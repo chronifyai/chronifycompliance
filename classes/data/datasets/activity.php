@@ -177,7 +177,7 @@ class activity extends dataset {
      * Add event counts of one day.
      *
      * @param int $day
-     * @param array<int, array<int, int>> $users User id => course id => events.
+     * @param array $users Events, keyed by user id, then course id.
      */
     private function add_activity(int $day, array $users): void {
         global $DB;
@@ -218,7 +218,7 @@ class activity extends dataset {
      * Add site totals of one day and recount its active users.
      *
      * @param int $day
-     * @param array<string, int> $totals
+     * @param array $totals Counts keyed by field name.
      */
     private function add_site_totals(int $day, array $totals): void {
         global $DB;
@@ -242,7 +242,7 @@ class activity extends dataset {
      * Record the latest completion time of learners in a course.
      *
      * @param int $courseid
-     * @param array<int, int> $learners User id => time completed.
+     * @param array $learners Time completed, keyed by user id.
      */
     private function set_completions(int $courseid, array $learners): void {
         global $DB;
