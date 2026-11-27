@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\availability;
+namespace local_chronifycompliance\availability;
 
-use local_completiondoctor\check\audit_context;
+use local_chronifycompliance\check\audit_context;
 
 /**
  * Structural validation of availability (restriction) JSON, without evaluating it for a user.
@@ -29,7 +29,7 @@ use local_completiondoctor\check\audit_context;
  * Negated trees and conditions of other plugins (for example availability_profile or third-party
  * conditions) are not judged.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

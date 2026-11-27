@@ -17,17 +17,17 @@
 /**
  * Audit courses from the command line.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\check\audit_result;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\site_auditor;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\check\audit_result;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\site_auditor;
+use local_chronifycompliance\local\scan_manager;
 
 define('CLI_SCRIPT', true);
 
@@ -55,7 +55,7 @@ if ($unrecognized) {
 }
 
 $help = <<<EOT
-Audit course completion setup with Completion Doctor.
+Audit course completion setup with Chronify.Compliance.
 
 Without --save this is a dry run: nothing is written, findings are only printed.
 
@@ -75,9 +75,9 @@ Options:
   -h, --help         Print this help.
 
 Examples:
-  php local/completiondoctor/cli/scan.php --course=12
-  php local/completiondoctor/cli/scan.php --all --severity=critical --format=csv
-  php local/completiondoctor/cli/scan.php --all --queue
+  php local/chronifycompliance/cli/scan.php --course=12
+  php local/chronifycompliance/cli/scan.php --all --severity=critical --format=csv
+  php local/chronifycompliance/cli/scan.php --all --queue
 
 EOT;
 
@@ -101,7 +101,7 @@ if ($options['cancel']) {
 
 if ($options['list']) {
     if (!check_registry::get_checks()) {
-        cli_writeln(get_string('settings:nochecks', 'local_completiondoctor'));
+        cli_writeln(get_string('settings:nochecks', 'local_chronifycompliance'));
     }
     foreach (check_registry::get_checks() as $id => $check) {
         printf(

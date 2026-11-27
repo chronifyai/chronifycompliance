@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor;
+namespace local_chronifycompliance;
 
-use local_completiondoctor\fix\fix_log;
-use local_completiondoctor\links\link_scan;
-use local_completiondoctor\links\link_store;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\fix\fix_log;
+use local_chronifycompliance\links\link_scan;
+use local_chronifycompliance\links\link_store;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\local\scan_manager;
 
 /**
  * Event observers.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,7 +41,7 @@ class observer {
         try {
             $body();
         } catch (\Throwable $e) {
-            debugging('Completion Doctor observer failed: ' . $e->getMessage(), DEBUG_DEVELOPER);
+            debugging('Chronify.Compliance observer failed: ' . $e->getMessage(), DEBUG_DEVELOPER);
         }
     }
 
@@ -51,7 +51,7 @@ class observer {
      * @param \core\event\base $event
      */
     public static function course_changed(\core\event\base $event): void {
-        if (!get_config('local_completiondoctor', 'autoreaudit')) {
+        if (!get_config('local_chronifycompliance', 'autoreaudit')) {
             return;
         }
         self::safely(function () use ($event): void {

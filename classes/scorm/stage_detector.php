@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Compares the fixed stage size of a package with how the activity displays it (static part only).
@@ -23,7 +23,7 @@ namespace local_completiondoctor\scorm;
  * course table of contents on the side takes width away. A pop-up uses the activity width and height.
  * Sizes of 100 or less are percentages in mod_scorm and cannot be judged statically.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -54,7 +54,7 @@ class stage_detector {
 
         if ((int) $scorm->popup === 1) {
             // Some sites open pop-ups as full browser tabs (setting "popupfulltab"): no size to judge then.
-            if (get_config('local_completiondoctor', 'popupfulltab')) {
+            if (get_config('local_chronifycompliance', 'popupfulltab')) {
                 return [];
             }
             if (($framewidth > 100 && $framewidth < $width) || ($frameheight > 100 && $frameheight < $height)) {

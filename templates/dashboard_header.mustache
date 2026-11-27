@@ -15,14 +15,14 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/dashboard_header
+    @template local_chronifycompliance/dashboard_header
 
     Site dashboard header: title and scan action, health tiles, top problems, site health and view chips.
 
     Example context (json):
     {
         "status": "193 of 193 courses checked", "canscan": true, "cancancel": false,
-        "scanurl": "https://example.com/local/completiondoctor/index.php", "sesskey": "abc",
+        "scanurl": "https://example.com/local/chronifycompliance/index.php", "sesskey": "abc",
         "tiles": [{"group": "critical", "label": "Courses with critical problems", "value": 38,
             "detail": "39 critical findings", "url": "https://example.com/?view=critical", "active": false}],
         "problems": [{"checkid": "nocriteria", "name": "No completion conditions", "severityname": "critical",
@@ -34,10 +34,10 @@
         "checkname": null, "clearurl": "https://example.com/"
     }
 }}
-<div class="local-completiondoctor-dashboard mb-3">
+<div class="local-chronifycompliance-dashboard mb-3">
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
         <div class="me-3 mb-2">
-            <h2 class="h3 mb-1">{{#str}}dashboard:title, local_completiondoctor{{/str}}</h2>
+            <h2 class="h3 mb-1">{{#str}}dashboard:title, local_chronifycompliance{{/str}}</h2>
             <div class="text-muted small">{{status}}</div>
             <div class="small mt-1" data-region="scan-progress" aria-live="polite"></div>
         </div>
@@ -46,14 +46,14 @@
                 <form method="post" action="{{scanurl}}">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="action" value="scan">
-                    <button type="submit" class="btn btn-primary">{{#pix}}i/reload, core{{/pix}} {{#str}}dashboard:scanall, local_completiondoctor{{/str}}</button>
+                    <button type="submit" class="btn btn-primary">{{#pix}}i/reload, core{{/pix}} {{#str}}dashboard:scanall, local_chronifycompliance{{/str}}</button>
                 </form>
             {{/canscan}}
             {{#cancancel}}
                 <form method="post" action="{{scanurl}}" class="ms-2">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="action" value="cancel">
-                    <button type="submit" class="btn btn-outline-secondary">{{#str}}dashboard:cancelscan, local_completiondoctor{{/str}}</button>
+                    <button type="submit" class="btn btn-outline-secondary">{{#str}}dashboard:cancelscan, local_chronifycompliance{{/str}}</button>
                 </form>
             {{/cancancel}}
         </div>
@@ -72,7 +72,7 @@
     <div class="lcd-panels mb-3">
         <section class="card lcd-panel">
             <div class="card-body">
-                <h3 class="h6 mb-3">{{#str}}dashboard:topproblems, local_completiondoctor{{/str}}</h3>
+                <h3 class="h6 mb-3">{{#str}}dashboard:topproblems, local_chronifycompliance{{/str}}</h3>
                 {{#hasproblems}}
                     <ul class="list-unstyled mb-1">
                         {{#problems}}
@@ -85,14 +85,14 @@
                             </li>
                         {{/problems}}
                     </ul>
-                    <div class="small text-muted">{{#str}}dashboard:topproblems:help, local_completiondoctor{{/str}}</div>
+                    <div class="small text-muted">{{#str}}dashboard:topproblems:help, local_chronifycompliance{{/str}}</div>
                 {{/hasproblems}}
-                {{^hasproblems}}<p class="text-muted mb-0">{{#str}}dashboard:noproblems, local_completiondoctor{{/str}}</p>{{/hasproblems}}
+                {{^hasproblems}}<p class="text-muted mb-0">{{#str}}dashboard:noproblems, local_chronifycompliance{{/str}}</p>{{/hasproblems}}
             </div>
         </section>
         <section class="card lcd-panel">
             <div class="card-body">
-                <h3 class="h6 mb-3">{{#str}}dashboard:sitehealth, local_completiondoctor{{/str}}</h3>
+                <h3 class="h6 mb-3">{{#str}}dashboard:sitehealth, local_chronifycompliance{{/str}}</h3>
                 <ul class="list-unstyled mb-0">
                     {{#sitehealth}}
                         <li class="lcd-health">
@@ -106,9 +106,9 @@
         </section>
     </div>
 
-    <h3 class="h5 mb-2">{{#str}}dashboard:courses, local_completiondoctor{{/str}}</h3>
-    <nav class="lcd-chips mb-2" aria-label="{{#str}}dashboard:courses, local_completiondoctor{{/str}}">
+    <h3 class="h5 mb-2">{{#str}}dashboard:courses, local_chronifycompliance{{/str}}</h3>
+    <nav class="lcd-chips mb-2" aria-label="{{#str}}dashboard:courses, local_chronifycompliance{{/str}}">
         {{#chips}}<a class="lcd-chip{{#active}} lcd-active{{/active}}" href="{{url}}"{{#active}} aria-current="true"{{/active}}>{{label}}</a>{{/chips}}
-        {{#checkname}}<span class="lcd-chip lcd-active">{{checkname}} <a href="{{clearurl}}" class="ms-1" aria-label="{{#str}}dashboard:clearfilter, local_completiondoctor{{/str}}">&times;</a></span>{{/checkname}}
+        {{#checkname}}<span class="lcd-chip lcd-active">{{checkname}} <a href="{{clearurl}}" class="ms-1" aria-label="{{#str}}dashboard:clearfilter, local_chronifycompliance{{/str}}">&times;</a></span>{{/checkname}}
     </nav>
 </div>

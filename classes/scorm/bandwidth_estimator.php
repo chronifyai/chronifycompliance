@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Static estimate of the connection speed a package needs.
@@ -29,7 +29,7 @@ namespace local_completiondoctor\scorm;
  * minmbps = max(startup bits / target start-up time, largest slide bits / target slide time,
  *               highest media kbps / 1000 x headroom).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -108,9 +108,9 @@ class bandwidth_estimator {
             }
         }
 
-        $targetstartup = (float) get_config('local_completiondoctor', 'targetstartup') ?: 5.0;
-        $targetslide = (float) get_config('local_completiondoctor', 'targetslide') ?: 2.0;
-        $headroom = (float) get_config('local_completiondoctor', 'videoheadroom') ?: 1.5;
+        $targetstartup = (float) get_config('local_chronifycompliance', 'targetstartup') ?: 5.0;
+        $targetslide = (float) get_config('local_chronifycompliance', 'targetslide') ?: 2.0;
+        $headroom = (float) get_config('local_chronifycompliance', 'videoheadroom') ?: 1.5;
         $minmbps = max(
             $startupbytes * 8 / $targetstartup / 1000000,
             $maxslide * 8 / $targetslide / 1000000,

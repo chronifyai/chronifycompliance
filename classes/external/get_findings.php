@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Findings across the site, filtered and paged.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -86,7 +86,7 @@ class get_findings extends external_api {
         ));
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewsitereport', $context);
+        require_capability('local/chronifycompliance:viewsitereport', $context);
 
         $statuses = [finding::STATUS_OPEN, finding::STATUS_IGNORED, finding::STATUS_RESOLVED, finding::STATUS_FIXED];
         if ($params['status'] !== '' && !in_array($params['status'], $statuses, true)) {
@@ -121,7 +121,7 @@ class get_findings extends external_api {
                                       ORDER BY f.severity DESC, f.courseid, f.id", $sqlparams, $page * $perpage, $perpage);
         $findings = [];
         foreach ($records as $record) {
-            $findings[] = \local_completiondoctor\output\finding_exporter::export_for_api(finding::from_record($record));
+            $findings[] = \local_chronifycompliance\output\finding_exporter::export_for_api(finding::from_record($record));
         }
         return ['total' => $total, 'page' => $page, 'perpage' => $perpage, 'findings' => $findings];
     }

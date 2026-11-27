@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/scan_progress
+    @template local_chronifycompliance/scan_progress
 
     Progress of the latest site scan.
 
@@ -27,12 +27,12 @@
 }}
 {{#scanid}}
     {{#running}}
-        <div class="small mb-1">{{#str}}dashboard:scanprogress, local_completiondoctor, {"done": {{done}}, "total": {{total}}, "failed": {{failed}} }{{/str}}</div>
+        <div class="small mb-1">{{#str}}dashboard:scanprogress, local_chronifycompliance, {"done": {{done}}, "total": {{total}}, "failed": {{failed}} }{{/str}}</div>
         <div class="progress" style="height: 1rem;">
             <div class="progress-bar" role="progressbar" style="width: {{percent}}%" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">{{percent}}%</div>
         </div>
     {{/running}}
     {{#finished}}
-        <div class="small text-muted">{{#str}}dashboard:scanfinished, local_completiondoctor, {"done": {{done}}, "failed": {{failed}}, "time": {{#quote}}{{timefinished}}{{/quote}} }{{/str}}</div>
+        <div class="small text-muted">{{#str}}dashboard:scanfinished, local_chronifycompliance, {"done": {{done}}, "failed": {{failed}}, "time": {{#quote}}{{timefinished}}{{/quote}} }{{/str}}</div>
     {{/finished}}
 {{/scanid}}

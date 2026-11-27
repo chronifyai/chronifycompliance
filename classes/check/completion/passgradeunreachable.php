@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
 
 /**
  * The grade needed for completion can never be reached: the grade to pass is higher than the maximum
@@ -25,7 +25,7 @@ use local_completiondoctor\check\finding;
  * questions with marks, so nobody gets a grade at all. The fix (set the grade to pass) is the one of
  * nopassgrade.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

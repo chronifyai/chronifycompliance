@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\scorm\inspector;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\scorm\inspector;
 
 /**
  * Checks one course in the background when someone asks for it ("Check again now", the first visit
  * of the course report, "Analyze now" and "Analyze again" for a SCORM package), so pages never do
  * the work themselves.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +39,7 @@ class check_course extends \core\task\adhoc_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:checkcourse', 'local_completiondoctor');
+        return get_string('task:checkcourse', 'local_chronifycompliance');
     }
 
     /**
@@ -61,7 +61,7 @@ class check_course extends \core\task\adhoc_task {
      */
     public static function request(int $courseid, int $cmid = 0, bool $refresh = false): void {
         global $DB;
-        \local_completiondoctor\local\audit_store::request($courseid);
+        \local_chronifycompliance\local\audit_store::request($courseid);
         $task = new self();
         $task->set_custom_data(['courseid' => $courseid, 'cmid' => $cmid, 'refresh' => $refresh]);
         $waiting = $DB->record_exists_select(
@@ -90,7 +90,7 @@ class check_course extends \core\task\adhoc_task {
             $retry->set_custom_data($data);
             $retry->set_next_run_time(time() + scan_manager::PAUSE_RETRY);
             \core\task\manager::queue_adhoc_task($retry);
-            mtrace('Completion Doctor scans are paused, course check postponed.');
+            mtrace('Chronify.Compliance scans are paused, course check postponed.');
             return;
         }
         if (!empty($data->cmid)) {

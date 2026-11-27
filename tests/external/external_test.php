@@ -14,27 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\local\finding_store;
 
-/**
- * Tests of the web service functions used by the UI.
- *
- * @package    local_completiondoctor
- * @category   test
- * @copyright  2026 Sebale {@link https://sebale.net}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 #[\PHPUnit\Framework\Attributes\CoversClass(audit_course::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(preview_fix::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(apply_fix::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(undo_fix::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(ignore_finding::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(get_scan_status::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\local\access::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\local\access::class)]
+/**
+ * Tests of the web service functions used by the UI.
+ *
+ * @package    local_chronifycompliance
+ * @category   test
+ * @copyright  2026 Sebale {@link https://sebale.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\external\audit_course
+ * @covers \local_chronifycompliance\external\preview_fix
+ * @covers \local_chronifycompliance\external\apply_fix
+ * @covers \local_chronifycompliance\external\undo_fix
+ * @covers \local_chronifycompliance\external\ignore_finding
+ * @covers \local_chronifycompliance\external\get_scan_status
+ * @covers \local_chronifycompliance\local\access
+ */
 final class external_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass Course with a nopassgrade finding. */
     private \stdClass $course;
@@ -53,9 +60,9 @@ final class external_test extends \core_external\tests\externallib_testcase {
         $this->resetAfterTest();
         check_registry::reset();
         $this->setAdminUser();
-        \local_completiondoctor\tests\role_grants::grant();
+        \local_chronifycompliance\tests\role_grants::grant();
         $generator = $this->getDataGenerator();
-        $this->course = (new \local_completiondoctor\tests\demo\scenario\nopassgrade())->create(
+        $this->course = (new \local_chronifycompliance\tests\demo\scenario\nopassgrade())->create(
             $generator,
             (int) $generator->create_category()->id
         );
@@ -74,7 +81,7 @@ final class external_test extends \core_external\tests\externallib_testcase {
         // The service queues the check; the task runs it, then the service returns the stored result.
         audit_course::execute((int) $this->course->id, true);
         ob_start();
-        $this->runAdhocTasks(\local_completiondoctor\task\check_course::class);
+        $this->runAdhocTasks(\local_chronifycompliance\task\check_course::class);
         ob_end_clean();
         $this->setUser($this->teacher);
         $result = external_api::clean_returnvalue(
@@ -108,7 +115,7 @@ final class external_test extends \core_external\tests\externallib_testcase {
             $this->fail('Teacher must not preview fixes');
         } catch (\required_capability_exception $e) {
             $this->assertStringContainsString(
-                get_string('completiondoctor:applyfix', 'local_completiondoctor'),
+                get_string('chronifycompliance:applyfix', 'local_chronifycompliance'),
                 $e->getMessage()
             );
         }
@@ -180,7 +187,7 @@ final class external_test extends \core_external\tests\externallib_testcase {
         $this->setAdminUser();
         $status = external_api::clean_returnvalue(get_scan_status::execute_returns(), get_scan_status::execute());
         $this->assertSame(0, $status['scanid']);
-        \local_completiondoctor\local\scan_manager::start_scan(2);
+        \local_chronifycompliance\local\scan_manager::start_scan(2);
         $status = get_scan_status::execute();
         $this->assertSame('queued', $status['status']);
 

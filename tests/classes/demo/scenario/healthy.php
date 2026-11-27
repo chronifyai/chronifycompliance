@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo\scenario;
+namespace local_chronifycompliance\tests\demo\scenario;
 
-use local_completiondoctor\tests\demo\scenario;
+use local_chronifycompliance\tests\demo\scenario;
 
 /**
  * A correctly configured course: completion on, a graded activity with a pass grade, and an
  * activity criterion that requires it.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,8 +55,8 @@ class healthy extends scenario {
     public function create(\testing_data_generator $generator, int $categoryid): \stdClass {
         $course = $generator->create_course($this->course_defaults(
             $categoryid,
-            get_string('demo:course:healthy', 'local_completiondoctor'),
-            get_string('demo:course:healthy:summary', 'local_completiondoctor')
+            get_string('demo:course:healthy', 'local_chronifycompliance'),
+            get_string('demo:course:healthy:summary', 'local_chronifycompliance')
         ));
         $assign = $this->create_graded_assign($generator, (int) $course->id);
         $this->require_activities((int) $course->id, [(int) $assign->cmid]);

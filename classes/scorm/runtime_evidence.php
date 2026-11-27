@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * What a SCORM activity actually reported: counts of the status values, score presence, saved
@@ -25,7 +25,7 @@ namespace local_completiondoctor\scorm;
  * scorm_scoes_value.attemptid), reading the text value only for the few elements that matter.
  * Results are cached per activity for a day (application cache "evidence").
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,7 +56,7 @@ class runtime_evidence {
      * @return array See collect().
      */
     public static function get(int $scormid, ?int $packagetime = null, bool $refresh = false): array {
-        $cache = \cache::make('local_completiondoctor', 'evidence');
+        $cache = \cache::make('local_chronifycompliance', 'evidence');
         $key = $scormid . '_' . (int) $packagetime;
         if (!$refresh) {
             $cached = $cache->get($key);
@@ -83,7 +83,7 @@ class runtime_evidence {
      */
     public static function collect(int $scormid, ?int $sample = null, ?int $packagetime = null): array {
         global $DB;
-        $sample = $sample ?? ((int) get_config('local_completiondoctor', 'evidencesample') ?: self::DEFAULT_SAMPLE);
+        $sample = $sample ?? ((int) get_config('local_chronifycompliance', 'evidencesample') ?: self::DEFAULT_SAMPLE);
         $evidence = ['attempts' => 0, 'statuses' => [], 'values' => [], 'withstatus' => 0, 'nostatus' => 0,
             'withscore' => 0, 'maxraw' => null, 'scoremax' => [], 'sufficient' => false,
             'suspend' => ['withdata' => 0, 'maxlength' => 0, 'over' => 0, 'near' => 0], 'stale' => 0];

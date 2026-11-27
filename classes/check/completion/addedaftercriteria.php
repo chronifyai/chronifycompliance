@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\add_criterion_fix;
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
+use local_chronifycompliance\check\add_criterion_fix;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
 
 /**
  * A key activity (see trackednotrequired::KEY_MODULES) or one with a grade or submission rule was added
  * after the course completion criteria were last saved, and is not required. The save time is the one
  * recorded by the plugin; courses whose criteria were not saved since the plugin was installed are skipped.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
