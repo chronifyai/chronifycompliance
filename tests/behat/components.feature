@@ -26,11 +26,11 @@ Feature: Shared page components
   Scenario: Dismissed invitations stay hidden
     Given I log in as "admin"
     And I visit "/local/chronifycompliance/components.php"
-    And I should see "Want a second pair of eyes on your site?"
+    And I should see "Want an expert to review your results?"
     When I click on "Hide for 30 days" "button"
-    Then I should not see "Want a second pair of eyes on your site?"
+    Then I should not see "Want an expert to review your results?"
     And I reload the page
-    And I should not see "Want a second pair of eyes on your site?"
+    And I should not see "Want an expert to review your results?"
     And I should see "None" in the "[data-region='invitation-slot']" "css_element"
 
   Scenario: The administrator can turn invitations off
@@ -38,4 +38,4 @@ Feature: Shared page components
       | invitations | 0 | local_chronifycompliance |
     And I log in as "admin"
     When I visit "/local/chronifycompliance/components.php"
-    Then I should not see "Want a second pair of eyes on your site?"
+    Then I should not see "Want an expert to review your results?"

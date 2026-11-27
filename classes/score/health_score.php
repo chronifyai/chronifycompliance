@@ -69,6 +69,9 @@ class health_score {
     /** @var int Overall score from which the site needs attention (below: at risk). */
     public const ATTENTION = 50;
 
+    /** @var array Points per check of the last computation, see site_breakdown(). */
+    private static array $lastpoints = [];
+
     /**
      * Score of the whole site.
      *
@@ -109,6 +112,7 @@ class health_score {
             $packofcheck[$id] = $check->get_pack();
         }
         $packs = [];
+        $checks = [];
         foreach (base_check::get_packs() as $pack) {
             if (in_array($pack, $packofcheck, true)) {
                 $packs[$pack] = (object) ['score' => 100, 'critical' => 0, 'warning' => 0, 'info' => 0, 'penalty' => 0.0];
@@ -139,7 +143,9 @@ class health_score {
             $count = (int) $row->total;
             $weight = $row->status === finding::STATUS_IGNORED ? self::IGNORED_FACTOR : 1;
             $scale = in_array($pack, self::COURSE_PACKS, true) ? $factor : 1;
-            $packs[$pack]->penalty += $count * $weight * self::PENALTY[$severity] * $scale;
+            $penalty = $count * $weight * self::PENALTY[$severity] * $scale;
+            $packs[$pack]->penalty += $penalty;
+            $checks[$row->checkid] = ($checks[$row->checkid] ?? 0) + $penalty;
             if ($row->status === finding::STATUS_OPEN) {
                 $packs[$pack]->{$names[$severity]} += $count;
             }
@@ -148,14 +154,57 @@ class health_score {
 
         $weighted = 0;
         $weights = 0;
+        $capped = [];
         foreach ($packs as $pack => $result) {
             $result->score = (int) round(100 - min(100, $result->penalty));
+            // A pack never loses more than 100 points, so each check's share shrinks when the pack is at 0.
+            $capped[$pack] = $result->penalty > 100 ? 100 / $result->penalty : 1;
             unset($result->penalty);
             $weighted += $result->score * self::WEIGHTS[$pack];
             $weights += self::WEIGHTS[$pack];
         }
         $overall = $weights ? (int) round($weighted / $weights) : null;
+        $points = [];
+        foreach ($checks as $checkid => $penalty) {
+            $pack = $packofcheck[$checkid];
+            $points[$checkid] = $penalty * $capped[$pack] * self::WEIGHTS[$pack] / $weights;
+        }
+        arsort($points);
+        self::$lastpoints = $points;
         return (object) ['overall' => $overall, 'status' => self::status($overall), 'packs' => $packs];
+    }
+
+    /**
+     * Points of the overall site score each check costs, largest first. Fixing every finding of the
+     * check (or reopening ignored ones and fixing them) gives these points back.
+     *
+     * @return array Check id => points (float).
+     */
+    public static function site_breakdown(): array {
+        self::site();
+        return self::$lastpoints;
+    }
+
+    /**
+     * The latest stored overall score from at least six days ago, for "change since last week".
+     *
+     * @param int|null $now
+     * @return int|null
+     */
+    public static function last_week(?int $now = null): ?int {
+        global $DB;
+        $now = $now ?? time();
+        $rows = $DB->get_records_select(
+            self::TABLE,
+            'pack = :pack AND timecreated <= :before',
+            ['pack' => self::OVERALL, 'before' => $now - 6 * DAYSECS],
+            'timecreated DESC',
+            'id, score',
+            0,
+            1
+        );
+        $row = reset($rows);
+        return $row ? (int) $row->score : null;
     }
 
     /**

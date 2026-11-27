@@ -219,4 +219,41 @@ final class health_score_test extends \advanced_testcase {
         $DB->set_field(health_score::TABLE, 'timecreated', time() - 3 * YEARSECS, []);
         $this->assertSame(12, health_score::delete_old());
     }
+
+    /**
+     * Points each check costs, capped at what its pack can lose, and last week's score.
+     */
+    public function test_breakdown_and_last_week(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertSame([], health_score::site_breakdown());
+
+        // Completion: 10 + 3 = 13 penalty, weight 30 of 65. Site: 10, weight 20 of 65.
+        $this->add_finding($course->id, 'nopassgrade', base_check::SEVERITY_CRITICAL);
+        $this->add_finding($course->id, 'weakcondition', base_check::SEVERITY_WARNING);
+        $this->add_finding(SITEID, 'cronstale', base_check::SEVERITY_CRITICAL);
+        $points = health_score::site_breakdown();
+        $this->assertSame(['nopassgrade', 'cronstale', 'weakcondition'], array_keys($points));
+        $this->assertEqualsWithDelta(10 * 30 / 65, $points['nopassgrade'], 0.001);
+        $this->assertEqualsWithDelta(10 * 20 / 65, $points['cronstale'], 0.001);
+        $this->assertEqualsWithDelta(3 * 30 / 65, $points['weakcondition'], 0.001);
+
+        // A pack at 0 shares its 100 points between its checks.
+        for ($i = 0; $i < 19; $i++) {
+            $this->add_finding($course->id, 'nopassgrade', base_check::SEVERITY_CRITICAL);
+        }
+        $points = health_score::site_breakdown();
+        $this->assertEqualsWithDelta(100 * 30 / 65, $points['nopassgrade'] + $points['weakcondition'], 0.001);
+
+        $now = time();
+        $this->assertNull(health_score::last_week($now));
+        $DB->insert_records(health_score::TABLE, [
+            ['timecreated' => $now - 8 * DAYSECS, 'pack' => health_score::OVERALL, 'score' => 70, 'critical' => 0,
+                'warning' => 0, 'info' => 0],
+            ['timecreated' => $now - 2 * DAYSECS, 'pack' => health_score::OVERALL, 'score' => 75, 'critical' => 0,
+                'warning' => 0, 'info' => 0],
+        ]);
+        $this->assertSame(70, health_score::last_week($now), 'The snapshot of two days ago is too recent');
+    }
 }

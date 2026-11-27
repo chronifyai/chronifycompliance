@@ -1,0 +1,187 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chronifycompliance/main_dashboard
+
+    Main dashboard: overall score, pack tiles, trend, top 3 actions, and the Not set up, Scanning and Paused states.
+
+    Example context (json):
+    {
+        "nav": "", "dataage": "", "notsetup": false, "scanning": false, "paused": false,
+        "settingsurl": "https://example.com/admin/settings.php?section=local_chronifycompliance",
+        "canscan": true, "cancancel": false, "scanurl": "https://example.com/local/chronifycompliance/index.php",
+        "sesskey": "abc", "invitation": null,
+        "score": {"value": 72, "hasvalue": true, "status": "attention", "statuslabel": "Needs attention",
+            "change": "Up 4 since last week"},
+        "packs": [
+            {"pack": "security", "name": "Security", "hasscore": false, "score": null, "url": null,
+                "severity": "none", "note": "No checks yet"},
+            {"pack": "completion", "name": "Completion", "hasscore": true, "score": 78,
+                "url": "https://example.com/local/chronifycompliance/completion.php", "severity": "critical",
+                "note": "4 critical"}
+        ],
+        "trend": {"haschart": false, "chart": null},
+        "breakdown": [{"name": "Pass grade missing", "pack": "Completion", "points": "6 points"}],
+        "hasbreakdown": true,
+        "actions": [{"checkid": "nopassgrade", "severity": "critical", "severitylabel": "Critical",
+            "points": "6 points", "text": "Pass grade missing in 4 courses", "description": "Why it matters.",
+            "fixid": null, "url": "https://example.com/local/chronifycompliance/completion.php?checkid=nopassgrade",
+            "linktext": "Review courses", "hasmain": true}],
+        "hasactions": true
+    }
+}}
+<div class="local-chronifycompliance-home" data-region="main-dashboard">
+    <h2 class="h3 mb-2">{{#str}}dashboard:title, local_chronifycompliance{{/str}}</h2>
+    {{{nav}}}
+    {{{dataage}}}
+
+    {{#paused}}
+        <div class="alert alert-warning" role="status">
+            {{#str}}dashboard:pausedstate, local_chronifycompliance{{/str}}
+            <a href="{{settingsurl}}" class="ms-1">{{#str}}dashboard:pausedsettings, local_chronifycompliance{{/str}}</a>
+        </div>
+    {{/paused}}
+
+    {{#scanning}}
+        <section class="card mb-3" data-region="scanning">
+            <div class="card-body d-flex flex-wrap justify-content-between align-items-start">
+                <div class="me-3 flex-grow-1">
+                    <h3 class="h6 mb-1">{{#str}}dashboard:scanningstate, local_chronifycompliance{{/str}}</h3>
+                    <p class="small text-muted mb-2">{{#str}}dashboard:scanningstate:help, local_chronifycompliance{{/str}}</p>
+                    <div data-region="scan-progress" aria-live="polite"></div>
+                </div>
+                {{#cancancel}}
+                    <form method="post" action="{{scanurl}}" class="mt-2">
+                        <input type="hidden" name="sesskey" value="{{sesskey}}">
+                        <input type="hidden" name="action" value="cancel">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">{{#str}}dashboard:cancelscan, local_chronifycompliance{{/str}}</button>
+                    </form>
+                {{/cancancel}}
+            </div>
+        </section>
+    {{/scanning}}
+
+    {{#notsetup}}
+        <section class="card mb-3" data-region="finish-setup">
+            <div class="card-body">
+                <h3 class="h5">{{#str}}dashboard:setup, local_chronifycompliance{{/str}}</h3>
+                <p>{{#str}}dashboard:setup:help, local_chronifycompliance{{/str}}</p>
+                {{#canscan}}
+                    <form method="post" action="{{scanurl}}">
+                        <input type="hidden" name="sesskey" value="{{sesskey}}">
+                        <input type="hidden" name="action" value="scan">
+                        <button type="submit" class="btn btn-primary">{{#str}}dashboard:setup:start, local_chronifycompliance{{/str}}</button>
+                    </form>
+                {{/canscan}}
+                {{^canscan}}<p class="text-muted mb-0">{{#str}}dashboard:setup:askadmin, local_chronifycompliance{{/str}}</p>{{/canscan}}
+            </div>
+        </section>
+    {{/notsetup}}
+
+    {{^notsetup}}
+        <div class="lcc-home-grid mb-3">
+            {{#score}}
+                <section class="card lcc-score" data-region="score">
+                    <div class="card-body">
+                        <div class="small text-muted">{{#str}}dashboard:score, local_chronifycompliance{{/str}}</div>
+                        {{#hasvalue}}
+                            <div class="lcc-score-value"><span class="lcc-score-number">{{value}}</span> <span class="text-muted">/ 100</span></div>
+                            <span class="lcd-pill lcc-status-{{status}}">{{statuslabel}}</span>
+                            {{#change}}<div class="small text-muted mt-2">{{change}}</div>{{/change}}
+                        {{/hasvalue}}
+                        {{^hasvalue}}<p class="text-muted mt-2 mb-0">{{#str}}dashboard:score:none, local_chronifycompliance{{/str}}</p>{{/hasvalue}}
+                        {{#hasbreakdown}}
+                            <details class="small mt-2" data-region="breakdown">
+                                <summary>{{#str}}dashboard:breakdown, local_chronifycompliance{{/str}}</summary>
+                                <ul class="list-unstyled mt-2 mb-0">
+                                    {{#breakdown}}
+                                        <li class="d-flex justify-content-between">
+                                            <span class="me-2">{{name}} <span class="text-muted">({{pack}})</span></span>
+                                            <span class="text-nowrap">{{points}}</span>
+                                        </li>
+                                    {{/breakdown}}
+                                </ul>
+                            </details>
+                        {{/hasbreakdown}}
+                    </div>
+                </section>
+            {{/score}}
+            <div class="lcc-packs">
+                {{#packs}}
+                    {{#url}}<a class="card lcc-pack lcc-pack-{{pack}} text-reset text-decoration-none" href="{{url}}" data-pack="{{pack}}">{{/url}}
+                    {{^url}}<div class="card lcc-pack lcc-pack-{{pack}}" data-pack="{{pack}}">{{/url}}
+                        <div class="card-body">
+                            <div class="small text-muted">{{name}}</div>
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <span class="lcc-pack-score">{{#hasscore}}{{score}}{{/hasscore}}</span>
+                                <span class="small lcc-note-{{severity}}">{{note}}</span>
+                            </div>
+                        </div>
+                    {{#url}}</a>{{/url}}
+                    {{^url}}</div>{{/url}}
+                {{/packs}}
+            </div>
+        </div>
+
+        {{#trend}}
+            <section class="card mb-3" data-region="trend">
+                <div class="card-body">
+                    <h3 class="h6">{{#str}}dashboard:trend, local_chronifycompliance{{/str}}</h3>
+                    {{#haschart}}{{{chart}}}{{/haschart}}
+                    {{^haschart}}<p class="small text-muted mb-0">{{#str}}dashboard:trend:wait, local_chronifycompliance{{/str}}</p>{{/haschart}}
+                </div>
+            </section>
+        {{/trend}}
+
+        <section class="card mb-3" data-region="top-actions">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+                    <h3 class="h6 mb-0">{{#str}}dashboard:actions, local_chronifycompliance{{/str}}</h3>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" disabled
+                        title="{{#str}}dashboard:fixforme:soon, local_chronifycompliance{{/str}}">
+                        {{#str}}dashboard:fixforme, local_chronifycompliance{{/str}}
+                    </button>
+                </div>
+                {{#hasactions}}
+                    <ul class="list-unstyled mb-0">
+                        {{#actions}}
+                            <li class="lcc-action d-flex flex-wrap align-items-start justify-content-between py-2" data-checkid="{{checkid}}">
+                                <div class="me-3 mb-1">
+                                    <span class="lcd-pill lcd-pill-{{severity}} me-2">{{severitylabel}}</span>{{text}}
+                                    <span class="small text-muted ms-1">{{#str}}dashboard:action:gain, local_chronifycompliance, {{points}}{{/str}}</span>
+                                    <details class="small text-muted mt-1">
+                                        <summary>{{#str}}report:whythismatters, local_chronifycompliance{{/str}}</summary>
+                                        <p class="mt-1 mb-0">{{description}}</p>
+                                    </details>
+                                </div>
+                                {{#fixid}}
+                                    <button type="button" class="btn btn-primary btn-sm" data-action="cd-preview-fix" data-findingid="{{fixid}}">
+                                        {{#str}}report:previewfix, local_chronifycompliance{{/str}}
+                                    </button>
+                                {{/fixid}}
+                                {{^fixid}}{{#url}}<a class="btn btn-primary btn-sm" href="{{url}}">{{linktext}}</a>{{/url}}{{/fixid}}
+                            </li>
+                        {{/actions}}
+                    </ul>
+                {{/hasactions}}
+                {{^hasactions}}<p class="text-muted mb-0">{{#str}}dashboard:actions:none, local_chronifycompliance{{/str}}</p>{{/hasactions}}
+            </div>
+        </section>
+
+        {{{invitation}}}
+    {{/notsetup}}
+</div>

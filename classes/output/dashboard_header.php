@@ -64,7 +64,7 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
         $component = 'local_chronifycompliance';
         $context = \context_system::instance();
         $summary = \local_chronifycompliance\local\dashboard_data::get_summary();
-        $baseurl = new moodle_url('/local/chronifycompliance/index.php');
+        $baseurl = new moodle_url('/local/chronifycompliance/completion.php');
         $link = fn(array $params) => (new moodle_url($baseurl, $params))->out(false);
 
         $tiles = [];

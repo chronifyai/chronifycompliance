@@ -31,6 +31,13 @@ $ADMIN->add('reports', new admin_externalpage(
     'local/chronifycompliance:viewsitereport'
 ));
 $ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_completion',
+    new lang_string('nav:completion', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/completion.php'),
+    'local/chronifycompliance:viewsitereport',
+    true
+));
+$ADMIN->add('reports', new admin_externalpage(
     'local_chronifycompliance_components',
     new lang_string('components', 'local_chronifycompliance'),
     new moodle_url('/local/chronifycompliance/components.php'),

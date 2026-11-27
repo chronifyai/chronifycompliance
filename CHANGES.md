@@ -41,6 +41,13 @@
   after a fix is applied; and a dismissible invitation slot (hidden for 30 days per user, user preferences
   `local_chronifycompliance_invite_*`) with an admin switch to turn invitations off. An administrator component
   gallery (`components.php`) shows every component in each state.
+- Step B2: main dashboard (`index.php`). Overall health score with its status and the change since last week, a
+  breakdown of the checks that cost the most points, one tile per pack (score and worst severity count, linking to
+  its workspace), the last 12 weekly scores as a chart, and the top 3 actions with one main action each (Preview fix,
+  Open course report or Review courses) and a Fix it for me button that is not active yet. States: Finish setup
+  before the first check, Scanning while a scan runs, Paused. The dashboard reads only the plugin's tables; measured
+  at about 0.1 seconds with 300 courses and 60,000 findings (`dev/measure-dashboard.php`). The course list with its
+  health tiles and filters moved to the Completion workspace (`completion.php`) until step B4 rebuilds it.
 
 ## 0.2.3 (unreleased): QA fixes
 

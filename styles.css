@@ -235,3 +235,74 @@ a.lcd-tile:focus {
     bottom: 1rem;
     z-index: 1100;
 }
+
+.local-chronifycompliance-home .lcc-home-grid {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) 2fr;
+    gap: 1rem;
+}
+
+.local-chronifycompliance-home .lcc-packs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.local-chronifycompliance-home .lcc-pack,
+.local-chronifycompliance-home .lcc-score {
+    margin-bottom: 0;
+}
+
+.local-chronifycompliance-home a.lcc-pack:hover,
+.local-chronifycompliance-home a.lcc-pack:focus {
+    border-color: currentColor;
+}
+
+.local-chronifycompliance-home .lcc-score-number {
+    font-size: 2.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.local-chronifycompliance-home .lcc-pack-score {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.local-chronifycompliance-home .lcc-status-healthy {
+    background-color: #e3f1e6;
+    color: #1d5c2e;
+}
+
+.local-chronifycompliance-home .lcc-status-attention {
+    background-color: #fdf1d8;
+    color: #6b4a00;
+}
+
+.local-chronifycompliance-home .lcc-status-atrisk {
+    background-color: #f9e0de;
+    color: #8a1c13;
+}
+
+.local-chronifycompliance-home .lcc-note-critical {
+    color: #b3261e;
+}
+
+.local-chronifycompliance-home .lcc-note-warning {
+    color: #8a5a00;
+}
+
+.local-chronifycompliance-home .lcc-note-good {
+    color: #2e7d40;
+}
+
+.local-chronifycompliance-home .lcc-action + .lcc-action {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 767.98px) {
+    .local-chronifycompliance-home .lcc-home-grid,
+    .local-chronifycompliance-home .lcc-packs {
+        grid-template-columns: 1fr;
+    }
+}

@@ -102,7 +102,7 @@ class behat_local_chronifycompliance extends behat_base {
     }
 
     /**
-     * Named pages without an identifier: "Dashboard".
+     * Named pages without an identifier: "Dashboard", "Completion".
      *
      * @param string $page
      * @return moodle_url
@@ -110,6 +110,9 @@ class behat_local_chronifycompliance extends behat_base {
     protected function resolve_page_url(string $page): moodle_url {
         if (strtolower($page) === 'dashboard') {
             return new moodle_url('/local/chronifycompliance/index.php');
+        }
+        if (strtolower($page) === 'completion') {
+            return new moodle_url('/local/chronifycompliance/completion.php');
         }
         throw new Exception("Unrecognized Chronify.Compliance page '{$page}'");
     }
