@@ -125,7 +125,7 @@ final class health_score_test extends \advanced_testcase {
         $this->assertSame([1, 2, 1], [$completion->critical, $completion->warning, $completion->info], 'Open findings only');
         $this->assertSame(80, $score->packs[base_check::PACK_SITE]->score);
         $this->assertSame(100, $score->packs[base_check::PACK_SCORM]->score);
-        // (79 x 30 + 80 x 20 + 100 x 15) / 65 = 84.15.
+        // Overall: (79 x 30 + 80 x 20 + 100 x 15) / 65 = 84.15.
         $this->assertSame(84, $score->overall);
 
         // A disabled check stops counting.
