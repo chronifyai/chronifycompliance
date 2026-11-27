@@ -17,12 +17,12 @@
 /**
  * SCORM analysis panel of one SCORM activity.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\scorm\inspector;
+use local_chronifycompliance\scorm\inspector;
 
 require(__DIR__ . '/../../config.php');
 
@@ -32,34 +32,34 @@ $action = optional_param('action', '', PARAM_ALPHA);
 [$course, $cm] = get_course_and_cm_from_cmid($cmid, 'scorm');
 require_login($course);
 $context = context_course::instance($course->id);
-require_capability('local/completiondoctor:viewcoursereport', $context);
+require_capability('local/chronifycompliance:viewcoursereport', $context);
 
-$url = new moodle_url('/local/completiondoctor/scorm.php', ['cmid' => $cm->id]);
+$url = new moodle_url('/local/chronifycompliance/scorm.php', ['cmid' => $cm->id]);
 $PAGE->set_url($url);
 $PAGE->set_context(context_module::instance($cm->id));
 $PAGE->set_cm($cm, $course);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('panel:title', 'local_completiondoctor') . ': ' . $cm->get_formatted_name());
+$PAGE->set_title(get_string('panel:title', 'local_chronifycompliance') . ': ' . $cm->get_formatted_name());
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->activityheader->disable();
 
 // The page only reads: analyzing a package, or analyzing it again, runs in a background task.
 if ($action === 'refresh' || $action === 'analyze') {
     require_sesskey();
-    \local_completiondoctor\task\check_course::request((int) $course->id, (int) $cm->id, $action === 'refresh');
-    \local_completiondoctor\event\course_check_requested::create(['context' => $context])->trigger();
-    redirect($url, get_string('panel:analysisqueued', 'local_completiondoctor'), null, \core\output\notification::NOTIFY_INFO);
+    \local_chronifycompliance\task\check_course::request((int) $course->id, (int) $cm->id, $action === 'refresh');
+    \local_chronifycompliance\event\course_check_requested::create(['context' => $context])->trigger();
+    redirect($url, get_string('panel:analysisqueued', 'local_chronifycompliance'), null, \core\output\notification::NOTIFY_INFO);
 }
 $inspection = inspector::inspect($cm, inspector::MODE_READ);
-\local_completiondoctor\event\scorm_analysis_viewed::create(['context' => context_module::instance($cm->id)])->trigger();
+\local_chronifycompliance\event\scorm_analysis_viewed::create(['context' => context_module::instance($cm->id)])->trigger();
 
-$PAGE->requires->js_call_amd('local_completiondoctor/course_report', 'init', ['[data-region="scorm-panel"]']);
-if (\local_completiondoctor\local\audit_store::get_requested((int) $course->id)) {
-    $PAGE->requires->js_call_amd('local_completiondoctor/course_status', 'init', [(int) $course->id]);
+$PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="scorm-panel"]']);
+if (\local_chronifycompliance\local\audit_store::get_requested((int) $course->id)) {
+    $PAGE->requires->js_call_amd('local_chronifycompliance/course_status', 'init', [(int) $course->id]);
 }
 
-$renderer = $PAGE->get_renderer('local_completiondoctor');
+$renderer = $PAGE->get_renderer('local_chronifycompliance');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('panel:title', 'local_completiondoctor') . ': ' . $cm->get_formatted_name());
+echo $OUTPUT->heading(get_string('panel:title', 'local_chronifycompliance') . ': ' . $cm->get_formatted_name());
 echo $renderer->scorm_panel($cm, $inspection);
 echo $OUTPUT->footer();

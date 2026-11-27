@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\scorm_check;
+use local_chronifycompliance\check\scorm_check;
 use moodle_url;
 use renderer_base;
 
 /**
  * Learner completion diagnostic.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +63,7 @@ class learner_report implements \core\output\named_templatable, \renderable {
      * @return string
      */
     public function get_template_name(renderer_base $renderer): string {
-        return 'local_completiondoctor/learner_report';
+        return 'local_chronifycompliance/learner_report';
     }
 
     /**
@@ -73,7 +73,7 @@ class learner_report implements \core\output\named_templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $criteria = [];
         foreach ($this->explanation['criteria'] ?? [] as $criterion) {
             $activity = $criterion['activity'];
@@ -98,12 +98,12 @@ class learner_report implements \core\output\named_templatable, \renderable {
         }
         $data = [
             'courseid' => (int) $this->course->id,
-            'actionurl' => (new moodle_url('/local/completiondoctor/learner.php'))->out(false),
+            'actionurl' => (new moodle_url('/local/chronifycompliance/learner.php'))->out(false),
             'search' => $this->search,
             'matches' => array_map(fn($u) => ['id' => (int) $u->id, 'fullname' => fullname($u),
                 'identity' => $u->identity ?? '',
                 'url' => (new moodle_url(
-                    '/local/completiondoctor/learner.php',
+                    '/local/chronifycompliance/learner.php',
                     ['courseid' => $this->course->id, 'userid' => $u->id]
                 ))->out(false)], $this->matches),
             'hasmatches' => (bool) $this->matches,

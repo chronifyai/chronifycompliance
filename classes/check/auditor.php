@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Shared logic of the course and site auditors.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -72,7 +72,7 @@ abstract class auditor {
                     $result->findings,
                     fn(finding $f): bool => $f->checkid !== $check->get_id()
                 ));
-                debugging('Completion Doctor check ' . $check->get_id() . ' failed on course ' . $courseid . ': '
+                debugging('Chronify.Compliance check ' . $check->get_id() . ' failed on course ' . $courseid . ': '
                     . $e->getMessage(), DEBUG_DEVELOPER);
             }
         }
@@ -118,10 +118,10 @@ abstract class auditor {
      * @throws \moodle_exception When the lock cannot be acquired.
      */
     protected static function get_lock(string $resource): \core\lock\lock {
-        $factory = \core\lock\lock_config::get_lock_factory('local_completiondoctor');
+        $factory = \core\lock\lock_config::get_lock_factory('local_chronifycompliance');
         $lock = $factory->get_lock($resource, static::LOCK_TIMEOUT);
         if (!$lock) {
-            throw new \moodle_exception('error:auditlocked', 'local_completiondoctor', '', $resource);
+            throw new \moodle_exception('error:auditlocked', 'local_chronifycompliance', '', $resource);
         }
         return $lock;
     }

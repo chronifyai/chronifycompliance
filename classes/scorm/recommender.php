@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Recommends Moodle SCORM completion settings from what a package reports.
@@ -25,7 +25,7 @@ namespace local_completiondoctor\scorm;
  * What the package reports comes, by trust: from runtime evidence (high confidence), from the
  * authoring tool settings (medium), from the manifest mastery score (low).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

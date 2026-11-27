@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\hook\register_checks;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\hook\register_checks;
 
 /**
  * Helpers to register test checks through the real hook.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +31,7 @@ trait check_testcase_trait {
     /**
      * Register checks via the register_checks hook and reset the registry.
      *
-     * @param \local_completiondoctor\check\base_check[] $checks
+     * @param \local_chronifycompliance\check\base_check[] $checks
      */
     protected function register_checks(array $checks): void {
         $manager = \core\hook\manager::phpunit_get_instance([]);

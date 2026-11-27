@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\site;
+namespace local_chronifycompliance\check\site;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\site_check;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\site_check;
 
 /**
  * The core completion tasks are disabled, failing, or have not run recently. Course completion is
  * aggregated by these tasks, so learners are not marked complete while they do not run.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +63,7 @@ class completiontasks extends site_check {
         if (empty($CFG->enablecompletion)) {
             return [];
         }
-        $maxage = ((int) get_config('local_completiondoctor', 'completiontaskmaxage') ?: self::DEFAULT_MAX_AGE) * MINSECS;
+        $maxage = ((int) get_config('local_chronifycompliance', 'completiontaskmaxage') ?: self::DEFAULT_MAX_AGE) * MINSECS;
         $tasks = [
             '\\core\\task\\completion_regular_task' => $maxage,
             '\\core\\task\\completion_daily_task' => self::DAILY_MAX_AGE,
