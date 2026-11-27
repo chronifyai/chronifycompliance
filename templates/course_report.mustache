@@ -50,7 +50,7 @@
     </div>
     {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}report:checking, local_chronifycompliance{{/str}}</div>{{/checking}}
 
-    <ul class="nav nav-tabs mb-3" role="tablist" aria-label="{{#str}}report:navigation, local_chronifycompliance{{/str}}">
+    <ul class="nav nav-tabs mb-3" data-region="report-tabs" aria-label="{{#str}}report:navigation, local_chronifycompliance{{/str}}">
         {{#tabs}}
             <li class="nav-item">
                 <a class="nav-link{{#active}} active{{/active}}" href="{{url}}" data-tab="{{key}}"{{#active}} aria-current="page"{{/active}}>{{label}}</a>
