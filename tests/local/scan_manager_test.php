@@ -14,24 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\tests\check_testcase_trait;
-use local_completiondoctor\tests\fake_check;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\tests\check_testcase_trait;
+use local_chronifycompliance\tests\fake_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\audit_course::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\scan_site::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\observer::class)]
 /**
  * Tests for queued scans, the audit task and the event observers.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\local\scan_manager
+ * @covers \local_chronifycompliance\task\audit_course
+ * @covers \local_chronifycompliance\task\scan_site
+ * @covers \local_chronifycompliance\observer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\task\audit_course::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\task\scan_site::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\observer::class)]
 final class scan_manager_test extends \advanced_testcase {
     use check_testcase_trait;
 
@@ -60,7 +64,7 @@ final class scan_manager_test extends \advanced_testcase {
      */
     private function count_tasks(): int {
         global $DB;
-        return $DB->count_records('task_adhoc', ['classname' => '\local_completiondoctor\task\audit_course']);
+        return $DB->count_records('task_adhoc', ['classname' => '\local_chronifycompliance\task\audit_course']);
     }
 
     /**
@@ -68,7 +72,7 @@ final class scan_manager_test extends \advanced_testcase {
      */
     public function test_scan_in_batches(): void {
         global $DB;
-        set_config('scanbatchsize', 2, 'local_completiondoctor');
+        set_config('scanbatchsize', 2, 'local_chronifycompliance');
         $courses = [];
         for ($i = 0; $i < 5; $i++) {
             $courses[] = $this->getDataGenerator()->create_course();
@@ -81,7 +85,7 @@ final class scan_manager_test extends \advanced_testcase {
         $this->assertSame(3, $this->count_tasks());
 
         $this->expectOutputRegex('/Course \d+: 1 findings/');
-        $this->runAdhocTasks('\local_completiondoctor\task\audit_course');
+        $this->runAdhocTasks('\local_chronifycompliance\task\audit_course');
 
         $scan = scan_manager::get_scan($scanid);
         $this->assertSame(scan_manager::STATUS_FINISHED, $scan->status);
@@ -120,7 +124,7 @@ final class scan_manager_test extends \advanced_testcase {
         scan_manager::cancel($scanid);
         $this->assertSame(scan_manager::STATUS_CANCELLED, scan_manager::get_scan($scanid)->status);
         $this->expectOutputRegex('/was cancelled/');
-        $this->runAdhocTasks('\\local_completiondoctor\\task\\audit_course');
+        $this->runAdhocTasks('\\local_chronifycompliance\\task\\audit_course');
         $this->assertSame(0, $DB->count_records(finding_store::TABLE));
     }
 
@@ -132,7 +136,7 @@ final class scan_manager_test extends \advanced_testcase {
         $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
         $this->assertSame(0, $this->count_tasks());
 
-        set_config('autoreaudit', 1, 'local_completiondoctor');
+        set_config('autoreaudit', 1, 'local_chronifycompliance');
         $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
         $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
         $this->assertSame(1, $this->count_tasks());
@@ -143,8 +147,8 @@ final class scan_manager_test extends \advanced_testcase {
      */
     public function test_scheduled_task(): void {
         $this->getDataGenerator()->create_course();
-        $task = new \local_completiondoctor\task\scan_site();
-        $this->assertTrue((bool) \core\task\manager::get_scheduled_task(\local_completiondoctor\task\scan_site::class)
+        $task = new \local_chronifycompliance\task\scan_site();
+        $this->assertTrue((bool) \core\task\manager::get_scheduled_task(\local_chronifycompliance\task\scan_site::class)
             ->get_disabled(), 'The scheduled scan must ship disabled');
 
         ob_start();

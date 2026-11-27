@@ -14,26 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\privacy;
+namespace local_chronifycompliance\privacy;
 
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fix_log;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fix_log;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\local\scan_manager;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(provider::class)]
 /**
  * Privacy provider tests.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\privacy\provider
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     /** @var \stdClass Course. */
     private \stdClass $course;
@@ -78,11 +79,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * Users in each context.
      */
     public function test_get_users_in_context(): void {
-        $userlist = new userlist(\context_course::instance($this->course->id), 'local_completiondoctor');
+        $userlist = new userlist(\context_course::instance($this->course->id), 'local_chronifycompliance');
         provider::get_users_in_context($userlist);
         $this->assertEqualsCanonicalizing([$this->user1->id, $this->user2->id], $userlist->get_userids());
 
-        $userlist = new userlist(\context_system::instance(), 'local_completiondoctor');
+        $userlist = new userlist(\context_system::instance(), 'local_chronifycompliance');
         provider::get_users_in_context($userlist);
         $this->assertEqualsCanonicalizing([$this->user2->id], $userlist->get_userids());
     }
@@ -92,8 +93,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      */
     public function test_export_user_data(): void {
         $context = \context_course::instance($this->course->id);
-        $this->export_context_data_for_user((int) $this->user1->id, $context, 'local_completiondoctor');
-        $data = writer::with_context($context)->get_data([get_string('pluginname', 'local_completiondoctor')]);
+        $this->export_context_data_for_user((int) $this->user1->id, $context, 'local_chronifycompliance');
+        $data = writer::with_context($context)->get_data([get_string('pluginname', 'local_chronifycompliance')]);
         $this->assertSame('Not relevant', $data->ignored[0]['reason']);
         $this->assertCount(1, $data->fixes);
     }
@@ -104,11 +105,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
     public function test_delete_data_for_user(): void {
         global $DB;
         $context = \context_course::instance($this->course->id);
-        provider::delete_data_for_user(new approved_contextlist($this->user1, 'local_completiondoctor', [$context->id]));
-        $this->assertSame(0, $DB->count_records('local_completiondoctor_finding', ['ignoredby' => $this->user1->id]));
-        $this->assertSame(0, $DB->count_records('local_completiondoctor_fixlog', ['userid' => $this->user1->id]));
-        $this->assertSame(1, $DB->count_records('local_completiondoctor_fixlog', ['undoneby' => $this->user2->id]));
-        $this->assertSame(1, $DB->count_records('local_completiondoctor_fixlog', []), 'Audit rows are kept');
+        provider::delete_data_for_user(new approved_contextlist($this->user1, 'local_chronifycompliance', [$context->id]));
+        $this->assertSame(0, $DB->count_records('local_chronifycompliance_finding', ['ignoredby' => $this->user1->id]));
+        $this->assertSame(0, $DB->count_records('local_chronifycompliance_fixlog', ['userid' => $this->user1->id]));
+        $this->assertSame(1, $DB->count_records('local_chronifycompliance_fixlog', ['undoneby' => $this->user2->id]));
+        $this->assertSame(1, $DB->count_records('local_chronifycompliance_fixlog', []), 'Audit rows are kept');
     }
 
     /**
@@ -117,11 +118,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
     public function test_delete_data_for_users_and_context(): void {
         global $DB;
         $system = \context_system::instance();
-        provider::delete_data_for_users(new approved_userlist($system, 'local_completiondoctor', [$this->user2->id]));
-        $this->assertSame(0, $DB->count_records('local_completiondoctor_scan', ['startedby' => $this->user2->id]));
+        provider::delete_data_for_users(new approved_userlist($system, 'local_chronifycompliance', [$this->user2->id]));
+        $this->assertSame(0, $DB->count_records('local_chronifycompliance_scan', ['startedby' => $this->user2->id]));
 
         provider::delete_data_for_all_users_in_context(\context_course::instance($this->course->id));
-        $this->assertSame(0, $DB->count_records_select('local_completiondoctor_fixlog', 'userid > 0 OR undoneby > 0'));
-        $this->assertSame(0, $DB->count_records_select('local_completiondoctor_finding', 'ignoredby > 0'));
+        $this->assertSame(0, $DB->count_records_select('local_chronifycompliance_fixlog', 'userid > 0 OR undoneby > 0'));
+        $this->assertSame(0, $DB->count_records_select('local_chronifycompliance_finding', 'ignoredby > 0'));
     }
 }

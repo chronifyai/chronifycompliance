@@ -17,13 +17,13 @@
 /**
  * Analyze SCORM packages from the command line.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\scorm\inspector;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\scorm\inspector;
+use local_chronifycompliance\scorm\package_analyzer;
 
 define('CLI_SCRIPT', true);
 

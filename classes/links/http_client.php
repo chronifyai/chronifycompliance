@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
 /**
  * Makes the requests of the link check through the core curl class, so the site's blocked hosts
  * and ports, proxy and plugin security helpers apply. Tests replace this class.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

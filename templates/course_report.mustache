@@ -15,45 +15,45 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/course_report
+    @template local_chronifycompliance/course_report
 
     Course completion health report.
 
     Example context (json):
     {
-        "courseid": 2, "checking": false, "recheckurl": "https://example.com/local/completiondoctor/course.php?id=2", "sesskey": "abc",
+        "courseid": 2, "checking": false, "recheckurl": "https://example.com/local/chronifycompliance/course.php?id=2", "sesskey": "abc",
         "summary": {"critical": 1, "warning": 0, "info": 0, "total": 1, "lastaudit": "Today", "neveraudited": false},
         "groups": [{"severity": "critical", "label": "Critical", "count": 1, "findings": [
             {"id": 1, "checkname": "No completion conditions", "message": "No course completion conditions are set.",
              "severitylabel": "Critical", "badgeclass": "lcd-pill lcd-pill-critical", "canfix": false, "canignore": true}
         ]}],
         "hasopen": true, "ignored": [], "hasignored": false, "fixed": [], "hasfixed": false, "fixedcount": 0,
-        "learnerurl": "https://example.com/local/completiondoctor/learner.php?courseid=2",
+        "learnerurl": "https://example.com/local/chronifycompliance/learner.php?courseid=2",
         "completionsettingsurl": "https://example.com/course/completion.php?id=2"
     }
 }}
-<div class="local-completiondoctor-report" data-region="course-report" data-courseid="{{courseid}}">
+<div class="local-chronifycompliance-report" data-region="course-report" data-courseid="{{courseid}}">
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
-        <h2 class="h3 me-3 mb-2">{{#str}}report:title, local_completiondoctor{{/str}}</h2>
+        <h2 class="h3 me-3 mb-2">{{#str}}report:title, local_chronifycompliance{{/str}}</h2>
         <div class="d-flex flex-wrap mb-2">
             <form method="post" action="{{recheckurl}}" class="me-2 mb-1">
                 <input type="hidden" name="sesskey" value="{{sesskey}}">
                 <input type="hidden" name="action" value="recheck">
-                <button type="submit" class="btn btn-primary">{{#pix}}i/reload, core{{/pix}} {{#str}}report:recheck, local_completiondoctor{{/str}}</button>
+                <button type="submit" class="btn btn-primary">{{#pix}}i/reload, core{{/pix}} {{#str}}report:recheck, local_chronifycompliance{{/str}}</button>
             </form>
             {{#links.cancheck}}
                 <form method="post" action="{{links.checkurl}}" class="me-2 mb-1">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="action" value="checklinks">
-                    <button type="submit" class="btn btn-outline-secondary" title="{{#str}}links:check_tooltip, local_completiondoctor{{/str}}"{{#links.busy}} disabled{{/links.busy}}>{{#pix}}i/link, core{{/pix}} {{#str}}links:check, local_completiondoctor{{/str}} <span class="lcd-extra">{{#str}}links:extra, local_completiondoctor{{/str}}</span></button>
+                    <button type="submit" class="btn btn-outline-secondary" title="{{#str}}links:check_tooltip, local_chronifycompliance{{/str}}"{{#links.busy}} disabled{{/links.busy}}>{{#pix}}i/link, core{{/pix}} {{#str}}links:check, local_chronifycompliance{{/str}} <span class="lcd-extra">{{#str}}links:extra, local_chronifycompliance{{/str}}</span></button>
                 </form>
             {{/links.cancheck}}
-            {{#learnerurl}}<a class="btn btn-outline-secondary me-2 mb-1" href="{{learnerurl}}">{{#str}}learner:title, local_completiondoctor{{/str}}</a>{{/learnerurl}}
-            <a class="btn btn-outline-secondary mb-1" href="{{completionsettingsurl}}">{{#str}}report:completionsettings, local_completiondoctor{{/str}}</a>
+            {{#learnerurl}}<a class="btn btn-outline-secondary me-2 mb-1" href="{{learnerurl}}">{{#str}}learner:title, local_chronifycompliance{{/str}}</a>{{/learnerurl}}
+            <a class="btn btn-outline-secondary mb-1" href="{{completionsettingsurl}}">{{#str}}report:completionsettings, local_chronifycompliance{{/str}}</a>
         </div>
     </div>
-    {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}report:checking, local_completiondoctor{{/str}}</div>{{/checking}}
-    {{#summary}}{{> local_completiondoctor/summary_bar }}{{/summary}}
+    {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}report:checking, local_chronifycompliance{{/str}}</div>{{/checking}}
+    {{#summary}}{{> local_chronifycompliance/summary_bar }}{{/summary}}
     {{#scormwaiting}}
         <div class="alert alert-info" data-region="scorm-waiting">
             <p class="mb-2">{{message}}</p>
@@ -65,7 +65,7 @@
                             <input type="hidden" name="sesskey" value="{{sesskey}}">
                             <input type="hidden" name="action" value="analyzescorm">
                             <input type="hidden" name="cmid" value="{{cmid}}">
-                            <button type="submit" class="btn btn-sm btn-secondary">{{#str}}report:analyzenow, local_completiondoctor{{/str}}</button>
+                            <button type="submit" class="btn btn-sm btn-secondary">{{#str}}report:analyzenow, local_chronifycompliance{{/str}}</button>
                         </form>
                     </li>
                 {{/items}}
@@ -76,25 +76,25 @@
     {{#groups}}
         <section class="mb-4" aria-labelledby="cd-group-{{severity}}">
             <h3 class="h5" id="cd-group-{{severity}}">{{label}} ({{count}})</h3>
-            {{#findings}}{{> local_completiondoctor/finding }}{{/findings}}
+            {{#findings}}{{> local_chronifycompliance/finding }}{{/findings}}
         </section>
     {{/groups}}
     {{^hasopen}}
-        {{^summary.neveraudited}}<p class="text-muted">{{#str}}report:noopen, local_completiondoctor{{/str}}</p>{{/summary.neveraudited}}
+        {{^summary.neveraudited}}<p class="text-muted">{{#str}}report:noopen, local_chronifycompliance{{/str}}</p>{{/summary.neveraudited}}
     {{/hasopen}}
 
-    {{#links}}{{> local_completiondoctor/links_panel }}{{/links}}
+    {{#links}}{{> local_chronifycompliance/links_panel }}{{/links}}
 
     {{#hasfixed}}
         <details class="mb-3">
-            <summary class="h6">{{#str}}report:fixed, local_completiondoctor{{/str}} ({{fixedcount}})</summary>
-            {{#fixed}}{{> local_completiondoctor/finding }}{{/fixed}}
+            <summary class="h6">{{#str}}report:fixed, local_chronifycompliance{{/str}} ({{fixedcount}})</summary>
+            {{#fixed}}{{> local_chronifycompliance/finding }}{{/fixed}}
         </details>
     {{/hasfixed}}
     {{#hasignored}}
         <details class="mb-3">
-            <summary class="h6">{{#str}}report:ignored, local_completiondoctor{{/str}}</summary>
-            {{#ignored}}{{> local_completiondoctor/finding }}{{/ignored}}
+            <summary class="h6">{{#str}}report:ignored, local_chronifycompliance{{/str}}</summary>
+            {{#ignored}}{{> local_chronifycompliance/finding }}{{/ignored}}
         </details>
     {{/hasignored}}
 </div>

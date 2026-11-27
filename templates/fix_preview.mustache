@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/fix_preview
+    @template local_chronifycompliance/fix_preview
 
     Body of the fix preview modal: what will change, warnings and parameters.
 
@@ -36,7 +36,7 @@
                     <input type="text" class="form-control me-2" id="cd-param-{{name}}" name="{{name}}" value="{{value}}"
                         data-region="fix-param">
                     <button type="button" class="btn btn-secondary" data-action="cd-update-preview">
-                        {{#str}}report:updatepreview, local_completiondoctor{{/str}}
+                        {{#str}}report:updatepreview, local_chronifycompliance{{/str}}
                     </button>
                 </div>
             {{/parameters}}
@@ -45,12 +45,12 @@
     {{#error}}<div class="alert alert-danger">{{error}}</div>{{/error}}
     {{#rows.0}}
         <table class="table table-sm">
-            <caption class="lcd-visually-hidden">{{#str}}report:changes, local_completiondoctor{{/str}}</caption>
+            <caption class="lcd-visually-hidden">{{#str}}report:changes, local_chronifycompliance{{/str}}</caption>
             <thead>
                 <tr>
-                    <th scope="col">{{#str}}report:setting, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}report:before, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}report:after, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}report:setting, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}report:before, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}report:after, local_chronifycompliance{{/str}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,5 +59,5 @@
         </table>
     {{/rows.0}}
     {{#warnings}}<div class="alert alert-warning">{{.}}</div>{{/warnings}}
-    <p class="small text-muted mb-0">{{#str}}report:undoable, local_completiondoctor{{/str}}</p>
+    <p class="small text-muted mb-0">{{#str}}report:undoable, local_chronifycompliance{{/str}}</p>
 </div>
