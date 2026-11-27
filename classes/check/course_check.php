@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 use cm_info;
 use stdClass;
@@ -24,7 +24,7 @@ use stdClass;
  *
  * By default a course check only applies when completion is enabled on the site and in the course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,6 +36,15 @@ abstract class course_check extends base_check {
      */
     public function get_scope(): string {
         return self::SCOPE_COURSE;
+    }
+
+    /**
+     * Course completion checks belong to the Completion pack.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return self::PACK_COMPLETION;
     }
 
     /**
@@ -111,7 +120,7 @@ abstract class course_check extends base_check {
      */
     protected function get_criteria_saved_time(audit_context $context): ?int {
         return $context->remember('criteriasavedtime', function (audit_context $context): ?int {
-            return \local_completiondoctor\local\audit_store::get_criteria_saved((int) $context->course->id);
+            return \local_chronifycompliance\local\audit_store::get_criteria_saved((int) $context->course->id);
         });
     }
 

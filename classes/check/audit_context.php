@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 use completion_info;
 use course_modinfo;
@@ -23,7 +23,7 @@ use stdClass;
 /**
  * Data shared by all checks of one audit, loaded lazily and at most once.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,6 +43,7 @@ class audit_context {
      * Create the context.
      *
      * @param stdClass $course Course record (the site course for site audits).
+     * @param bool $save Whether the audit is saved; a dry run writes nothing.
      */
     public function __construct(
         /** @var stdClass Course record. */

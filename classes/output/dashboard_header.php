@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\check_registry;
+use local_chronifycompliance\check\check_registry;
 use moodle_url;
 use renderer_base;
 
 /**
  * Site dashboard header: title, scan action, health tiles, top problems, site health and view chips.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +51,7 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
      * @return string
      */
     public function get_template_name(renderer_base $renderer): string {
-        return 'local_completiondoctor/dashboard_header';
+        return 'local_chronifycompliance/dashboard_header';
     }
 
     /**
@@ -61,10 +61,10 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $context = \context_system::instance();
-        $summary = \local_completiondoctor\local\dashboard_data::get_summary();
-        $baseurl = new moodle_url('/local/completiondoctor/index.php');
+        $summary = \local_chronifycompliance\local\dashboard_data::get_summary();
+        $baseurl = new moodle_url('/local/chronifycompliance/completion.php');
         $link = fn(array $params) => (new moodle_url($baseurl, $params))->out(false);
 
         $tiles = [];
@@ -92,7 +92,7 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
             'severitylabel' => get_string('severity:' . (finding_exporter::SEVERITIES[$p['severity']] ?? 'info'), $component),
             'url' => $link(['checkid' => $p['checkid']]),
             'active' => $this->checkid === $p['checkid'],
-        ], \local_completiondoctor\local\dashboard_data::get_top_problems());
+        ], \local_chronifycompliance\local\dashboard_data::get_top_problems());
 
         $chips = [['label' => get_string('dashboard:chip:all', $component, $summary['audited']), 'url' => $baseurl->out(false),
             'active' => $this->view === '' && $this->checkid === '']];
@@ -113,9 +113,9 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
         return [
             'status' => get_string('dashboard:status', $component, ['audited' => $summary['audited'],
                 'courses' => $summary['courses']]),
-            'canscan' => has_capability('local/completiondoctor:runscan', $context),
-            'cancancel' => has_capability('local/completiondoctor:runscan', $context)
-                && \local_completiondoctor\local\scan_manager::get_active_scan() !== null,
+            'canscan' => has_capability('local/chronifycompliance:runscan', $context),
+            'cancancel' => has_capability('local/chronifycompliance:runscan', $context)
+                && \local_chronifycompliance\local\scan_manager::get_active_scan() !== null,
             'scanurl' => $baseurl->out(false),
             'sesskey' => sesskey(),
             'tiles' => $tiles,
@@ -123,7 +123,7 @@ class dashboard_header implements \core\output\named_templatable, \renderable {
             'hasproblems' => (bool) $problems,
             'sitehealth' => array_map(
                 fn($line) => $line + ['neutral' => $line['ok'] === null],
-                \local_completiondoctor\local\dashboard_data::get_site_health()
+                \local_chronifycompliance\local\dashboard_data::get_site_health()
             ),
             'chips' => $chips,
             'checkname' => $checkname,

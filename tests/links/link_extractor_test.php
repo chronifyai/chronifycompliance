@@ -14,19 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\scorm\package_reader;
+use local_chronifycompliance\scorm\package_reader;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_extractor::class)]
 /**
  * Tests of finding links in HTML, PDF and Office files.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\links\link_extractor
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_extractor::class)]
 final class link_extractor_test extends \advanced_testcase {
     /**
      * Links in HTML: attributes and bare addresses; mail, script and in-page links are ignored.

@@ -14,20 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local\demo;
+namespace local_chronifycompliance\local\demo;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\tests\demo\seeder;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\tests\demo\seeder;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(seeder::class)]
 /**
  * Demo seeder tests. Every scenario must trigger exactly its expected checks.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\tests\demo\seeder
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(seeder::class)]
 final class seeder_test extends \advanced_testcase {
     /**
      * The seeder refuses to run on large sites.

@@ -14,25 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
 
-/**
- * Tests of the API web services: findings, SCORM and package analysis, learner explanation, service.
- *
- * @package    local_completiondoctor
- * @category   test
- * @copyright  2026 Sebale {@link https://sebale.net}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 #[\PHPUnit\Framework\Attributes\CoversClass(get_findings::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(analyze_scorm::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(analyze_package::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(explain_user_completion::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(scorm_exporter::class)]
+/**
+ * Tests of the API web services: findings, SCORM and package analysis, learner explanation, service.
+ *
+ * @package    local_chronifycompliance
+ * @category   test
+ * @copyright  2026 Sebale {@link https://sebale.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\external\get_findings
+ * @covers \local_chronifycompliance\external\analyze_scorm
+ * @covers \local_chronifycompliance\external\analyze_package
+ * @covers \local_chronifycompliance\external\explain_user_completion
+ * @covers \local_chronifycompliance\external\scorm_exporter
+ */
 final class api_test extends \core_external\tests\externallib_testcase {
     /**
      * Prepare.
@@ -52,7 +57,7 @@ final class api_test extends \core_external\tests\externallib_testcase {
      * @return \stdClass
      */
     private function scenario(string $id, ?int $categoryid = null): \stdClass {
-        $class = '\\local_completiondoctor\\tests\\demo\\scenario\\' . $id;
+        $class = '\\local_chronifycompliance\\tests\\demo\\scenario\\' . $id;
         return (new $class())->create(
             $this->getDataGenerator(),
             $categoryid ?? (int) $this->getDataGenerator()->create_category()->id
@@ -103,7 +108,7 @@ final class api_test extends \core_external\tests\externallib_testcase {
         $this->assertSame('pending', $result['status']);
         analyze_scorm::execute((int) $cm->id, true);
         $this->expectOutputRegex('/./');
-        $this->runAdhocTasks(\local_completiondoctor\task\check_course::class);
+        $this->runAdhocTasks(\local_chronifycompliance\task\check_course::class);
         $result = external_api::clean_returnvalue(analyze_scorm::execute_returns(), analyze_scorm::execute((int) $cm->id));
         $this->assertSame('ok', $result['status']);
         $this->assertSame('storyline', $result['tool']);
@@ -182,7 +187,7 @@ final class api_test extends \core_external\tests\externallib_testcase {
      */
     public function test_service_definition(): void {
         global $DB;
-        $service = $DB->get_record('external_services', ['shortname' => 'local_completiondoctor'], '*', MUST_EXIST);
+        $service = $DB->get_record('external_services', ['shortname' => 'local_chronifycompliance'], '*', MUST_EXIST);
         $this->assertEquals(0, $service->enabled);
         $this->assertEquals(1, $service->restrictedusers);
         $functions = $DB->get_fieldset_select(
@@ -191,8 +196,8 @@ final class api_test extends \core_external\tests\externallib_testcase {
             'externalserviceid = ?',
             [$service->id]
         );
-        $plugin = $DB->get_fieldset_select('external_functions', 'name', 'component = ?', ['local_completiondoctor']);
-        $this->assertCount(11, $plugin);
+        $plugin = $DB->get_fieldset_select('external_functions', 'name', 'component = ?', ['local_chronifycompliance']);
+        $this->assertCount(12, $plugin);
         foreach ($plugin as $name) {
             $this->assertContains($name, $functions);
         }
