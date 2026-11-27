@@ -16,14 +16,14 @@
 /**
  * Shows the progress of the latest site scan and refreshes it while the scan runs.
  *
- * @module     local_completiondoctor/scan_progress
+ * @module     local_chronifycompliance/scan_progress
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Templates from 'core/templates';
 import Notification from 'core/notification';
-import {getScanStatus} from 'local_completiondoctor/repository';
+import {getScanStatus} from 'local_chronifycompliance/repository';
 
 /** @type {Number} Milliseconds between refreshes while a scan runs. */
 const INTERVAL = 15000;
@@ -48,7 +48,7 @@ const refresh = async(region) => {
         percent: status.total ? Math.round(done * 100 / status.total) : 0,
         timefinished: status.timefinished ? new Date(status.timefinished * 1000).toLocaleString() : '',
     };
-    const {html, js} = await Templates.renderForPromise('local_completiondoctor/scan_progress', context);
+    const {html, js} = await Templates.renderForPromise('local_chronifycompliance/scan_progress', context);
     Templates.replaceNodeContents(region, html, js);
     return running;
 };

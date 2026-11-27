@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\audit_result;
-use local_completiondoctor\persistent\audit_record;
+use local_chronifycompliance\check\audit_result;
+use local_chronifycompliance\persistent\audit_record;
 use stdClass;
 
 /**
@@ -27,7 +27,7 @@ use stdClass;
  * Courses without findings have no finding rows, so this table is what tells "healthy" apart from
  * "never audited".
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

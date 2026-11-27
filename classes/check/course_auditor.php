@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 /**
  * Runs the course and activity checks against one course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +48,7 @@ class course_auditor extends auditor {
         try {
             $result = self::run_checks(new audit_context($course, $save), $checks, false);
             $result->timestarted = $started;
-            $result->waiting = \local_completiondoctor\scorm\package_analyzer::count_waiting((int) $course->id);
+            $result->waiting = \local_chronifycompliance\scorm\package_analyzer::count_waiting((int) $course->id);
             if ($save) {
                 self::save_result($result);
             }

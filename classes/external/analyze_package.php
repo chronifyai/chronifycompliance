@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * Analyze a SCORM package uploaded to the user's draft area, without a course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +58,7 @@ class analyze_package extends external_api {
         );
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewsitereport', $context);
+        require_capability('local/chronifycompliance:viewsitereport', $context);
 
         $files = get_file_storage()->get_area_files(
             \context_user::instance($USER->id)->id,
@@ -82,7 +82,7 @@ class analyze_package extends external_api {
         if ($file->get_filesize() > package_analyzer::get_inline_bytes()) {
             throw new \moodle_exception(
                 'error:packagetoolarge',
-                'local_completiondoctor',
+                'local_chronifycompliance',
                 '',
                 display_size(package_analyzer::get_inline_bytes())
             );

@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Everything known about one SCORM activity: package analysis (cached), runtime evidence,
  * recommendation and stage fit.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -74,7 +74,13 @@ class inspector {
         // Revision 1 is the first package; each replacement with different content adds one.
         $replaced = (int) $scorm->revision >= 2 && $packagetime;
 
-        $evidence = runtime_evidence::get((int) $scorm->id, $replaced ? $packagetime : null, $refresh);
+        // Page views (MODE_READ) only read stored evidence; checks and background tasks collect it.
+        $evidence = runtime_evidence::get(
+            (int) $scorm->id,
+            $replaced ? $packagetime : null,
+            $refresh,
+            $mode !== self::MODE_READ
+        );
         $item = \grade_item::fetch(['itemtype' => 'mod', 'itemmodule' => 'scorm', 'iteminstance' => $scorm->id,
             'itemnumber' => 0, 'courseid' => $cm->course]);
         $gradepass = $item ? (float) $item->gradepass : null;

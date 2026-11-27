@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * Figures for the dashboard header: course health groups, top problems and site health.
@@ -28,7 +28,7 @@ use local_completiondoctor\scorm\package_analyzer;
  * Every figure is an aggregate over the plugin's own tables (one row per course in the audit table),
  * plus the live site checks, which are cheap.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -126,7 +126,7 @@ class dashboard_data {
      */
     public static function get_site_health(): array {
         global $DB;
-        $cache = \cache::make('local_completiondoctor', 'sitehealth');
+        $cache = \cache::make('local_chronifycompliance', 'sitehealth');
         $cached = $cache->get('lines');
         if ($cached === false) {
             $checks = [];
@@ -146,15 +146,15 @@ class dashboard_data {
             $lines[] = [
                 'ok' => $check['ok'],
                 'text' => $check['finding'] ? finding::from_record((object) $check['finding'])->get_message()
-                    : get_string('dashboard:siteok:' . $check['checkid'], 'local_completiondoctor'),
+                    : get_string('dashboard:siteok:' . $check['checkid'], 'local_chronifycompliance'),
             ];
         }
         if (scan_manager::is_paused()) {
-            $lines[] = ['ok' => false, 'text' => get_string('dashboard:paused', 'local_completiondoctor')];
+            $lines[] = ['ok' => false, 'text' => get_string('dashboard:paused', 'local_chronifycompliance')];
         }
         $queued = package_analyzer::count_queued();
         if ($queued) {
-            $lines[] = ['ok' => null, 'text' => get_string('dashboard:packagesqueued', 'local_completiondoctor', $queued)];
+            $lines[] = ['ok' => null, 'text' => get_string('dashboard:packagesqueued', 'local_chronifycompliance', $queued)];
         }
         if ($cached['packages']) {
             $analyzed = $DB->count_records_select(
@@ -164,7 +164,7 @@ class dashboard_data {
             );
             $lines[] = ['ok' => null, 'text' => get_string(
                 'dashboard:packages',
-                'local_completiondoctor',
+                'local_chronifycompliance',
                 ['total' => $cached['packages'], 'analyzed' => $analyzed]
             )];
         }

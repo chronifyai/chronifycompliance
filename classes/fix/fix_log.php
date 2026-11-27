@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
-use local_completiondoctor\check\finding;
-use local_completiondoctor\persistent\fixlog_record;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\persistent\fixlog_record;
 use stdClass;
 
 /**
  * Log of every change made by a fix, with the values needed to undo it.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
