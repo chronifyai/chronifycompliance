@@ -32,6 +32,9 @@
   packs that have enabled checks. Labels: healthy from 80, needs attention from 50, at risk below. Course scores use
   the course's own findings. A weekly task stores snapshots (`local_chronifycompliance_score`) for the trend; the
   cleanup task drops snapshots older than two years.
+- Step A7: tables reserved for later releases: `local_chronifycompliance_connect` (Connect consent and status) and
+  `local_chronifycompliance_fixplan` (signed fix plans). Nothing writes to them yet; they are covered by the Privacy
+  API, course deletion and the cleanup task so the later features start from a complete schema.
 
 ## 0.2.3 (unreleased): QA fixes
 

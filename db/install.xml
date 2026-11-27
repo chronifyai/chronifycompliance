@@ -317,5 +317,43 @@
         <INDEX NAME="packtime" UNIQUE="false" FIELDS="pack, timecreated"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_chronifycompliance_connect" COMMENT="Reserved for Connect (later release): consent and connection of this site to hub.chronifyai.com. Nothing writes to it yet.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="off" SEQUENCE="false" COMMENT="off, connected or disconnected."/>
+        <FIELD NAME="sitetoken" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="Random token identifying the site to the hub; no URL."/>
+        <FIELD NAME="consentversion" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Version of the payload the administrator agreed to."/>
+        <FIELD NAME="timeconsented" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastsync" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The administrator who gave or withdrew consent."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_chronifycompliance_fixplan" COMMENT="Reserved for signed fix plans (later release): plans prepared by experts, reviewed and applied by an administrator. Nothing writes to it yet.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course the plan changes, or the site id."/>
+        <FIELD NAME="planid" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the plan on the hub."/>
+        <FIELD NAME="plan" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The plan, JSON."/>
+        <FIELD NAME="signature" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Signature checked before the plan is shown."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="received" SEQUENCE="false" COMMENT="received, applied, rejected or undone."/>
+        <FIELD NAME="appliedby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The administrator who applied the plan."/>
+        <FIELD NAME="timeapplied" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="planid" UNIQUE="true" FIELDS="planid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

@@ -47,6 +47,9 @@ controls, shows one health score, and fixes what it finds. Built on Completion D
 - `tests/` PHPUnit, Behat, demo scenarios and seeder
 - `dev/` development scripts (not part of the release ZIP)
 
+Reserved tables: `local_chronifycompliance_connect` and `local_chronifycompliance_fixplan` exist (step A7) but no
+code writes to them until Connect and signed fix plans ship. Do not use them for anything else.
+
 ## Local test site
 
 ```bash

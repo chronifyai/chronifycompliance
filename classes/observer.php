@@ -78,12 +78,14 @@ class observer {
      */
     public static function course_deleted(\core\event\course_deleted $event): void {
         self::safely(function () use ($event): void {
+            global $DB;
             $courseid = (int) $event->objectid;
             finding_store::delete_course($courseid);
             fix_log::delete_course($courseid);
             link_store::delete_course($courseid);
             link_scan::delete_course($courseid);
             \local_chronifycompliance\data\datasets\activity::delete_course($courseid);
+            $DB->delete_records('local_chronifycompliance_fixplan', ['courseid' => $courseid]);
         });
     }
 }

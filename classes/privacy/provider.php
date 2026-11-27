@@ -48,6 +48,7 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
         'local_chronifycompliance_linkcheck' => ['requestedby', 'usermodified'],
         'local_chronifycompliance_audit' => ['usermodified'],
         'local_chronifycompliance_link' => ['usermodified'],
+        'local_chronifycompliance_fixplan' => ['appliedby', 'usermodified'],
     ];
     /** @var string[] Data layer tables about a learner's own activity, keyed by user id and course id. */
     private const ACTIVITY_TABLES = ['local_chronifycompliance_actday', 'local_chronifycompliance_compl'];
@@ -55,6 +56,7 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
     private const SITE_TABLES = [
         'local_chronifycompliance_scan' => ['startedby', 'usermodified'],
         'local_chronifycompliance_pkg' => ['usermodified'],
+        'local_chronifycompliance_connect' => ['usermodified'],
     ];
 
     /**
@@ -93,6 +95,15 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
                 'timemodified' => 'privacy:metadata:timemodified',
             ], 'privacy:metadata:' . $table);
         }
+        $collection->add_database_table('local_chronifycompliance_fixplan', [
+            'appliedby' => 'privacy:metadata:fixplan:appliedby',
+            'timeapplied' => 'privacy:metadata:fixplan:timeapplied',
+            'usermodified' => 'privacy:metadata:usermodified',
+        ], 'privacy:metadata:fixplan');
+        $collection->add_database_table('local_chronifycompliance_connect', [
+            'usermodified' => 'privacy:metadata:connect:usermodified',
+            'timeconsented' => 'privacy:metadata:connect:timeconsented',
+        ], 'privacy:metadata:connect');
         $collection->add_database_table('local_chronifycompliance_actday', [
             'userid' => 'privacy:metadata:actday:userid',
             'courseid' => 'privacy:metadata:actday:courseid',

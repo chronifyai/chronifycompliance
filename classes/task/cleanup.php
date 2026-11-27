@@ -86,6 +86,13 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // Fix plans of courses that no longer exist (normally removed when the course is deleted).
+        $counts['fixplans'] = $this->delete(
+            'local_chronifycompliance_fixplan',
+            'courseid <> :siteid AND NOT EXISTS (SELECT 1 FROM {course} c WHERE c.id = courseid)',
+            ['siteid' => SITEID]
+        );
+
         // Health score snapshots older than two years.
         $counts['scoresnapshots'] = \local_chronifycompliance\score\health_score::delete_old();
 
