@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\scorm\package_analyzer;
 use moodle_url;
 use renderer_base;
 
 /**
  * Course completion health report of one course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,7 +53,7 @@ class course_report implements \core\output\named_templatable, \renderable {
      * @return string
      */
     public function get_template_name(renderer_base $renderer): string {
-        return 'local_completiondoctor/course_report';
+        return 'local_chronifycompliance/course_report';
     }
 
     /**
@@ -65,13 +65,13 @@ class course_report implements \core\output\named_templatable, \renderable {
     public function export_for_template(renderer_base $output): array {
         $context = \context_course::instance($this->course->id);
         $caps = [
-            'canfix' => has_capability('local/completiondoctor:applyfix', $context),
-            'canignore' => has_capability('local/completiondoctor:ignorefinding', $context),
+            'canfix' => has_capability('local/chronifycompliance:applyfix', $context),
+            'canignore' => has_capability('local/chronifycompliance:ignorefinding', $context),
         ];
         $all = finding_store::get_course_findings((int) $this->course->id, null);
         $groups = [];
         foreach (finding_exporter::SEVERITIES as $severity => $name) {
-            $groups[$severity] = ['severity' => $name, 'label' => get_string('severity:' . $name, 'local_completiondoctor'),
+            $groups[$severity] = ['severity' => $name, 'label' => get_string('severity:' . $name, 'local_chronifycompliance'),
                 'badgeclass' => finding_exporter::BADGES[$name], 'findings' => []];
         }
         $ignored = [];
@@ -96,7 +96,7 @@ class course_report implements \core\output\named_templatable, \renderable {
             'courseid' => (int) $this->course->id,
             'checking' => audit_store::get_requested((int) $this->course->id) > 0,
             'summary' => self::summary((int) $this->course->id),
-            'recheckurl' => (new moodle_url('/local/completiondoctor/course.php', ['id' => $this->course->id]))->out(false),
+            'recheckurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $this->course->id]))->out(false),
             'sesskey' => sesskey(),
             'groups' => array_values(array_filter($groups, fn($g) => $g['hasfindings'])),
             'hasopen' => (bool) array_filter($groups, fn($g) => $g['hasfindings']),
@@ -105,8 +105,8 @@ class course_report implements \core\output\named_templatable, \renderable {
             'fixed' => $fixed,
             'hasfixed' => (bool) $fixed,
             'fixedcount' => count($fixed),
-            'learnerurl' => has_capability('local/completiondoctor:viewlearnerdiagnostic', $context)
-                ? (new moodle_url('/local/completiondoctor/learner.php', ['courseid' => $this->course->id]))->out(false) : null,
+            'learnerurl' => has_capability('local/chronifycompliance:viewlearnerdiagnostic', $context)
+                ? (new moodle_url('/local/chronifycompliance/learner.php', ['courseid' => $this->course->id]))->out(false) : null,
             'completionsettingsurl' => (new moodle_url('/course/completion.php', ['id' => $this->course->id]))->out(false),
             'links' => (new links_panel($this->course, $modinfo))->export_for_template($output),
             'scormwaiting' => $this->waiting_packages(),
@@ -157,9 +157,9 @@ class course_report implements \core\output\named_templatable, \renderable {
             return null;
         }
         return [
-            'message' => get_string('report:scormwaiting', 'local_completiondoctor', count($items)),
+            'message' => get_string('report:scormwaiting', 'local_chronifycompliance', count($items)),
             'items' => $items,
-            'actionurl' => (new moodle_url('/local/completiondoctor/course.php', ['id' => $this->course->id]))->out(false),
+            'actionurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $this->course->id]))->out(false),
         ];
     }
 }

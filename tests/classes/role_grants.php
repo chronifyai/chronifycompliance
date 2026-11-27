@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
 /**
  * Grants the plugin's capabilities to the standard roles in tests.
@@ -22,20 +22,20 @@ namespace local_completiondoctor\tests;
  * The capabilities ship with no archetypes, so a test that acts as a teacher or a manager grants
  * them first, the way a site would.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class role_grants {
     /** @var array<string, string[]> Role shortnames by capability. */
     private const GRANTS = [
-        'local/completiondoctor:viewcoursereport' => ['editingteacher', 'manager'],
-        'local/completiondoctor:viewlearnerdiagnostic' => ['editingteacher', 'teacher', 'manager'],
-        'local/completiondoctor:ignorefinding' => ['editingteacher', 'manager'],
-        'local/completiondoctor:applyfix' => ['manager'],
-        'local/completiondoctor:viewsitereport' => ['manager'],
-        'local/completiondoctor:checklinks' => ['editingteacher', 'manager'],
-        'local/completiondoctor:runscan' => ['manager'],
+        'local/chronifycompliance:viewcoursereport' => ['editingteacher', 'manager'],
+        'local/chronifycompliance:viewlearnerdiagnostic' => ['editingteacher', 'teacher', 'manager'],
+        'local/chronifycompliance:ignorefinding' => ['editingteacher', 'manager'],
+        'local/chronifycompliance:applyfix' => ['manager'],
+        'local/chronifycompliance:viewsitereport' => ['manager'],
+        'local/chronifycompliance:checklinks' => ['editingteacher', 'manager'],
+        'local/chronifycompliance:runscan' => ['manager'],
     ];
 
     /**

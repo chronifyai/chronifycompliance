@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * The only component that changes data outside the plugin tables.
@@ -27,7 +27,7 @@ use local_completiondoctor\local\finding_store;
  * runs in a transaction and is written to the fix log so it can be undone.
  * Permission checks are the caller's job (UI, web services, CLI --confirm).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +58,7 @@ class fixer {
         self::load_libraries();
         [$finding, $check] = self::load_fixable($findingid);
         if ($finding->status !== finding::STATUS_OPEN) {
-            throw new \moodle_exception('error:findingnotopen', 'local_completiondoctor');
+            throw new \moodle_exception('error:findingnotopen', 'local_chronifycompliance');
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -74,7 +74,7 @@ class fixer {
         if ($result->success) {
             self::after_change($finding->courseid);
             self::log_event(
-                \local_completiondoctor\event\fix_applied::class,
+                \local_chronifycompliance\event\fix_applied::class,
                 (int) $result->fixlogid,
                 $finding->courseid,
                 $finding->checkid,
@@ -96,11 +96,11 @@ class fixer {
         self::load_libraries();
         $log = fix_log::get($fixlogid);
         if ($log->undone) {
-            throw new \moodle_exception('error:fixalreadyundone', 'local_completiondoctor');
+            throw new \moodle_exception('error:fixalreadyundone', 'local_chronifycompliance');
         }
         $check = check_registry::get_check($log->checkid);
         if (!$check) {
-            throw new \moodle_exception('error:checknotfound', 'local_completiondoctor', '', $log->checkid);
+            throw new \moodle_exception('error:checknotfound', 'local_chronifycompliance', '', $log->checkid);
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -120,7 +120,7 @@ class fixer {
         if ($result->success) {
             self::after_change((int) $log->courseid);
             self::log_event(
-                \local_completiondoctor\event\fix_undone::class,
+                \local_chronifycompliance\event\fix_undone::class,
                 $fixlogid,
                 (int) $log->courseid,
                 $log->checkid,
@@ -140,10 +140,10 @@ class fixer {
         $finding = finding_store::get($findingid);
         $check = check_registry::get_check($finding->checkid);
         if (!$check) {
-            throw new \moodle_exception('error:checknotfound', 'local_completiondoctor', '', $finding->checkid);
+            throw new \moodle_exception('error:checknotfound', 'local_chronifycompliance', '', $finding->checkid);
         }
         if (!$check->can_fix($finding)) {
-            throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+            throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
         }
         return [$finding, $check];
     }

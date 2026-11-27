@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\reportbuilder\local\filters;
+namespace local_chronifycompliance\reportbuilder\local\filters;
 
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\database;
@@ -24,7 +24,7 @@ use core_reportbuilder\local\helpers\database;
  *
  * The filter field must be the course id. Subclasses set the finding column.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,7 +53,7 @@ abstract class open_finding extends select {
         $valueparam = database::generate_param_name();
         $statusparam = database::generate_param_name();
         $column = $this->get_finding_column();
-        $exists = "EXISTS (SELECT 1 FROM {local_completiondoctor_finding} cdf
+        $exists = "EXISTS (SELECT 1 FROM {local_chronifycompliance_finding} cdf
                             WHERE cdf.courseid = {$courseid} AND cdf.status = :{$statusparam}
                               AND cdf.{$column} = :{$valueparam})";
         $params = $this->filter->get_field_params() + [$valueparam => $value, $statusparam => 'open'];

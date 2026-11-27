@@ -14,21 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\tests\demo\seeder;
-use local_completiondoctor\scorm\inspector;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\tests\demo\seeder;
+use local_chronifycompliance\scorm\inspector;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(renderer::class)]
 /**
  * Smoke tests: every page renders through the real templates for every demo course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\output\renderer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(renderer::class)]
 final class renderer_test extends \advanced_testcase {
     /**
      * Render the course report, SCORM panels and learner diagnostic of all demo courses.
@@ -37,9 +38,9 @@ final class renderer_test extends \advanced_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $PAGE->set_url('/local/completiondoctor/course.php');
+        $PAGE->set_url('/local/chronifycompliance/course.php');
         $PAGE->set_context(\context_system::instance());
-        $renderer = $PAGE->get_renderer('local_completiondoctor');
+        $renderer = $PAGE->get_renderer('local_chronifycompliance');
 
         foreach (seeder::seed() as $id => $courseid) {
             course_auditor::audit($courseid, true);
@@ -59,7 +60,7 @@ final class renderer_test extends \advanced_testcase {
             $learner = $renderer->learner_report(
                 $course,
                 $student,
-                \local_completiondoctor\learner\explainer::explain($courseid, (int) $student->id),
+                \local_chronifycompliance\learner\explainer::explain($courseid, (int) $student->id),
                 [],
                 ''
             );
@@ -74,22 +75,22 @@ final class renderer_test extends \advanced_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $PAGE->set_url('/local/completiondoctor/index.php');
+        $PAGE->set_url('/local/chronifycompliance/index.php');
         $PAGE->set_context(\context_system::instance());
-        $renderer = $PAGE->get_renderer('local_completiondoctor');
+        $renderer = $PAGE->get_renderer('local_chronifycompliance');
 
         $generator = $this->getDataGenerator();
         $categoryid = (int) $generator->create_category()->id;
-        $healthy = (new \local_completiondoctor\tests\demo\scenario\healthy())->create($generator, $categoryid);
-        $broken = (new \local_completiondoctor\tests\demo\scenario\nocriteria())->create($generator, $categoryid);
+        $healthy = (new \local_chronifycompliance\tests\demo\scenario\healthy())->create($generator, $categoryid);
+        $broken = (new \local_chronifycompliance\tests\demo\scenario\nocriteria())->create($generator, $categoryid);
         course_auditor::audit((int) $healthy->id, true);
         course_auditor::audit((int) $broken->id, true);
 
-        $summary = \local_completiondoctor\local\dashboard_data::get_summary();
+        $summary = \local_chronifycompliance\local\dashboard_data::get_summary();
         $this->assertSame(1, $summary['critical']);
         $this->assertSame(1, $summary['healthy']);
         $this->assertSame(50, $summary['healthypercent']);
-        $problems = \local_completiondoctor\local\dashboard_data::get_top_problems();
+        $problems = \local_chronifycompliance\local\dashboard_data::get_top_problems();
         $this->assertSame('nocriteria', $problems[0]['checkid']);
 
         foreach (['', 'critical', 'healthy'] as $view) {
@@ -97,7 +98,7 @@ final class renderer_test extends \advanced_testcase {
             $this->assertStringContainsString('lcd-tile-critical', $html);
             $this->assertStringNotContainsString('[[', $html);
             $report = \core_reportbuilder\system_report_factory::create(
-                \local_completiondoctor\reportbuilder\local\systemreports\dashboard::class,
+                \local_chronifycompliance\reportbuilder\local\systemreports\dashboard::class,
                 \context_system::instance(),
                 '',
                 '',
@@ -107,9 +108,9 @@ final class renderer_test extends \advanced_testcase {
             $this->assertNotEmpty($report->output());
         }
         $html = $renderer->dashboard_header('', 'nocriteria');
-        $this->assertStringContainsString(get_string('check:nocriteria:name', 'local_completiondoctor'), $html);
+        $this->assertStringContainsString(get_string('check:nocriteria:name', 'local_chronifycompliance'), $html);
         $report = \core_reportbuilder\system_report_factory::create(
-            \local_completiondoctor\reportbuilder\local\systemreports\dashboard::class,
+            \local_chronifycompliance\reportbuilder\local\systemreports\dashboard::class,
             \context_system::instance(),
             '',
             '',
@@ -126,14 +127,14 @@ final class renderer_test extends \advanced_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('inlineanalysismb', 0, 'local_completiondoctor');
-        $PAGE->set_url('/local/completiondoctor/course.php');
+        set_config('inlineanalysismb', 0, 'local_chronifycompliance');
+        $PAGE->set_url('/local/chronifycompliance/course.php');
         $PAGE->set_context(\context_system::instance());
-        $renderer = $PAGE->get_renderer('local_completiondoctor');
+        $renderer = $PAGE->get_renderer('local_chronifycompliance');
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
-        $path = \core_component::get_component_directory('local_completiondoctor')
+        $path = \core_component::get_component_directory('local_chronifycompliance')
             . '/tests/fixtures/packages/storyline_fake.zip';
         $scorm = $generator->create_module('scorm', ['course' => $course->id, 'packagefilepath' => $path]);
         course_auditor::audit((int) $course->id, true);
