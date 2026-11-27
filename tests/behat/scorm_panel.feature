@@ -13,3 +13,5 @@ Feature: The SCORM panel explains a package and recommends settings
     And I should see "completed-incomplete"
     And I should see "Recommended settings (medium confidence, based on the authoring tool settings)"
     And I should see "Completed" in the "table.table-sm tr.table-warning" "css_element"
+    And I should see "Preview recommended settings"
+    And I should see "Confidence"

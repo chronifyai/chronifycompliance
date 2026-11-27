@@ -25,7 +25,7 @@
         "scocount": 1, "tool": "Articulate Storyline", "toolversion": "Storyline 360 3.90", "toolconfidence": 100,
         "toolexperimental": false, "reportingmode": "passed-incomplete", "masteryscore": null, "attempts": 12,
         "statuses": [{"value": "passed", "count": 8}], "hasstatuses": true, "nostatus": 0, "withscore": 8,
-        "hasrecommendation": true, "confidence": "High",
+        "hasrecommendation": true, "confidence": "High", "confidenceshort": "High",
         "settings": [{"label": "Require status", "current": "Completed", "recommended": "Passed", "changed": true}],
         "reasons": ["The package reports passed."], "warnings": [], "size": "20 MB", "files": 150,
         "bandwidth": "Works well from 5.4 Mbps.", "stage": "960×540", "stageissues": [], "hasstageissues": false,
@@ -33,26 +33,19 @@
         "courseurl": "https://example.com/local/chronifycompliance/course.php?id=2",
         "editurl": "https://example.com/course/modedit.php?update=5",
         "refreshurl": "https://example.com/local/chronifycompliance/scorm.php?cmid=5", "sesskey": "abc",
-        "pending": false, "checking": false
+        "pending": false, "checking": false, "applyid": null, "republish": false
     }
 }}
 <div class="local-chronifycompliance-scorm" data-region="scorm-panel" data-cmid="{{cmid}}">
-    <div class="mb-3">
-        <a class="btn btn-outline-secondary" href="{{courseurl}}">{{#str}}panel:backtoreport, local_chronifycompliance{{/str}}</a>
-        <a class="btn btn-outline-secondary" href="{{editurl}}">{{#str}}report:editsettings, local_chronifycompliance{{/str}}</a>
-        <form method="post" action="{{refreshurl}}" class="d-inline">
+    <div class="mb-3 d-flex flex-wrap">
+        <a class="btn btn-outline-secondary btn-sm me-2 mb-1" href="{{courseurl}}">{{#str}}panel:backtoreport, local_chronifycompliance{{/str}}</a>
+        <a class="btn btn-outline-secondary btn-sm me-2 mb-1" href="{{editurl}}">{{#str}}report:editsettings, local_chronifycompliance{{/str}}</a>
+        <form method="post" action="{{refreshurl}}" class="d-inline mb-1">
             <input type="hidden" name="sesskey" value="{{sesskey}}">
             <input type="hidden" name="action" value="refresh">
-            <button type="submit" class="btn btn-secondary">{{#str}}panel:reanalyze, local_chronifycompliance{{/str}}</button>
+            <button type="submit" class="btn btn-outline-secondary btn-sm">{{#str}}panel:reanalyze, local_chronifycompliance{{/str}}</button>
         </form>
     </div>
-
-    {{#hasfindings}}
-        <section class="mb-4">
-            <h3 class="h5">{{#str}}panel:findings, local_chronifycompliance{{/str}}</h3>
-            {{#findings}}{{> local_chronifycompliance/finding }}{{/findings}}
-        </section>
-    {{/hasfindings}}
 
     {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}panel:checking, local_chronifycompliance{{/str}}</div>{{/checking}}
     {{^checking}}{{#pending}}
@@ -67,7 +60,9 @@
     {{/pending}}{{/checking}}
     {{#error}}<div class="alert alert-warning">{{error}}</div>{{/error}}
 
-    <section class="mb-4">
+    <div class="row">
+    <section class="col-md-6 mb-3">
+        <div class="card h-100" data-region="package-card"><div class="card-body">
         <h3 class="h5">{{#str}}panel:package, local_chronifycompliance{{/str}}</h3>
         <dl class="row mb-0">
             <dt class="col-sm-4">{{#str}}panel:version, local_chronifycompliance{{/str}}</dt>
@@ -93,7 +88,29 @@
                 <dd class="col-sm-8">{{size}}, {{#str}}panel:files, local_chronifycompliance, {{files}}{{/str}}</dd>
             {{/ok}}
         </dl>
+        </div></div>
     </section>
+
+
+    <section class="col-md-6 mb-3">
+        <div class="card h-100" data-region="evidence-card"><div class="card-body">
+        <h3 class="h5">{{#str}}panel:evidence, local_chronifycompliance, {{attempts}}{{/str}}</h3>
+        {{#evidencepending}}<p class="text-muted">{{#str}}panel:evidencepending, local_chronifycompliance{{/str}}</p>{{/evidencepending}}
+        {{#evidencecollected}}<p class="small text-muted">{{#str}}panel:evidencecollected, local_chronifycompliance, {{evidencecollected}}{{/str}}</p>{{/evidencecollected}}
+        {{#hasstatuses}}
+            <table class="table table-sm w-auto">
+                <thead><tr>
+                    <th scope="col">{{#str}}panel:status, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:count, local_chronifycompliance{{/str}}</th>
+                </tr></thead>
+                <tbody>{{#statuses}}<tr><td>{{value}}</td><td>{{count}}</td></tr>{{/statuses}}</tbody>
+            </table>
+        {{/hasstatuses}}
+        {{^hasstatuses}}<p class="text-muted">{{#str}}panel:nostatuses, local_chronifycompliance{{/str}}</p>{{/hasstatuses}}
+        <p class="small text-muted mb-0">{{#str}}panel:evidencedetail, local_chronifycompliance, {"nostatus": {{nostatus}}, "withscore": {{withscore}} }{{/str}}</p>
+        </div></div>
+    </section>
+    </div>
 
     {{#hasbuilds}}
         <section class="mb-4">
@@ -113,23 +130,6 @@
         </section>
     {{/hasbuilds}}
 
-    <section class="mb-4">
-        <h3 class="h5">{{#str}}panel:evidence, local_chronifycompliance, {{attempts}}{{/str}}</h3>
-        {{#evidencepending}}<p class="text-muted">{{#str}}panel:evidencepending, local_chronifycompliance{{/str}}</p>{{/evidencepending}}
-        {{#evidencecollected}}<p class="small text-muted">{{#str}}panel:evidencecollected, local_chronifycompliance, {{evidencecollected}}{{/str}}</p>{{/evidencecollected}}
-        {{#hasstatuses}}
-            <table class="table table-sm w-auto">
-                <thead><tr>
-                    <th scope="col">{{#str}}panel:status, local_chronifycompliance{{/str}}</th>
-                    <th scope="col">{{#str}}panel:count, local_chronifycompliance{{/str}}</th>
-                </tr></thead>
-                <tbody>{{#statuses}}<tr><td>{{value}}</td><td>{{count}}</td></tr>{{/statuses}}</tbody>
-            </table>
-        {{/hasstatuses}}
-        {{^hasstatuses}}<p class="text-muted">{{#str}}panel:nostatuses, local_chronifycompliance{{/str}}</p>{{/hasstatuses}}
-        <p class="small text-muted mb-0">{{#str}}panel:evidencedetail, local_chronifycompliance, {"nostatus": {{nostatus}}, "withscore": {{withscore}} }{{/str}}</p>
-    </section>
-
     {{#hasrecommendation}}
         <section class="mb-4">
             <h3 class="h5">{{#str}}panel:recommendation, local_chronifycompliance, {{confidence}}{{/str}}</h3>
@@ -138,10 +138,11 @@
                     <th scope="col">{{#str}}report:setting, local_chronifycompliance{{/str}}</th>
                     <th scope="col">{{#str}}panel:current, local_chronifycompliance{{/str}}</th>
                     <th scope="col">{{#str}}panel:recommended, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:confidencecol, local_chronifycompliance{{/str}}</th>
                 </tr></thead>
                 <tbody>
                     {{#settings}}
-                        <tr{{#changed}} class="table-warning"{{/changed}}><td>{{label}}</td><td>{{current}}</td><td>{{#changed}}<strong>{{recommended}}</strong>{{/changed}}{{^changed}}{{recommended}}{{/changed}}</td></tr>
+                        <tr{{#changed}} class="table-warning"{{/changed}}><td>{{label}}</td><td>{{current}}</td><td>{{#changed}}<strong>{{recommended}}</strong>{{/changed}}{{^changed}}{{recommended}}{{/changed}}</td><td>{{confidenceshort}}</td></tr>
                     {{/settings}}
                 </tbody>
             </table>
@@ -149,6 +150,34 @@
             {{#warnings}}<div class="alert alert-warning mb-1">{{.}}</div>{{/warnings}}
         </section>
     {{/hasrecommendation}}
+
+    <div class="d-flex flex-wrap align-items-center mb-4" data-region="scorm-actions">
+        {{#applyid}}
+            <button type="button" class="btn btn-primary btn-sm me-2 mb-1" data-action="cd-preview-fix" data-findingid="{{applyid}}">
+                {{#str}}panel:applyrecommended, local_chronifycompliance{{/str}}
+            </button>
+        {{/applyid}}
+        <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-1" disabled
+            title="{{#str}}dashboard:fixforme:soon, local_chronifycompliance{{/str}}">{{#str}}dashboard:fixforme, local_chronifycompliance{{/str}}</button>
+        {{#republish}}
+            <details class="small ms-md-auto">
+                <summary>{{#str}}panel:republish, local_chronifycompliance{{/str}}</summary>
+                <ol class="mt-2 mb-0">
+                    <li>{{#str}}panel:republish:1, local_chronifycompliance{{/str}}</li>
+                    <li>{{#str}}panel:republish:2, local_chronifycompliance{{/str}}</li>
+                    <li>{{#str}}panel:republish:3, local_chronifycompliance{{/str}}</li>
+                </ol>
+            </details>
+        {{/republish}}
+    </div>
+
+    {{#hasfindings}}
+        <section class="mb-4">
+            <h3 class="h5">{{#str}}panel:findings, local_chronifycompliance{{/str}}</h3>
+            {{#findings}}{{> local_chronifycompliance/finding }}{{/findings}}
+        </section>
+    {{/hasfindings}}
+
 
     {{#ok}}
         <section class="mb-4">

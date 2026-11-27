@@ -136,6 +136,8 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'hasrecommendation' => (bool) $recommendation,
             'settings' => $settings,
             'confidence' => $recommendation ? get_string('panel:confidence:' . $recommendation['confidence'], $component) : null,
+            'confidenceshort' => $recommendation
+                ? get_string('panel:confidenceshort:' . $recommendation['confidence'], $component) : null,
             'reasons' => $recommendation ? $resolve($recommendation['reasons']) : [],
             'warnings' => $recommendation ? $resolve($recommendation['warnings']) : [],
             'size' => isset($bandwidth['totalbytes']) ? display_size((int) $bandwidth['totalbytes']) : null,
@@ -154,7 +156,15 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'builddifferences' => $resolve($package['builds']['differences'] ?? []),
             'findings' => $findings,
             'hasfindings' => (bool) $findings,
+            'applyid' => null,
+            'republish' => $ok && $evidence['attempts'] && !$evidence['withscore'],
         ];
+        foreach ($findings as $finding) {
+            if ($finding['mainfix']) {
+                $data['applyid'] = $finding['id'];
+                break;
+            }
+        }
         return $data;
     }
 }

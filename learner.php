@@ -56,8 +56,9 @@ if ($userid) {
         ->trigger();
 }
 
+$PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="learner-diagnostic"]']);
 $renderer = $PAGE->get_renderer('local_chronifycompliance');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('learner:title', 'local_chronifycompliance'));
+echo $OUTPUT->heading(get_string('learner:heading', 'local_chronifycompliance'));
 echo $renderer->learner_report($course, $user, $explanation, array_values($matches), $search);
 echo $OUTPUT->footer();

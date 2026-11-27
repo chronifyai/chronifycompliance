@@ -306,3 +306,30 @@ a.lcd-tile:focus {
         grid-template-columns: 1fr;
     }
 }
+
+.local-chronifycompliance-learner .lcc-condition + .lcc-condition {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.local-chronifycompliance-learner .lcc-condition-blocking {
+    background-color: rgba(179, 38, 30, 0.06);
+}
+
+.local-chronifycompliance-learner .lcc-state-met {
+    background-color: #e3f1e6;
+    color: #1d5c2e;
+}
+
+.local-chronifycompliance-learner .lcc-state-blocks {
+    background-color: #f9e0de;
+    color: #8a1c13;
+}
+
+.local-chronifycompliance-learner .lcc-state-notmet {
+    background-color: #eceef1;
+    color: #3d4450;
+}
+
+.local-chronifycompliance-learner .lcc-verdict {
+    background-color: rgba(0, 0, 0, 0.04);
+}

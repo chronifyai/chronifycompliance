@@ -69,6 +69,14 @@
   otherwise Set up for the activity settings, SCORM analysis, Reopen or Undo) and a More menu with Details, Ignore
   and the other links. The Fixed tab is the course's fix history (who applied each fix and when, undone or not)
   with Undo on the latest fix of each problem. Check links moved into the Links tab.
+- Step B6: learner diagnostic and SCORM analysis restyled. The diagnostic ("Why hasn't this learner completed?")
+  shows the status in one line, every condition as Met, Not met or Blocking with its evidence, and a verdict
+  (`learner\verdict`): a course setting problem (deleted or hidden required activity, or an open problem on the
+  blocking activity, named, with Preview fix when the user may apply it) or what the learner still needs to do.
+  Copy summary puts a plain text version on the clipboard for a support reply. The SCORM analysis shows the
+  package and what learners reported side by side, a Confidence column in the recommended settings, Preview
+  recommended settings (the activity's fixable problem), Fix it for me (not active yet) and a republish guide when
+  attempts never send a score.
 
 ## 0.2.3 (unreleased): QA fixes
 

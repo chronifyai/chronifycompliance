@@ -17,6 +17,7 @@
 namespace local_chronifycompliance\output;
 
 use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\learner\verdict;
 use moodle_url;
 use renderer_base;
 
@@ -93,8 +94,10 @@ class learner_report implements \core\output\named_templatable, \renderable {
                     );
                 }
             }
-            $criteria[] = ['activity' => $activity, 'timemet' => $criterion['timemet'] ? userdate($criterion['timemet']) : null]
-                + $criterion;
+            $state = $criterion['met'] ? 'met' : ($criterion['blocking'] ? 'blocks' : 'notmet');
+            $criteria[] = ['activity' => $activity, 'timemet' => $criterion['timemet'] ? userdate($criterion['timemet']) : null,
+                'state' => $state, 'statelabel' => get_string('learner:' . $state, $component),
+                'ismet' => $state === 'met', 'isblocking' => $state === 'blocks'] + $criterion;
         }
         $data = [
             'courseid' => (int) $this->course->id,
@@ -122,6 +125,40 @@ class learner_report implements \core\output\named_templatable, \renderable {
                 'hascriteria' => (bool) $criteria,
             ] : null,
         ];
+        if ($this->explanation && $this->user) {
+            $data['explanation']['status'] = verdict::status_text($this->explanation);
+            $data['verdict'] = $this->export_verdict();
+        }
+        return $data;
+    }
+
+    /**
+     * Verdict line, its action and the summary to copy.
+     *
+     * @return array
+     */
+    private function export_verdict(): array {
+        $context = \context_course::instance($this->course->id);
+        $verdict = verdict::decide((int) $this->course->id, $this->explanation);
+        $data = [
+            'kind' => $verdict['kind'],
+            'issetup' => $verdict['kind'] === verdict::SETUP,
+            'islearner' => $verdict['kind'] === verdict::LEARNER,
+            'text' => verdict::verdict_text($verdict),
+            'fixid' => null,
+            'reporturl' => null,
+            'summary' => verdict::summary($this->course, $this->user, $this->explanation, $verdict),
+        ];
+        if ($verdict['finding']) {
+            $card = finding_exporter::export($verdict['finding'], get_fast_modinfo($this->course), [
+                'canfix' => has_capability('local/chronifycompliance:applyfix', $context),
+                'canignore' => false,
+            ]);
+            $data['fixid'] = $card['mainfix'] ? $card['id'] : null;
+        }
+        if ($data['issetup'] && !$data['fixid'] && has_capability('local/chronifycompliance:viewcoursereport', $context)) {
+            $data['reporturl'] = (new moodle_url('/local/chronifycompliance/course.php', ['id' => $this->course->id]))->out(false);
+        }
         return $data;
     }
 }

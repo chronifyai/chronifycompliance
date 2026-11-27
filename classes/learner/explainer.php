@@ -97,6 +97,7 @@ class explainer {
                 'timemet' => !empty($met[$record->id]) ? (int) $met[$record->id] : null,
                 'blocking' => false,
                 'activity' => null,
+                'cmid' => $type === COMPLETION_CRITERIA_TYPE_ACTIVITY ? $cmid : null,
             ];
             if ($type === COMPLETION_CRITERIA_TYPE_ACTIVITY) {
                 $item['activity'] = self::explain_activity($modinfo, (int) $record->moduleinstance, $userid);
