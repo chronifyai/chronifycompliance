@@ -58,6 +58,20 @@ dev/run-tests.sh ~/moodle-dev/moodle405 --filter=scan_manager
 The first setup takes about 10 minutes (Moodle clone, install, PHPUnit init). Baseline before any
 change: 153 PHPUnit tests, all passing.
 
+Large site for data layer measurements (PostgreSQL only), run from the Moodle directory:
+
+```bash
+php local/chronifycompliance/dev/seed-large-site.php --users=100000 --courses=3000 --logs=10000000 --days=120
+php local/chronifycompliance/dev/measure-refresh.php --dataset=activity
+```
+
+Seeding 100,000 users, 300 courses and 10 million log rows takes about 3 minutes (courses add about
+4 seconds per 100). Measured 2026-11-27 on that site: the activity dataset's first load (7.5 million rows
+in 90 days) takes 39 seconds of work, 13 minutes with the default 5 seconds between batches.
+
+Building JavaScript: `dev/build-js.sh` (needs `npm ci` in the Moodle directory once). Language strings
+must stay sorted: `dev/check-lang-order.py`.
+
 ## Release ZIP
 
 Leave out `dev/`, `.github/`, `CLAUDE.md` and test fixture sources when building the ZIP (step F7).

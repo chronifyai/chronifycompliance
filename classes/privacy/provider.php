@@ -49,6 +49,8 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
         'local_chronifycompliance_audit' => ['usermodified'],
         'local_chronifycompliance_link' => ['usermodified'],
     ];
+    /** @var string[] Data layer tables about a learner's own activity, keyed by user id and course id. */
+    private const ACTIVITY_TABLES = ['local_chronifycompliance_actday', 'local_chronifycompliance_compl'];
     /** @var array User id columns of site-wide tables (system context). */
     private const SITE_TABLES = [
         'local_chronifycompliance_scan' => ['startedby', 'usermodified'],
@@ -91,6 +93,17 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
                 'timemodified' => 'privacy:metadata:timemodified',
             ], 'privacy:metadata:' . $table);
         }
+        $collection->add_database_table('local_chronifycompliance_actday', [
+            'userid' => 'privacy:metadata:actday:userid',
+            'courseid' => 'privacy:metadata:actday:courseid',
+            'day' => 'privacy:metadata:actday:day',
+            'events' => 'privacy:metadata:actday:events',
+        ], 'privacy:metadata:actday');
+        $collection->add_database_table('local_chronifycompliance_compl', [
+            'userid' => 'privacy:metadata:compl:userid',
+            'courseid' => 'privacy:metadata:compl:courseid',
+            'timecompleted' => 'privacy:metadata:compl:timecompleted',
+        ], 'privacy:metadata:compl');
         $collection->add_subsystem_link('core_message', [], 'privacy:metadata:core_message');
         return $collection;
     }
@@ -122,6 +135,16 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
                 $system = $system || $DB->record_exists($table, [$field => $userid]);
             }
         }
+        foreach (self::ACTIVITY_TABLES as $table) {
+            $contextlist->add_from_sql(
+                "SELECT ctx.id
+                   FROM {{$table}} t
+                   JOIN {context} ctx ON ctx.instanceid = t.courseid AND ctx.contextlevel = :level
+                  WHERE t.userid = :userid AND t.courseid <> :siteid",
+                ['userid' => $userid, 'level' => CONTEXT_COURSE, 'siteid' => SITEID]
+            );
+            $system = $system || $DB->record_exists($table, ['userid' => $userid, 'courseid' => SITEID]);
+        }
         if ($system) {
             $contextlist->add_system_context();
         }
@@ -148,6 +171,13 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
                 );
             }
         }
+        foreach (self::ACTIVITY_TABLES as $table) {
+            $userlist->add_from_sql(
+                'userid',
+                "SELECT userid FROM {{$table}} WHERE courseid = :courseid",
+                ['courseid' => $courseid]
+            );
+        }
         if ($context->contextlevel == CONTEXT_SYSTEM) {
             foreach (self::SITE_TABLES as $table => $fields) {
                 foreach ($fields as $field) {
@@ -172,7 +202,28 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
             if ($courseid === null) {
                 continue;
             }
-            $data = ['ignored' => [], 'fixes' => [], 'scans' => [], 'linkchecks' => [], 'changed' => []];
+            $data = [
+                'ignored' => [], 'fixes' => [], 'scans' => [], 'linkchecks' => [], 'changed' => [],
+                'activity' => [], 'completion' => [],
+            ];
+
+            $days = $DB->get_records(
+                'local_chronifycompliance_actday',
+                ['userid' => $userid, 'courseid' => $courseid],
+                'day',
+                'id, day, events'
+            );
+            foreach ($days as $day) {
+                $data['activity'][] = ['day' => (string) $day->day, 'events' => (int) $day->events];
+            }
+            $completed = $DB->get_field(
+                'local_chronifycompliance_compl',
+                'timecompleted',
+                ['userid' => $userid, 'courseid' => $courseid]
+            );
+            if ($completed) {
+                $data['completion'] = ['timecompleted' => transform::datetime($completed)];
+            }
 
             $findings = $DB->get_records(
                 'local_chronifycompliance_finding',
@@ -312,7 +363,7 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
     }
 
     /**
-     * Replace user ids by 0.
+     * Replace user ids by 0, and delete the learner activity rows.
      *
      * @param int $courseid Course (or site) whose rows are affected.
      * @param int[]|null $userids Only these users, null for everyone.
@@ -320,6 +371,17 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
      */
     private static function anonymize(int $courseid, ?array $userids, bool $includesite): void {
         global $DB;
+        // Activity rows are about the learner: delete them instead of anonymizing.
+        foreach (self::ACTIVITY_TABLES as $table) {
+            $where = 'courseid = :courseid';
+            $params = ['courseid' => $courseid];
+            if ($userids !== null) {
+                [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+                $where .= " AND userid {$insql}";
+                $params += $inparams;
+            }
+            $DB->delete_records_select($table, $where, $params);
+        }
         $tables = self::COURSE_TABLES + ($includesite ? self::SITE_TABLES : []);
         foreach ($tables as $table => $fields) {
             foreach ($fields as $field) {

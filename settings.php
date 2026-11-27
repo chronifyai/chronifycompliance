@@ -128,6 +128,20 @@ if ($hassiteconfig) {
             PARAM_INT
         ));
         $settings->add(new admin_setting_configtext(
+            "{$component}/refreshfirstload",
+            new lang_string('settings:refreshfirstload', $component),
+            new lang_string('settings:refreshfirstload_desc', $component),
+            \local_chronifycompliance\data\datasets\activity::DEFAULT_FIRSTLOAD,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshkeep",
+            new lang_string('settings:refreshkeep', $component),
+            new lang_string('settings:refreshkeep_desc', $component),
+            \local_chronifycompliance\data\datasets\activity::DEFAULT_KEEP,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
             "{$component}/refreshbudget",
             new lang_string('settings:refreshbudget', $component),
             new lang_string('settings:refreshbudget_desc', $component),

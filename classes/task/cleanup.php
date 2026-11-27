@@ -86,6 +86,12 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // Daily activity older than the retention period.
+        $keep = (int) get_config('local_chronifycompliance', 'refreshkeep');
+        $counts['activitydays'] = (new \local_chronifycompliance\data\datasets\activity())->delete_older_than(
+            $keep > 0 ? $keep : \local_chronifycompliance\data\datasets\activity::DEFAULT_KEEP
+        );
+
         // State of datasets that no longer exist (removed in a newer plugin version).
         $counts['refreshstates'] = $this->delete_unknown_dataset_states();
 

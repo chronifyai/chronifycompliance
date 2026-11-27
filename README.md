@@ -108,6 +108,12 @@ Pages, reports and checks never read the large Moodle tables (logs, SCORM tracki
 - **Replica:** reads run outside transactions, so sites with a read-only replica (`$CFG->dboptions['readonly']`)
   read from it.
 
+Datasets so far:
+
+| Dataset | Source | Fills |
+| --- | --- | --- |
+| Activity, logins and completions (`activity`) | standard log | events per user, course and day; site totals per day (active users, logins, failed logins, completions); latest completion per user and course |
+
 ## Extending
 
 Other plugins can add checks by listening to the `\local_chronifycompliance\hook\register_checks` hook

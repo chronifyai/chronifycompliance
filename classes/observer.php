@@ -83,6 +83,7 @@ class observer {
             fix_log::delete_course($courseid);
             link_store::delete_course($courseid);
             link_scan::delete_course($courseid);
+            \local_chronifycompliance\data\datasets\activity::delete_course($courseid);
         });
     }
 }

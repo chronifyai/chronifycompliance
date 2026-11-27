@@ -16,6 +16,12 @@
   transaction, so an interrupted refresh resumes without duplicates. A scheduled task refreshes due datasets
   inside the refresh window (default 1 to 5) within a time budget; an ad hoc task serves Refresh now. Both
   respect Pause all scans. New settings: refresh window, rows per batch, seconds between batches, minutes per run.
+- Step A4: first dataset, Activity. One pass over the standard log fills events per user, course and day
+  (`local_chronifycompliance_actday`), site totals per day with active users, logins, failed logins and completions
+  (`local_chronifycompliance_siteday`), and the latest completion per user and course (`local_chronifycompliance_compl`).
+  The first load reads the last 90 days (setting); daily data is kept 730 days (setting). Privacy API covers the new
+  tables; deleting a course removes its rows. Measured on 100,000 users and 7.5 million log rows in 90 days: first
+  load 39 seconds of work, 13 minutes with the default pause between batches.
 
 ## 0.2.3 (unreleased): QA fixes
 
