@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for Completion Doctor.
+ * Capability definitions for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,39 +26,39 @@ defined('MOODLE_INTERNAL') || die();
 
 // No role gets these by default: access is granted per site, on the roles that need it.
 $capabilities = [
-    'local/completiondoctor:viewcoursereport' => [
+    'local/chronifycompliance:viewcoursereport' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [],
     ],
-    'local/completiondoctor:viewlearnerdiagnostic' => [
+    'local/chronifycompliance:viewlearnerdiagnostic' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [],
     ],
-    'local/completiondoctor:ignorefinding' => [
+    'local/chronifycompliance:ignorefinding' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [],
     ],
-    'local/completiondoctor:applyfix' => [
+    'local/chronifycompliance:applyfix' => [
         'riskbitmask' => RISK_CONFIG | RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [],
     ],
-    'local/completiondoctor:viewsitereport' => [
+    'local/chronifycompliance:viewsitereport' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],
     ],
-    'local/completiondoctor:checklinks' => [
+    'local/chronifycompliance:checklinks' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [],
     ],
-    'local/completiondoctor:runscan' => [
+    'local/chronifycompliance:runscan' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],

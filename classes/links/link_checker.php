@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
 /**
  * Decides whether one link works.
@@ -24,7 +24,7 @@ namespace local_completiondoctor\links;
  * as not existing), then HEAD, then a short GET when the server refuses HEAD. Requests to the
  * same host are at least one second apart, and recent results of the same URL are reused.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -82,7 +82,7 @@ class link_checker {
      * @return self
      */
     public static function from_config(): self {
-        $config = get_config('local_completiondoctor');
+        $config = get_config('local_chronifycompliance');
         $timeout = (int) ($config->linktimeout ?? 0) ?: 8;
         $maxurls = (int) ($config->linkmaxurls ?? 0) ?: 500;
         $cachehours = isset($config->linkcachehours) && $config->linkcachehours !== '' ? (int) $config->linkcachehours : 24;

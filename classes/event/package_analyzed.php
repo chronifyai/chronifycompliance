@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
- * Completion Doctor SCORM package analyzed.
+ * Chronify.Compliance SCORM package analyzed.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ class package_analyzed extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'local_completiondoctor_pkg';
+        $this->data['objecttable'] = 'local_chronifycompliance_pkg';
     }
 
     /**
@@ -39,7 +39,7 @@ class package_analyzed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:packageanalyzed', 'local_completiondoctor');
+        return get_string('event:packageanalyzed', 'local_chronifycompliance');
     }
 
     /**
@@ -48,7 +48,7 @@ class package_analyzed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Completion Doctor analyzed the SCORM package with content hash '{$this->other['contenthash']}'"
+        return "Chronify.Compliance analyzed the SCORM package with content hash '{$this->other['contenthash']}'"
             . " (result '{$this->other['status']}').";
     }
 
@@ -70,7 +70,7 @@ class package_analyzed extends \core\event\base {
      * @return array
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'local_completiondoctor_pkg', 'restore' => \core\event\base::NOT_MAPPED];
+        return ['db' => 'local_chronifycompliance_pkg', 'restore' => \core\event\base::NOT_MAPPED];
     }
 
     /**

@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\learner\explainer;
+use local_chronifycompliance\learner\explainer;
 
 /**
  * Explain why a learner has or has not completed a course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,11 +57,11 @@ class explain_user_completion extends external_api {
         );
         $context = \context_course::instance($courseid);
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewlearnerdiagnostic', $context);
+        require_capability('local/chronifycompliance:viewlearnerdiagnostic', $context);
         explainer::require_can_diagnose(get_course($courseid), $userid);
 
         $explanation = explainer::explain($courseid, $userid);
-        \local_completiondoctor\event\learner_diagnostic_viewed::create(['context' => $context, 'relateduserid' => $userid])
+        \local_chronifycompliance\event\learner_diagnostic_viewed::create(['context' => $context, 'relateduserid' => $userid])
             ->trigger();
         $criteria = [];
         foreach ($explanation['criteria'] as $criterion) {

@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\hook;
+namespace local_chronifycompliance\hook;
 
-use local_completiondoctor\check\base_check;
+use local_chronifycompliance\check\base_check;
 
 /**
- * Hook allowing other plugins to add Completion Doctor checks.
+ * Hook allowing other plugins to add Chronify.Compliance checks.
  *
  * Register a callback in your plugin's db/hooks.php and call add_check() for each check.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins to register additional Completion Doctor checks.')]
+#[\core\attribute\label('Allows plugins to register additional Chronify.Compliance checks.')]
 #[\core\attribute\tags('completion')]
 final class register_checks {
     /** @var base_check[] Checks added by plugins. */

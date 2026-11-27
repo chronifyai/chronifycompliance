@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor;
+namespace local_chronifycompliance;
 
 use core\hook\output\before_http_headers;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Hook callbacks.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +39,7 @@ class hook_callbacks {
      */
     public static function before_http_headers(before_http_headers $hook): void {
         global $PAGE;
-        if (during_initial_install() || !get_config('local_completiondoctor', 'showbanner')) {
+        if (during_initial_install() || !get_config('local_chronifycompliance', 'showbanner')) {
             return;
         }
         $course = $PAGE->course ?? null;
@@ -51,7 +51,7 @@ class hook_callbacks {
             return;
         }
         $context = \context_course::instance($course->id);
-        if (!has_capability('local/completiondoctor:viewcoursereport', $context)) {
+        if (!has_capability('local/chronifycompliance:viewcoursereport', $context)) {
             return;
         }
         $critical = finding_store::get_summary((int) $course->id)['critical'];
@@ -59,11 +59,11 @@ class hook_callbacks {
             return;
         }
         $link = \html_writer::link(
-            new \moodle_url('/local/completiondoctor/course.php', ['id' => $course->id]),
-            get_string('banner:view', 'local_completiondoctor')
+            new \moodle_url('/local/chronifycompliance/course.php', ['id' => $course->id]),
+            get_string('banner:view', 'local_chronifycompliance')
         );
         \core\notification::add(
-            get_string('banner:message', 'local_completiondoctor', $critical) . ' ' . $link,
+            get_string('banner:message', 'local_chronifycompliance', $critical) . ' ' . $link,
             \core\output\notification::NOTIFY_ERROR
         );
     }

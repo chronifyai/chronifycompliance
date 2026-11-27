@@ -1,13 +1,13 @@
-# Completion Doctor (local_completiondoctor)
+# Chronify.Compliance (local_chronifycompliance)
 
-Completion Doctor audits Moodle course completion setup and SCORM activities.
+Chronify.Compliance audits Moodle course completion setup and SCORM activities.
 
 - Finds courses where learners can never complete, or complete when they should not.
 - Analyzes SCORM packages (version, SCOs, mastery score, authoring tool, reported statuses, size)
   and recommends matching Moodle completion settings.
 - Explains why a single learner has not completed a course.
 
-Status: **alpha (0.1.0), under development.**
+Status: **alpha (0.3.0), under development.** Built on Completion Doctor 0.2.3.
 
 ## What it checks
 
@@ -29,7 +29,7 @@ and how to fix it is described in [docs/checks.md](docs/checks.md).
   Optionally (off by default) new courses are checked automatically: a task every 10 minutes checks courses
   created in the last 30 days whose content changed since their last check. Existing courses are only checked
   on request.
-- **Site dashboard:** *Site administration > Reports > Completion Doctor*: health of all courses, top problems,
+- **Site dashboard:** *Site administration > Reports > Chronify.Compliance*: health of all courses, top problems,
   site health, filters, export, *Scan all courses* and *Cancel scan*.
 - **Notifications (optional, off by default):** a popup notification (never e-mail) to the people who can see
   the course report when a course that was checked before gets a new Critical problem.
@@ -49,15 +49,15 @@ learner diagnostic, site dashboard, mobile view of the course report.
 
 ### From ZIP
 
-1. Download `local_completiondoctor-<version>.zip`.
+1. Download `local_chronifycompliance-<version>.zip`.
 2. Go to *Site administration > Plugins > Install plugins* and upload the ZIP,
-   or unzip it into `local/completiondoctor` (`public/local/completiondoctor` on Moodle 5.1+).
+   or unzip it into `local/chronifycompliance` (`public/local/chronifycompliance` on Moodle 5.1+).
 3. Visit *Site administration > Notifications* to finish the installation.
 
 ### From source
 
 ```bash
-git clone <repository-url> local/completiondoctor
+git clone <repository-url> local/chronifycompliance
 php admin/cli/upgrade.php
 ```
 
@@ -71,39 +71,55 @@ configuration).
 
 | Capability | Default roles | Context |
 |---|---|---|
-| `local/completiondoctor:viewcoursereport` | Teacher, Manager | Course |
-| `local/completiondoctor:viewlearnerdiagnostic` | Teacher, Non-editing teacher, Manager | Course |
-| `local/completiondoctor:ignorefinding` | Teacher, Manager | Course |
-| `local/completiondoctor:applyfix` | Manager | Course |
-| `local/completiondoctor:checklinks` | Teacher, Manager | Course |
-| `local/completiondoctor:viewsitereport` | Manager | System |
-| `local/completiondoctor:runscan` | Manager | System |
+| `local/chronifycompliance:viewcoursereport` | Teacher, Manager | Course |
+| `local/chronifycompliance:viewlearnerdiagnostic` | Teacher, Non-editing teacher, Manager | Course |
+| `local/chronifycompliance:ignorefinding` | Teacher, Manager | Course |
+| `local/chronifycompliance:applyfix` | Manager | Course |
+| `local/chronifycompliance:checklinks` | Teacher, Manager | Course |
+| `local/chronifycompliance:viewsitereport` | Manager | System |
+| `local/chronifycompliance:runscan` | Manager | System |
 
 ## CLI
 
 ```bash
-php local/completiondoctor/cli/scan.php --help        # audit courses (dry run unless --save)
-php local/completiondoctor/cli/scan.php --all --queue # queue background audits of all courses
-php local/completiondoctor/cli/fix.php --help         # preview, apply (--confirm) or undo a fix
-php local/completiondoctor/cli/analyze.php --file=package.zip   # analyze a SCORM package without a course
-php local/completiondoctor/cli/analyze.php --all --queue        # analyze every SCORM package in the background
+php local/chronifycompliance/cli/scan.php --help        # audit courses (dry run unless --save)
+php local/chronifycompliance/cli/scan.php --all --queue # queue background audits of all courses
+php local/chronifycompliance/cli/fix.php --help         # preview, apply (--confirm) or undo a fix
+php local/chronifycompliance/cli/analyze.php --file=package.zip   # analyze a SCORM package without a course
+php local/chronifycompliance/cli/analyze.php --all --queue        # analyze every SCORM package in the background
 ```
 
-On Moodle 5.1 and later the path is `public/local/completiondoctor/cli/...`.
+On Moodle 5.1 and later the path is `public/local/chronifycompliance/cli/...`.
 
 For development, `tests/cli/seed_demo.php` creates demo courses that trigger each check (test sites with at most 100 users only).
 
+## Data layer
+
+Pages, reports and checks never read the large Moodle tables (logs, SCORM tracking, files) directly. Datasets
+(`classes/data/datasets/`) copy and summarise them into the plugin's own tables in the background:
+
+- **Incremental:** each refresh reads only source rows after the dataset's high water mark.
+- **Batched and safe:** each batch and the new mark are saved in one transaction, so an interrupted refresh
+  goes on from the last saved batch without duplicates.
+- **Scheduled:** the task "Refresh the Chronify.Compliance data" runs every 15 minutes but works only inside
+  the refresh window (default 1 to 5, server time) and for at most the minutes per run setting.
+- **On demand:** Refresh now queues an ad hoc task that runs at any hour.
+- **Paused** with Pause all scans, like scans.
+- **Replica:** reads run outside transactions, so sites with a read-only replica (`$CFG->dboptions['readonly']`)
+  read from it.
+
 ## Extending
 
-Other plugins can add checks by listening to the `\local_completiondoctor\hook\register_checks` hook
+Other plugins can add checks by listening to the `\local_chronifycompliance\hook\register_checks` hook
 in their `db/hooks.php` and calling `$hook->add_check(new my_check())`, where `my_check` extends
-`\local_completiondoctor\check\base_check`.
+`\local_chronifycompliance\check\base_check`. Override `get_pack()` to place the check in a pack (`base_check::PACK_*`);
+without it, site checks go to Site and performance, the others to Completion.
 
 ## Large sites
 
-Completion Doctor is built to run on sites with many thousands of courses and tens of millions of log and SCORM tracking rows. Installing it starts no checks: the scheduled scan, the automatic re-check after course changes and the automatic link checks are all off. Only an hourly clean-up task runs, and it removes old data of the plugin itself.
+Chronify.Compliance is built to run on sites with many thousands of courses and tens of millions of log and SCORM tracking rows. Installing it starts no checks: the scheduled scan, the automatic re-check after course changes and the automatic link checks are all off. Only an hourly clean-up task runs, and it removes old data of the plugin itself.
 
-- **Scans are paced.** "Scan all courses" queues batches of courses (default 20) that start 30 seconds apart, and at most one batch runs at a time. Raise the limit with `$CFG->task_concurrency_limit['local_completiondoctor\task\audit_course']` if you want faster scans.
+- **Scans are paced.** "Scan all courses" queues batches of courses (default 20) that start 30 seconds apart, and at most one batch runs at a time. Raise the limit with `$CFG->task_concurrency_limit['local_chronifycompliance\task\audit_course']` if you want faster scans.
 - **SCORM packages are analyzed a few at a time.** Packages up to 10 MB are analyzed during checks; bigger ones are queued and analyzed by a scheduled task, 10 per run by default, optionally only during set hours (for example `0-6`).
 - **Logs are not scanned.** The plugin records when completion settings are saved, from the moment it is installed.
 - **SCORM tracking is sampled.** The latest 200 attempts per activity are read in one query and cached for a day.
@@ -121,35 +137,35 @@ On a large site, run the first full scan at night.
 
 ## Web services
 
-The pre-built service **Completion Doctor API** (short name `local_completiondoctor`) is disabled by default and restricted to authorised users. Enable it under *Site administration > Server > Web services > External services*. Every function checks the capability named below in the relevant context.
+The pre-built service **Chronify.Compliance API** (short name `local_chronifycompliance`) is disabled by default and restricted to authorised users. Enable it under *Site administration > Server > Web services > External services*. Every function checks the capability named below in the relevant context.
 
 | Function | Parameters | Returns | Capability |
 |---|---|---|---|
-| `local_completiondoctor_audit_course` | courseid, refresh | Counts by severity, last audit, open findings (refresh queues a new check in the background) | viewcoursereport |
-| `local_completiondoctor_get_course_status` | courseid | Whether a check of the course is waiting or running | viewcoursereport |
-| `local_completiondoctor_get_findings` | categoryid, severity, checkid, status, page, perpage | Paged findings across the site | viewsitereport |
-| `local_completiondoctor_analyze_scorm` | cmid, refresh | Package analysis, what learners reported, recommended settings, size estimate, display (refresh queues a new analysis) | viewcoursereport |
-| `local_completiondoctor_analyze_package` | draftitemid (zip uploaded with `core_files_upload`, up to the inline analysis size) | The same, without a course | viewsitereport |
-| `local_completiondoctor_preview_fix` | findingid, params | What would change, warnings, parameters | applyfix |
-| `local_completiondoctor_apply_fix` | findingid, params | Result and fix log id | applyfix |
-| `local_completiondoctor_undo_fix` | fixlogid | Result | applyfix |
-| `local_completiondoctor_ignore_finding` | findingid, reason, ignore | New status | ignorefinding |
-| `local_completiondoctor_explain_user_completion` | courseid, userid | Conditions, their state and what blocks completion | viewlearnerdiagnostic |
-| `local_completiondoctor_get_scan_status` | none | Progress of the latest site scan | viewsitereport |
+| `local_chronifycompliance_audit_course` | courseid, refresh | Counts by severity, last audit, open findings (refresh queues a new check in the background) | viewcoursereport |
+| `local_chronifycompliance_get_course_status` | courseid | Whether a check of the course is waiting or running | viewcoursereport |
+| `local_chronifycompliance_get_findings` | categoryid, severity, checkid, status, page, perpage | Paged findings across the site | viewsitereport |
+| `local_chronifycompliance_analyze_scorm` | cmid, refresh | Package analysis, what learners reported, recommended settings, size estimate, display (refresh queues a new analysis) | viewcoursereport |
+| `local_chronifycompliance_analyze_package` | draftitemid (zip uploaded with `core_files_upload`, up to the inline analysis size) | The same, without a course | viewsitereport |
+| `local_chronifycompliance_preview_fix` | findingid, params | What would change, warnings, parameters | applyfix |
+| `local_chronifycompliance_apply_fix` | findingid, params | Result and fix log id | applyfix |
+| `local_chronifycompliance_undo_fix` | fixlogid | Result | applyfix |
+| `local_chronifycompliance_ignore_finding` | findingid, reason, ignore | New status | ignorefinding |
+| `local_chronifycompliance_explain_user_completion` | courseid, userid | Conditions, their state and what blocks completion | viewlearnerdiagnostic |
+| `local_chronifycompliance_get_scan_status` | none | Progress of the latest site scan | viewsitereport |
 
 ## Testing
 
 ```
-vendor/bin/phpunit --testsuite local_completiondoctor_testsuite
-vendor/bin/behat --config <behat.yml> --tags=@local_completiondoctor
+vendor/bin/phpunit --testsuite local_chronifycompliance_testsuite
+vendor/bin/behat --config <behat.yml> --tags=@local_chronifycompliance
 ```
 
-The Behat context adds the step `the Completion Doctor demo course "<check>" exists` and the named pages
-*Course report*, *Learner diagnostic*, *SCORM panel* and *Dashboard* (prefix `local_completiondoctor >`).
+The Behat context adds the step `the Chronify.Compliance demo course "<check>" exists` and the named pages
+*Course report*, *Learner diagnostic*, *SCORM panel* and *Dashboard* (prefix `local_chronifycompliance >`).
 
 ## Configuration
 
-Site administration > Plugins > Local plugins > Completion Doctor: scanning, SCORM analysis limits and speed targets, site check thresholds, the teacher banner, and per-check enable and severity settings.
+Site administration > Plugins > Local plugins > Chronify.Compliance: scanning, SCORM analysis limits and speed targets, site check thresholds, the teacher banner, and per-check enable and severity settings.
 
 ## Privacy
 

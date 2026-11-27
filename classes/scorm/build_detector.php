@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Finds several complete course builds inside one package (typically one per language behind a
@@ -26,7 +26,7 @@ namespace local_completiondoctor\scorm;
  * Each Storyline build is compared on: player version, project id, scene, slide and variable counts,
  * slide ids, and the number of objects on each slide.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

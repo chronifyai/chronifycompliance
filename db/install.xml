@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/completiondoctor/db" VERSION="20261028" COMMENT="XMLDB file for Moodle local/completiondoctor"
+<XMLDB PATH="local/chronifycompliance/db" VERSION="20261028" COMMENT="XMLDB file for Moodle local/chronifycompliance"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="local_completiondoctor_finding" COMMENT="Problems detected by Completion Doctor checks, one row per unique fingerprint.">
+    <TABLE NAME="local_chronifycompliance_finding" COMMENT="Problems detected by Chronify.Compliance checks, one row per unique fingerprint.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course id, or the site id for site-level findings."/>
@@ -39,7 +39,7 @@
         <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_pkg" COMMENT="Cached SCORM package analysis, one row per package content hash and parser version.">
+    <TABLE NAME="local_chronifycompliance_pkg" COMMENT="Cached SCORM package analysis, one row per package content hash and parser version.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
@@ -79,7 +79,7 @@
         <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_fixlog" COMMENT="Every change made by a Completion Doctor fix, with the values needed to undo it.">
+    <TABLE NAME="local_chronifycompliance_fixlog" COMMENT="Every change made by a Chronify.Compliance fix, with the values needed to undo it.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="findingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -99,7 +99,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="findingid" TYPE="foreign" FIELDS="findingid" REFTABLE="local_completiondoctor_finding" REFFIELDS="id"/>
+        <KEY NAME="findingid" TYPE="foreign" FIELDS="findingid" REFTABLE="local_chronifycompliance_finding" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="undoneby" TYPE="foreign" FIELDS="undoneby" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
@@ -107,7 +107,7 @@
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_scan" COMMENT="Progress of queued site or category scans.">
+    <TABLE NAME="local_chronifycompliance_scan" COMMENT="Progress of queued site or category scans.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="type" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="site" SEQUENCE="false" COMMENT="site or category."/>
@@ -133,7 +133,7 @@
         <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_audit" COMMENT="Last audit of each course: when it ran, how long it took and what it found.">
+    <TABLE NAME="local_chronifycompliance_audit" COMMENT="Last audit of each course: when it ran, how long it took and what it found.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course id, or the site id for site audits."/>
@@ -159,7 +159,7 @@
         <INDEX NAME="timeaudited" UNIQUE="false" FIELDS="timeaudited"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_link" COMMENT="Links found in a course by the on-demand link check, with their state.">
+    <TABLE NAME="local_chronifycompliance_link" COMMENT="Links found in a course by the on-demand link check, with their state.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -187,7 +187,7 @@
         <INDEX NAME="urlhash-timechecked" UNIQUE="false" FIELDS="urlhash, timechecked"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_completiondoctor_linkcheck" COMMENT="Link checks of a course: requested by a teacher or automatic for new courses.">
+    <TABLE NAME="local_chronifycompliance_linkcheck" COMMENT="Link checks of a course: requested by a teacher or automatic for new courses.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -212,6 +212,28 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_chronifycompliance_refresh" COMMENT="State of each dataset of the data layer: how far it has read and how its last refresh went.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataset" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Dataset id."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="idle" SEQUENCE="false" COMMENT="idle, queued (more to read), running or failed."/>
+        <FIELD NAME="highwater" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Key of the last source row stored; the next refresh reads after it."/>
+        <FIELD NAME="rowsread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Rows read by the current or last refresh."/>
+        <FIELD NAME="batches" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Batches stored by the current or last refresh."/>
+        <FIELD NAME="runtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Seconds spent by the current or last refresh, pauses excluded."/>
+        <FIELD NAME="failures" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Failed refreshes in a row."/>
+        <FIELD NAME="lasterror" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Message of the last failure."/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Start of the current or last refresh."/>
+        <FIELD NAME="timefinished" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="End of the last refresh that read everything there was."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="dataset" UNIQUE="true" FIELDS="dataset"/>
       </INDEXES>
     </TABLE>
   </TABLES>

@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
-use local_completiondoctor\persistent\package_record;
+use local_chronifycompliance\persistent\package_record;
 
 /**
  * Analyzes SCORM package files and caches the result by content hash, so a package used by many
  * activities is analyzed once. Raise PARSER_VERSION when the analysis changes; old rows are replaced.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -82,7 +82,7 @@ class package_analyzer {
         if (!$store) {
             return self::analyze_file($file);
         }
-        $lock = \core\lock\lock_config::get_lock_factory('local_completiondoctor')->get_lock('package_' . $hash, 0);
+        $lock = \core\lock\lock_config::get_lock_factory('local_chronifycompliance')->get_lock('package_' . $hash, 0);
         if (!$lock) {
             return self::pending($hash);
         }
@@ -118,7 +118,7 @@ class package_analyzer {
             self::store($analysis);
         }
         $record = package_record::get_record(['contenthash' => $hash, 'parserversion' => self::PARSER_VERSION]);
-        \local_completiondoctor\event\package_analyzed::create(['context' => \context_system::instance(),
+        \local_chronifycompliance\event\package_analyzed::create(['context' => \context_system::instance(),
             'objectid' => $record ? (int) $record->get('id') : 0,
             'other' => ['contenthash' => $hash, 'status' => $analysis['status']]])->trigger();
         return $analysis;
@@ -198,7 +198,7 @@ class package_analyzer {
      * @return int
      */
     public static function get_inline_bytes(): int {
-        $inlinemb = get_config('local_completiondoctor', 'inlineanalysismb');
+        $inlinemb = get_config('local_chronifycompliance', 'inlineanalysismb');
         return ($inlinemb === false || $inlinemb === '' ? self::DEFAULT_INLINE_MB : (int) $inlinemb) * 1048576;
     }
 

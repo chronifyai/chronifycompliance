@@ -14,34 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\review;
+namespace local_chronifycompliance\review;
 
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\task\cleanup;
-use local_completiondoctor\task\notify_teachers;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\task\cleanup;
+use local_chronifycompliance\task\notify_teachers;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\enrolment::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\datecriteria::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\activityrules::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\unreachable::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\manualrole::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\selfcompletionblock::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(notify_teachers::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(cleanup::class)]
 /**
  * Tests of the changes made after the senior review: new checks (enrolment, date criteria, activity
  * rules), softer unreachable rules, manual role capability, teacher notifications and clean-up.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\completion\enrolment
+ * @covers \local_chronifycompliance\check\completion\datecriteria
+ * @covers \local_chronifycompliance\check\completion\activityrules
+ * @covers \local_chronifycompliance\check\completion\unreachable
+ * @covers \local_chronifycompliance\check\completion\manualrole
+ * @covers \local_chronifycompliance\check\completion\selfcompletionblock
+ * @covers \local_chronifycompliance\task\notify_teachers
+ * @covers \local_chronifycompliance\task\cleanup
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\enrolment::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\datecriteria::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\activityrules::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\unreachable::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\manualrole::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\selfcompletionblock::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(notify_teachers::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(cleanup::class)]
 final class review_changes_test extends \advanced_testcase {
     /**
      * Prepare.
@@ -237,7 +245,7 @@ final class review_changes_test extends \advanced_testcase {
      */
     public function test_notify_teachers(): void {
         global $DB;
-        \local_completiondoctor\tests\role_grants::grant();
+        \local_chronifycompliance\tests\role_grants::grant();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
         $teacher = $generator->create_and_enrol($course, 'editingteacher');
@@ -247,7 +255,7 @@ final class review_changes_test extends \advanced_testcase {
         course_auditor::audit((int) $course->id, true, ['nocriteria']);
         $this->assertSame(0, $tasks(), 'Off by default');
 
-        set_config('notifyteachers', 1, 'local_completiondoctor');
+        set_config('notifyteachers', 1, 'local_chronifycompliance');
         $DB->delete_records(finding_store::TABLE);
         course_auditor::audit((int) $course->id, true, ['nocriteria']);
         $this->assertSame(1, $tasks());
@@ -278,13 +286,13 @@ final class review_changes_test extends \advanced_testcase {
         $id = (int) $DB->get_field(finding_store::TABLE, 'id', ['courseid' => $course->id]);
         $DB->update_record(finding_store::TABLE, (object) ['id' => $id, 'status' => finding::STATUS_RESOLVED,
             'timemodified' => time() - (cleanup::KEEP_DAYS + 1) * DAYSECS]);
-        $DB->insert_record(finding_store::TABLE, ['courseid' => 999999, 'checkid' => 'x', 'component' => 'local_completiondoctor',
+        $DB->insert_record(finding_store::TABLE, ['courseid' => 999999, 'checkid' => 'x', 'component' => 'local_chronifycompliance',
             'severity' => 1, 'baseseverity' => 1, 'fingerprint' => sha1('gone'), 'status' => 'open', 'messagekey' => 'x',
             'fixable' => 0, 'timecreated' => time(), 'timemodified' => time(), 'lastseen' => time()]);
 
         $this->expectOutputRegex('/cleanup/');
         (new cleanup())->execute();
         $this->assertSame(0, $DB->count_records(finding_store::TABLE));
-        $this->assertTrue($DB->record_exists('local_completiondoctor_audit', ['courseid' => $course->id]));
+        $this->assertTrue($DB->record_exists('local_chronifycompliance_audit', ['courseid' => $course->id]));
     }
 }

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 (unreleased): Chronify.Compliance, step A1
+
+- Renamed from Completion Doctor (`local_completiondoctor`) to Chronify.Compliance (`local_chronifycompliance`).
+  This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
+  old upgrade steps are removed.
+- Course completion checks moved from the `check\course` namespace to `check\completion`.
+- Step A2: every check belongs to a pack (Completion, SCORM and content, Site and performance, Security).
+  The registry filters and groups checks by pack, and the checks settings page lists them under a heading per pack.
+  Checks added through the `register_checks` hook can choose a pack; without one they go to Site (site scope)
+  or Completion.
+- Step A3: data layer core. New table `local_chronifycompliance_refresh` holds each dataset's read position
+  (high water mark) and last refresh outcome. Datasets (`data\dataset`, discovered in `data\datasets`) read
+  source rows after the high water mark in batches; the refresher saves each batch and the new mark in one
+  transaction, so an interrupted refresh resumes without duplicates. A scheduled task refreshes due datasets
+  inside the refresh window (default 1 to 5) within a time budget; an ad hoc task serves Refresh now. Both
+  respect Pause all scans. New settings: refresh window, rows per batch, seconds between batches, minutes per run.
+
 ## 0.2.3 (unreleased): QA fixes
 
 - Site dashboard: "Scan all courses" and "Cancel scan" stay together on the right while a scan runs (VM-317).

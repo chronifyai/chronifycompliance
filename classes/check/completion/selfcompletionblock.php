@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * Self completion is a criterion, but the course has no Self completion block, so learners have no
  * way to mark themselves complete.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -154,7 +154,7 @@ class selfcompletionblock extends course_check {
         global $DB;
         $instance = $DB->get_record('block_instances', ['id' => $after['blockinstanceid'] ?? 0, 'blockname' => 'selfcompletion']);
         if (!$instance) {
-            throw new \moodle_exception('error:undochanged', 'local_completiondoctor');
+            throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
         }
         blocks_delete_instance($instance);
         return new fix_result(true, $before);
