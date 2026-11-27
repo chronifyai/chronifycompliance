@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\local\scan_manager;
 
 /**
  * Ad-hoc task auditing a batch of courses and storing the findings.
  *
  * Custom data: courseids (int[]), scanid (int|null), checkids (string[]|null).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,12 +35,12 @@ class audit_course extends \core\task\adhoc_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:auditcourse', 'local_completiondoctor');
+        return get_string('task:auditcourse', 'local_chronifycompliance');
     }
 
     /**
      * At most one batch runs at a time by default, so a scan never takes all the task runners.
-     * Raise it with $CFG->task_concurrency_limit['local_completiondoctor\\task\\audit_course'].
+     * Raise it with $CFG->task_concurrency_limit['local_chronifycompliance\\task\\audit_course'].
      *
      * @return int
      */
@@ -72,7 +72,7 @@ class audit_course extends \core\task\adhoc_task {
             if ($scanid) {
                 scan_manager::touch($scanid);
             }
-            mtrace('Completion Doctor scans are paused, batch postponed.');
+            mtrace('Chronify.Compliance scans are paused, batch postponed.');
             return;
         }
         $processed = 0;

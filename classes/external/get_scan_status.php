@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\local\scan_manager;
 
 /**
  * Progress of the latest site scan.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +47,7 @@ class get_scan_status extends external_api {
     public static function execute(): array {
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewsitereport', $context);
+        require_capability('local/chronifycompliance:viewsitereport', $context);
         $scan = scan_manager::get_latest_scan();
         return [
             'scanid' => $scan ? (int) $scan->id : 0,

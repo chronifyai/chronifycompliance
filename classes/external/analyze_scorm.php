@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\scorm\inspector;
+use local_chronifycompliance\scorm\inspector;
 
 /**
  * Analyze the package of a SCORM activity: what it reports, recommended settings, speed and display.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,11 +57,11 @@ class analyze_scorm extends external_api {
         [$course, $cm] = get_course_and_cm_from_cmid($cmid, 'scorm');
         $context = \context_course::instance($course->id);
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewcoursereport', $context);
+        require_capability('local/chronifycompliance:viewcoursereport', $context);
 
         // Analyzing again runs in a background task; the stored analysis is returned.
         if ($refresh) {
-            \local_completiondoctor\task\check_course::request((int) $course->id, (int) $cm->id, true);
+            \local_chronifycompliance\task\check_course::request((int) $course->id, (int) $cm->id, true);
         }
         $inspection = inspector::inspect($cm, inspector::MODE_READ);
         return ['cmid' => $cmid] + scorm_exporter::export(

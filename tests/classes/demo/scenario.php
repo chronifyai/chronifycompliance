@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo;
+namespace local_chronifycompliance\tests\demo;
 
 /**
  * A demo course set up so that one check (or none, for the healthy course) reports a finding.
@@ -22,7 +22,7 @@ namespace local_completiondoctor\tests\demo;
  * Scenarios live in tests/classes/demo/scenario (namespace tests\demo\scenario) and are discovered automatically.
  * They are used by tests/cli/seed_demo.php and by the PHPUnit tests of the checks.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,8 +56,8 @@ abstract class scenario {
      * @return string
      */
     protected function get_fullname(): string {
-        $check = \local_completiondoctor\check\check_registry::get_check($this->get_id());
-        return get_string('demo:course', 'local_completiondoctor', $check ? $check->get_name() : $this->get_id());
+        $check = \local_chronifycompliance\check\check_registry::get_check($this->get_id());
+        return get_string('demo:course', 'local_chronifycompliance', $check ? $check->get_name() : $this->get_id());
     }
 
     /**
@@ -108,7 +108,7 @@ abstract class scenario {
         string $fixture,
         array $overrides = []
     ): \stdClass {
-        $path = \core_component::get_component_directory('local_completiondoctor') . "/tests/fixtures/packages/{$fixture}.zip";
+        $path = \core_component::get_component_directory('local_chronifycompliance') . "/tests/fixtures/packages/{$fixture}.zip";
         return $generator->create_module('scorm', $overrides + [
             'course' => $courseid,
             'packagefilepath' => $path,

@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 use core\check\result;
 
 /**
- * Exposes a Completion Doctor site check through the core Check API
+ * Exposes a Chronify.Compliance site check through the core Check API
  * (Site administration > Reports > System status, and admin/cli/checks.php).
  *
  * The check runs live each time; site checks are cheap and read-only.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ class core_check_adapter extends \core\check\check {
         /** @var base_check The wrapped check. */
         private base_check $check,
     ) {
-        $this->set_component('local_completiondoctor');
+        $this->set_component('local_chronifycompliance');
     }
 
     /**
@@ -56,7 +56,7 @@ class core_check_adapter extends \core\check\check {
      * @return string
      */
     public function get_name(): string {
-        return get_string('pluginname', 'local_completiondoctor') . ': ' . $this->check->get_name();
+        return get_string('pluginname', 'local_chronifycompliance') . ': ' . $this->check->get_name();
     }
 
     /**
@@ -66,8 +66,8 @@ class core_check_adapter extends \core\check\check {
      */
     public function get_action_link(): ?\action_link {
         return new \action_link(
-            new \moodle_url('/admin/settings.php', ['section' => 'local_completiondoctor_checks']),
-            get_string('settings:checks', 'local_completiondoctor')
+            new \moodle_url('/admin/settings.php', ['section' => 'local_chronifycompliance_checks']),
+            get_string('settings:checks', 'local_chronifycompliance')
         );
     }
 
@@ -78,11 +78,11 @@ class core_check_adapter extends \core\check\check {
      */
     public function get_result(): result {
         if (!$this->check->is_enabled()) {
-            return new result(result::NA, get_string('checkdisabled', 'local_completiondoctor'));
+            return new result(result::NA, get_string('checkdisabled', 'local_chronifycompliance'));
         }
         $findings = $this->check->run(new audit_context(get_site()));
         if (!$findings) {
-            return new result(result::OK, get_string('checkok', 'local_completiondoctor'));
+            return new result(result::OK, get_string('checkok', 'local_chronifycompliance'));
         }
         usort($findings, fn(finding $a, finding $b) => $b->severity <=> $a->severity);
         $statuses = [

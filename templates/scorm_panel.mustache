@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/scorm_panel
+    @template local_chronifycompliance/scorm_panel
 
     SCORM package analysis, what learners reported, recommended settings, speed and display.
 
@@ -30,80 +30,80 @@
         "reasons": ["The package reports passed."], "warnings": [], "size": "20 MB", "files": 150,
         "bandwidth": "Works well from 5.4 Mbps.", "stage": "960×540", "stageissues": [], "hasstageissues": false,
         "builds": [], "hasbuilds": false, "builddifferences": [], "findings": [], "hasfindings": false,
-        "courseurl": "https://example.com/local/completiondoctor/course.php?id=2",
+        "courseurl": "https://example.com/local/chronifycompliance/course.php?id=2",
         "editurl": "https://example.com/course/modedit.php?update=5",
-        "refreshurl": "https://example.com/local/completiondoctor/scorm.php?cmid=5", "sesskey": "abc",
+        "refreshurl": "https://example.com/local/chronifycompliance/scorm.php?cmid=5", "sesskey": "abc",
         "pending": false, "checking": false
     }
 }}
-<div class="local-completiondoctor-scorm" data-region="scorm-panel" data-cmid="{{cmid}}">
+<div class="local-chronifycompliance-scorm" data-region="scorm-panel" data-cmid="{{cmid}}">
     <div class="mb-3">
-        <a class="btn btn-outline-secondary" href="{{courseurl}}">{{#str}}panel:backtoreport, local_completiondoctor{{/str}}</a>
-        <a class="btn btn-outline-secondary" href="{{editurl}}">{{#str}}report:editsettings, local_completiondoctor{{/str}}</a>
+        <a class="btn btn-outline-secondary" href="{{courseurl}}">{{#str}}panel:backtoreport, local_chronifycompliance{{/str}}</a>
+        <a class="btn btn-outline-secondary" href="{{editurl}}">{{#str}}report:editsettings, local_chronifycompliance{{/str}}</a>
         <form method="post" action="{{refreshurl}}" class="d-inline">
             <input type="hidden" name="sesskey" value="{{sesskey}}">
             <input type="hidden" name="action" value="refresh">
-            <button type="submit" class="btn btn-secondary">{{#str}}panel:reanalyze, local_completiondoctor{{/str}}</button>
+            <button type="submit" class="btn btn-secondary">{{#str}}panel:reanalyze, local_chronifycompliance{{/str}}</button>
         </form>
     </div>
 
     {{#hasfindings}}
         <section class="mb-4">
-            <h3 class="h5">{{#str}}panel:findings, local_completiondoctor{{/str}}</h3>
-            {{#findings}}{{> local_completiondoctor/finding }}{{/findings}}
+            <h3 class="h5">{{#str}}panel:findings, local_chronifycompliance{{/str}}</h3>
+            {{#findings}}{{> local_chronifycompliance/finding }}{{/findings}}
         </section>
     {{/hasfindings}}
 
-    {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}panel:checking, local_completiondoctor{{/str}}</div>{{/checking}}
+    {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}panel:checking, local_chronifycompliance{{/str}}</div>{{/checking}}
     {{^checking}}{{#pending}}
         <div class="alert alert-info d-flex flex-wrap align-items-center" data-region="pending">
-            <span class="me-2">{{#str}}panel:pending, local_completiondoctor{{/str}}</span>
+            <span class="me-2">{{#str}}panel:pending, local_chronifycompliance{{/str}}</span>
             <form method="post" action="{{refreshurl}}">
                 <input type="hidden" name="sesskey" value="{{sesskey}}">
                 <input type="hidden" name="action" value="analyze">
-                <button type="submit" class="btn btn-sm btn-secondary">{{#str}}report:analyzenow, local_completiondoctor{{/str}}</button>
+                <button type="submit" class="btn btn-sm btn-secondary">{{#str}}report:analyzenow, local_chronifycompliance{{/str}}</button>
             </form>
         </div>
     {{/pending}}{{/checking}}
     {{#error}}<div class="alert alert-warning">{{error}}</div>{{/error}}
 
     <section class="mb-4">
-        <h3 class="h5">{{#str}}panel:package, local_completiondoctor{{/str}}</h3>
+        <h3 class="h5">{{#str}}panel:package, local_chronifycompliance{{/str}}</h3>
         <dl class="row mb-0">
-            <dt class="col-sm-4">{{#str}}panel:version, local_completiondoctor{{/str}}</dt>
+            <dt class="col-sm-4">{{#str}}panel:version, local_chronifycompliance{{/str}}</dt>
             <dd class="col-sm-8">{{version}} {{edition}}</dd>
-            <dt class="col-sm-4">{{#str}}panel:scos, local_completiondoctor{{/str}}</dt>
+            <dt class="col-sm-4">{{#str}}panel:scos, local_chronifycompliance{{/str}}</dt>
             <dd class="col-sm-8">{{scocount}}</dd>
             {{#ok}}
-                <dt class="col-sm-4">{{#str}}panel:tool, local_completiondoctor{{/str}}</dt>
+                <dt class="col-sm-4">{{#str}}panel:tool, local_chronifycompliance{{/str}}</dt>
                 <dd class="col-sm-8">
                     {{tool}} {{toolversion}}
-                    <span class="text-muted">({{#str}}panel:toolconfidence, local_completiondoctor, {{toolconfidence}}{{/str}})</span>
-                    {{#toolexperimental}}<span class="badge bg-secondary text-white">{{#str}}panel:experimental, local_completiondoctor{{/str}}</span>{{/toolexperimental}}
+                    <span class="text-muted">({{#str}}panel:toolconfidence, local_chronifycompliance, {{toolconfidence}}{{/str}})</span>
+                    {{#toolexperimental}}<span class="badge bg-secondary text-white">{{#str}}panel:experimental, local_chronifycompliance{{/str}}</span>{{/toolexperimental}}
                 </dd>
                 {{#reportingmode}}
-                    <dt class="col-sm-4">{{#str}}panel:reportingmode, local_completiondoctor{{/str}}</dt>
+                    <dt class="col-sm-4">{{#str}}panel:reportingmode, local_chronifycompliance{{/str}}</dt>
                     <dd class="col-sm-8">{{reportingmode}}</dd>
                 {{/reportingmode}}
                 {{#masteryscore}}
-                    <dt class="col-sm-4">{{#str}}panel:masteryscore, local_completiondoctor{{/str}}</dt>
+                    <dt class="col-sm-4">{{#str}}panel:masteryscore, local_chronifycompliance{{/str}}</dt>
                     <dd class="col-sm-8">{{masteryscore}}</dd>
                 {{/masteryscore}}
-                <dt class="col-sm-4">{{#str}}panel:size, local_completiondoctor{{/str}}</dt>
-                <dd class="col-sm-8">{{size}}, {{#str}}panel:files, local_completiondoctor, {{files}}{{/str}}</dd>
+                <dt class="col-sm-4">{{#str}}panel:size, local_chronifycompliance{{/str}}</dt>
+                <dd class="col-sm-8">{{size}}, {{#str}}panel:files, local_chronifycompliance, {{files}}{{/str}}</dd>
             {{/ok}}
         </dl>
     </section>
 
     {{#hasbuilds}}
         <section class="mb-4">
-            <h3 class="h5">{{#str}}panel:builds, local_completiondoctor{{/str}}</h3>
+            <h3 class="h5">{{#str}}panel:builds, local_chronifycompliance{{/str}}</h3>
             <table class="table table-sm">
                 <thead><tr>
-                    <th scope="col">{{#str}}panel:build, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:playerversion, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:slides, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:variables, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:build, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:playerversion, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:slides, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:variables, local_chronifycompliance{{/str}}</th>
                 </tr></thead>
                 <tbody>
                     {{#builds}}<tr><td>{{label}}</td><td>{{version}}</td><td>{{slides}}</td><td>{{variables}}</td></tr>{{/builds}}
@@ -114,28 +114,30 @@
     {{/hasbuilds}}
 
     <section class="mb-4">
-        <h3 class="h5">{{#str}}panel:evidence, local_completiondoctor, {{attempts}}{{/str}}</h3>
+        <h3 class="h5">{{#str}}panel:evidence, local_chronifycompliance, {{attempts}}{{/str}}</h3>
+        {{#evidencepending}}<p class="text-muted">{{#str}}panel:evidencepending, local_chronifycompliance{{/str}}</p>{{/evidencepending}}
+        {{#evidencecollected}}<p class="small text-muted">{{#str}}panel:evidencecollected, local_chronifycompliance, {{evidencecollected}}{{/str}}</p>{{/evidencecollected}}
         {{#hasstatuses}}
             <table class="table table-sm w-auto">
                 <thead><tr>
-                    <th scope="col">{{#str}}panel:status, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:count, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:status, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:count, local_chronifycompliance{{/str}}</th>
                 </tr></thead>
                 <tbody>{{#statuses}}<tr><td>{{value}}</td><td>{{count}}</td></tr>{{/statuses}}</tbody>
             </table>
         {{/hasstatuses}}
-        {{^hasstatuses}}<p class="text-muted">{{#str}}panel:nostatuses, local_completiondoctor{{/str}}</p>{{/hasstatuses}}
-        <p class="small text-muted mb-0">{{#str}}panel:evidencedetail, local_completiondoctor, {"nostatus": {{nostatus}}, "withscore": {{withscore}} }{{/str}}</p>
+        {{^hasstatuses}}<p class="text-muted">{{#str}}panel:nostatuses, local_chronifycompliance{{/str}}</p>{{/hasstatuses}}
+        <p class="small text-muted mb-0">{{#str}}panel:evidencedetail, local_chronifycompliance, {"nostatus": {{nostatus}}, "withscore": {{withscore}} }{{/str}}</p>
     </section>
 
     {{#hasrecommendation}}
         <section class="mb-4">
-            <h3 class="h5">{{#str}}panel:recommendation, local_completiondoctor, {{confidence}}{{/str}}</h3>
+            <h3 class="h5">{{#str}}panel:recommendation, local_chronifycompliance, {{confidence}}{{/str}}</h3>
             <table class="table table-sm">
                 <thead><tr>
-                    <th scope="col">{{#str}}report:setting, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:current, local_completiondoctor{{/str}}</th>
-                    <th scope="col">{{#str}}panel:recommended, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}report:setting, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:current, local_chronifycompliance{{/str}}</th>
+                    <th scope="col">{{#str}}panel:recommended, local_chronifycompliance{{/str}}</th>
                 </tr></thead>
                 <tbody>
                     {{#settings}}
@@ -150,9 +152,9 @@
 
     {{#ok}}
         <section class="mb-4">
-            <h3 class="h5">{{#str}}panel:delivery, local_completiondoctor{{/str}}</h3>
+            <h3 class="h5">{{#str}}panel:delivery, local_chronifycompliance{{/str}}</h3>
             <p class="mb-1">{{bandwidth}}</p>
-            {{#stage}}<p class="mb-1">{{#str}}panel:stage, local_completiondoctor, {{stage}}{{/str}}</p>{{/stage}}
+            {{#stage}}<p class="mb-1">{{#str}}panel:stage, local_chronifycompliance, {{stage}}{{/str}}</p>{{/stage}}
             {{#stageissues}}<div class="alert alert-info mb-1">{{.}}</div>{{/stageissues}}
         </section>
     {{/ok}}

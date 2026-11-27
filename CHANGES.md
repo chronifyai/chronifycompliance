@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.3.0 (unreleased): Chronify.Compliance, step A1
+
+- Renamed from Completion Doctor (`local_completiondoctor`) to Chronify.Compliance (`local_chronifycompliance`).
+  This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
+  old upgrade steps are removed.
+- Course completion checks moved from the `check\course` namespace to `check\completion`.
+- Step A2: every check belongs to a pack (Completion, SCORM and content, Site and performance, Security).
+  The registry filters and groups checks by pack, and the checks settings page lists them under a heading per pack.
+  Checks added through the `register_checks` hook can choose a pack; without one they go to Site (site scope)
+  or Completion.
+- Step A3: data layer core. New table `local_chronifycompliance_refresh` holds each dataset's read position
+  (high water mark) and last refresh outcome. Datasets (`data\dataset`, discovered in `data\datasets`) read
+  source rows after the high water mark in batches; the refresher saves each batch and the new mark in one
+  transaction, so an interrupted refresh resumes without duplicates. A scheduled task refreshes due datasets
+  inside the refresh window (default 1 to 5) within a time budget; an ad hoc task serves Refresh now. Both
+  respect Pause all scans. New settings: refresh window, rows per batch, seconds between batches, minutes per run.
+- Step A4: first dataset, Activity. One pass over the standard log fills events per user, course and day
+  (`local_chronifycompliance_actday`), site totals per day with active users, logins, failed logins and completions
+  (`local_chronifycompliance_siteday`), and the latest completion per user and course (`local_chronifycompliance_compl`).
+  The first load reads the last 90 days (setting); daily data is kept 730 days (setting). Privacy API covers the new
+  tables; deleting a course removes its rows. Measured on 100,000 users and 7.5 million log rows in 90 days: first
+  load 39 seconds of work, 13 minutes with the default pause between batches.
+- Step A5: SCORM evidence (what learners' latest attempts reported) is stored in `local_chronifycompliance_scormev`
+  instead of a one-day cache. Checks and background tasks collect it when it is more than a day old; the SCORM panel
+  and the analysis web service only read what is stored and show when it was collected, or that it is not collected
+  yet. Page views no longer read the SCORM tracking tables. The `evidence` cache definition is removed.
+- Step A6: health score (`score\health_score`). Per pack: 100 minus 10 per critical, 3 per warning and 0.5 per info
+  finding (open findings of enabled checks; ignored ones count half), never below 0. Site scores count Completion and
+  SCORM findings per 100 audited courses. Overall: weighted average (Security 35, Completion 30, Site 20, SCORM 15) over
+  packs that have enabled checks. Labels: healthy from 80, needs attention from 50, at risk below. Course scores use
+  the course's own findings. A weekly task stores snapshots (`local_chronifycompliance_score`) for the trend; the
+  cleanup task drops snapshots older than two years.
+- Step A7: tables reserved for later releases: `local_chronifycompliance_connect` (Connect consent and status) and
+  `local_chronifycompliance_fixplan` (signed fix plans). Nothing writes to them yet; they are covered by the Privacy
+  API, course deletion and the cleanup task so the later features start from a complete schema.
+- Step B1: shared page components. Top navigation between the workspaces (only pages that exist are listed); a data
+  age line showing when the data was refreshed, with Refresh now (new web service
+  `local_chronifycompliance_request_refresh`) and refreshing, failed and no data states; an undo toast for 30 seconds
+  after a fix is applied; and a dismissible invitation slot (hidden for 30 days per user, user preferences
+  `local_chronifycompliance_invite_*`) with an admin switch to turn invitations off. An administrator component
+  gallery (`components.php`) shows every component in each state.
+
 ## 0.2.3 (unreleased): QA fixes
 
 - Site dashboard: "Scan all courses" and "Cancel scan" stay together on the right while a scan runs (VM-317).

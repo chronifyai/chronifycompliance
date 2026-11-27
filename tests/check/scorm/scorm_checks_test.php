@@ -14,24 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\scorm_check::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\inspector::class)]
 /**
  * Tests of the SCORM check fixes, using the demo scenarios.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\scorm_check
+ * @covers \local_chronifycompliance\scorm\inspector
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\scorm_check::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\scorm\inspector::class)]
 final class scorm_checks_test extends \advanced_testcase {
     /**
      * Prepare.
@@ -50,7 +52,7 @@ final class scorm_checks_test extends \advanced_testcase {
      * @return \stdClass
      */
     private function scenario(string $id): \stdClass {
-        $class = '\\local_completiondoctor\\tests\\demo\\scenario\\' . $id;
+        $class = '\\local_chronifycompliance\\tests\\demo\\scenario\\' . $id;
         return (new $class())->create($this->getDataGenerator(), (int) $this->getDataGenerator()->create_category()->id);
     }
 
@@ -144,10 +146,10 @@ final class scorm_checks_test extends \advanced_testcase {
         global $DB;
         $course = $this->scenario('scormmultisco');
         $generator = $this->getDataGenerator();
-        $path = \core_component::get_component_directory('local_completiondoctor')
+        $path = \core_component::get_component_directory('local_chronifycompliance')
             . '/tests/fixtures/packages/scorm12_multisco.zip';
         $generator->create_module('scorm', ['course' => $course->id, 'packagefilepath' => $path]);
         course_auditor::audit((int) $course->id, true);
-        $this->assertSame(1, $DB->count_records('local_completiondoctor_pkg'));
+        $this->assertSame(1, $DB->count_records('local_chronifycompliance_pkg'));
     }
 }

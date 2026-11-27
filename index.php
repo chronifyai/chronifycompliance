@@ -15,45 +15,45 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Completion Doctor site dashboard.
+ * Chronify.Compliance site dashboard.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use core_reportbuilder\system_report_factory;
-use local_completiondoctor\check\site_auditor;
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\reportbuilder\local\systemreports\dashboard;
+use local_chronifycompliance\check\site_auditor;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\reportbuilder\local\systemreports\dashboard;
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $action = optional_param('action', '', PARAM_ALPHA);
 
-admin_externalpage_setup('local_completiondoctor_dashboard');
+admin_externalpage_setup('local_chronifycompliance_dashboard');
 $context = context_system::instance();
-require_capability('local/completiondoctor:viewsitereport', $context);
-$url = new moodle_url('/local/completiondoctor/index.php');
+require_capability('local/chronifycompliance:viewsitereport', $context);
+$url = new moodle_url('/local/chronifycompliance/index.php');
 
 if ($action === 'cancel') {
     require_sesskey();
-    require_capability('local/completiondoctor:runscan', $context);
+    require_capability('local/chronifycompliance:runscan', $context);
     $active = scan_manager::get_active_scan();
     if ($active) {
         scan_manager::cancel((int) $active->id);
     }
-    redirect($url, get_string('dashboard:scancancelled', 'local_completiondoctor'), null, \core\output\notification::NOTIFY_INFO);
+    redirect($url, get_string('dashboard:scancancelled', 'local_chronifycompliance'), null, \core\output\notification::NOTIFY_INFO);
 }
 
 if ($action === 'scan') {
     require_sesskey();
-    require_capability('local/completiondoctor:runscan', $context);
+    require_capability('local/chronifycompliance:runscan', $context);
     if (scan_manager::get_active_scan()) {
         redirect(
             $url,
-            get_string('dashboard:scanrunning', 'local_completiondoctor'),
+            get_string('dashboard:scanrunning', 'local_chronifycompliance'),
             null,
             \core\output\notification::NOTIFY_WARNING
         );
@@ -63,7 +63,7 @@ if ($action === 'scan') {
     $scan = scan_manager::get_scan($scanid);
     redirect(
         $url,
-        get_string('dashboard:scanqueued', 'local_completiondoctor', $scan->totalitems),
+        get_string('dashboard:scanqueued', 'local_chronifycompliance', $scan->totalitems),
         null,
         \core\output\notification::NOTIFY_SUCCESS
     );
@@ -75,9 +75,9 @@ if (!in_array($view, ['', 'critical', 'warning', 'info', 'completionoff', 'waiti
     $view = '';
 }
 
-\local_completiondoctor\event\dashboard_viewed::create(['context' => $context])->trigger();
-$renderer = $PAGE->get_renderer('local_completiondoctor');
-$PAGE->requires->js_call_amd('local_completiondoctor/scan_progress', 'init', ['[data-region="scan-progress"]']);
+\local_chronifycompliance\event\dashboard_viewed::create(['context' => $context])->trigger();
+$renderer = $PAGE->get_renderer('local_chronifycompliance');
+$PAGE->requires->js_call_amd('local_chronifycompliance/scan_progress', 'init', ['[data-region="scan-progress"]']);
 
 echo $OUTPUT->header();
 echo $renderer->dashboard_header($view, $checkid);

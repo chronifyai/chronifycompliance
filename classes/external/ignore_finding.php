@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\access;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\access;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Ignore a finding with a reason, or reopen an ignored one.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,11 +66,11 @@ class ignore_finding extends external_api {
         $event = null;
         if ($ignore) {
             $finding = finding_store::ignore($findingid, trim($reason), (int) $USER->id);
-            $event = \local_completiondoctor\event\finding_ignored::class;
+            $event = \local_chronifycompliance\event\finding_ignored::class;
         } else if ($finding->status === finding::STATUS_IGNORED) {
             finding_store::set_status($findingid, finding::STATUS_OPEN);
             $finding = finding_store::get($findingid);
-            $event = \local_completiondoctor\event\finding_reopened::class;
+            $event = \local_chronifycompliance\event\finding_reopened::class;
         }
         if ($event) {
             $event::create(['context' => access::get_finding_context($finding), 'objectid' => $findingid,

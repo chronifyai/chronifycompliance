@@ -15,13 +15,13 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/links_panel
+    @template local_chronifycompliance/links_panel
 
     Links panel of the course report: state of the last link check and the broken links.
 
     Example context (json):
     {
-        "refreshurl": "https://example.com/local/completiondoctor/course.php?id=2#cd-links",
+        "refreshurl": "https://example.com/local/chronifycompliance/course.php?id=2#cd-links",
         "never": false, "starting": false, "scheduled": null, "running": false, "busy": false, "progress": null, "failed": null,
         "checked": "Checked 16 October 2026: 42 links, 1 broken, 1 could not be verified.",
         "nobroken": false, "skipped": null, "skippedfiles": null, "truncated": false, "hasgroups": true,
@@ -36,18 +36,18 @@
     }
 }}
 <section class="mb-4 lcd-links" id="cd-links" aria-labelledby="cd-links-title">
-    <h3 class="h5" id="cd-links-title">{{#str}}links:title, local_completiondoctor{{/str}} <span class="lcd-extra">{{#str}}links:extra, local_completiondoctor{{/str}}</span></h3>
-    {{#never}}{{^busy}}{{^scheduled}}<p class="text-muted">{{#str}}links:never, local_completiondoctor{{/str}}</p>{{/scheduled}}{{/busy}}{{/never}}
-    {{#starting}}<div class="alert alert-info">{{#str}}links:starting, local_completiondoctor{{/str}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_completiondoctor{{/str}}</a></div>{{/starting}}
+    <h3 class="h5" id="cd-links-title">{{#str}}links:title, local_chronifycompliance{{/str}} <span class="lcd-extra">{{#str}}links:extra, local_chronifycompliance{{/str}}</span></h3>
+    {{#never}}{{^busy}}{{^scheduled}}<p class="text-muted">{{#str}}links:never, local_chronifycompliance{{/str}}</p>{{/scheduled}}{{/busy}}{{/never}}
+    {{#starting}}<div class="alert alert-info">{{#str}}links:starting, local_chronifycompliance{{/str}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_chronifycompliance{{/str}}</a></div>{{/starting}}
     {{#scheduled}}<p class="small text-muted">{{scheduled}}</p>{{/scheduled}}
-    {{#running}}<div class="alert alert-info">{{progress}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_completiondoctor{{/str}}</a></div>{{/running}}
+    {{#running}}<div class="alert alert-info">{{progress}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_chronifycompliance{{/str}}</a></div>{{/running}}
     {{#failed}}<div class="alert alert-warning">{{failed}}</div>{{/failed}}
     {{#checked}}
         <p class="mb-2">{{checked}}</p>
-        {{#nobroken}}<p class="text-success mb-2">{{#str}}links:nobroken, local_completiondoctor{{/str}}</p>{{/nobroken}}
+        {{#nobroken}}<p class="text-success mb-2">{{#str}}links:nobroken, local_chronifycompliance{{/str}}</p>{{/nobroken}}
         {{#skipped}}<p class="small text-muted mb-1">{{skipped}}</p>{{/skipped}}
         {{#skippedfiles}}<p class="small text-muted mb-1">{{skippedfiles}}</p>{{/skippedfiles}}
-        {{#truncated}}<p class="small text-muted mb-1">{{#str}}links:truncated, local_completiondoctor{{/str}}</p>{{/truncated}}
+        {{#truncated}}<p class="small text-muted mb-1">{{#str}}links:truncated, local_chronifycompliance{{/str}}</p>{{/truncated}}
     {{/checked}}
     {{#groups}}
         <h4 class="h6 mt-3">{{label}} ({{count}})</h4>
@@ -63,8 +63,8 @@
                             {{#section}}<div class="small text-muted">{{section}}</div>{{/section}}
                         </div>
                         <div class="text-nowrap">
-                            {{#openurl}}<a class="btn btn-sm btn-outline-secondary me-1" href="{{openurl}}">{{#str}}links:open, local_completiondoctor{{/str}}</a>{{/openurl}}
-                            {{#editurl}}<a class="btn btn-sm btn-outline-secondary" href="{{editurl}}">{{#str}}links:edit, local_completiondoctor{{/str}}</a>{{/editurl}}
+                            {{#openurl}}<a class="btn btn-sm btn-outline-secondary me-1" href="{{openurl}}">{{#str}}links:open, local_chronifycompliance{{/str}}</a>{{/openurl}}
+                            {{#editurl}}<a class="btn btn-sm btn-outline-secondary" href="{{editurl}}">{{#str}}links:edit, local_chronifycompliance{{/str}}</a>{{/editurl}}
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
