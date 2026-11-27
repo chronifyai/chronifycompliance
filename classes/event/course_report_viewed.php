@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
  * Completion health report viewed.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ class course_report_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:coursereportviewed', 'local_completiondoctor');
+        return get_string('event:coursereportviewed', 'local_chronifycompliance');
     }
 
     /**
@@ -47,7 +47,7 @@ class course_report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' viewed the Completion Doctor report of the course with id '{$this->courseid}'.";
+        return "The user with id '{$this->userid}' viewed the Chronify.Compliance report of the course with id '{$this->courseid}'.";
     }
 
     /**
@@ -56,6 +56,6 @@ class course_report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/local/completiondoctor/course.php', ['id' => $this->courseid]);
+        return new \moodle_url('/local/chronifycompliance/course.php', ['id' => $this->courseid]);
     }
 }

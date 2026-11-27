@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * Configurable check used by the engine tests.
  *
  * run() returns whatever the static $runner returns. Its fix toggles course.showreports.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

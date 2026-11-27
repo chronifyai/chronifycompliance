@@ -1,7 +1,7 @@
-# Completion Doctor checks
+# Chronify.Compliance checks
 
 Every check is read-only. Fixable checks show a preview first, write a fix log entry, and can be undone.
-Each check can be switched off, or given another severity, in *Site administration > Plugins > Local plugins > Completion Doctor > Checks*.
+Each check can be switched off, or given another severity, in *Site administration > Plugins > Local plugins > Chronify.Compliance > Checks*.
 
 Severity: **Critical** means learners can never complete, or complete when they should not. **Warning** means a likely mistake. **Info** is a suggestion.
 

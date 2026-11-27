@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 (unreleased): Chronify.Compliance, step A1
+
+- Renamed from Completion Doctor (`local_completiondoctor`) to Chronify.Compliance (`local_chronifycompliance`).
+  This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
+  old upgrade steps are removed.
+- Course completion checks moved from the `check\course` namespace to `check\completion`.
+
 ## 0.2.3 (unreleased): QA fixes
 
 - Site dashboard: "Scan all courses" and "Cancel scan" stay together on the right while a scan runs (VM-317).

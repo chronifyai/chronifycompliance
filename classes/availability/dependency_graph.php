@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\availability;
+namespace local_chronifycompliance\availability;
 
-use local_completiondoctor\check\audit_context;
+use local_chronifycompliance\check\audit_context;
 
 /**
  * Graph of "activity A needs activity B to be complete" dependencies in a course, built from the
@@ -25,7 +25,7 @@ use local_completiondoctor\check\audit_context;
  * Only mandatory dependencies are used: conditions under an AND (or a single-child OR) from the root.
  * Optional (OR) and negated conditions cannot cause a dead lock on their own.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

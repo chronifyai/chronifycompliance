@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\criteria_editor;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\criteria_editor;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * A passing grade is required but no pass grade is set.
@@ -29,7 +29,7 @@ use local_completiondoctor\fix\fix_result;
  * Activity: "receive a passing grade" with grade to pass 0 completes on any grade (core treats a
  * missing pass mark as "any grade"). Course grade criterion without a pass value never completes.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -129,7 +129,7 @@ class nopassgrade extends course_check {
         $gradepass = clean_param($params['gradepass'] ?? '', PARAM_FLOAT);
         $max = (float) ($finding->details['grademax'] ?? 0);
         if ($gradepass === null || $gradepass <= 0 || ($max > 0 && $gradepass > $max)) {
-            throw new \invalid_parameter_exception(get_string('fix:error:gradepass', 'local_completiondoctor', $max));
+            throw new \invalid_parameter_exception(get_string('fix:error:gradepass', 'local_chronifycompliance', $max));
         }
         if (isset($finding->details['criterionid'])) {
             $current = (float) criteria_editor::get_grade_criterion($finding->courseid);
@@ -143,7 +143,7 @@ class nopassgrade extends course_check {
         } else {
             $item = \grade_item::fetch(['id' => $finding->details['gradeitemid']]);
             if (!$item) {
-                throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+                throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
             }
             $preview = new fix_preview(
                 'itemgradepass',
@@ -213,9 +213,9 @@ class nopassgrade extends course_check {
         }
         $item = \grade_item::fetch(['id' => $values['gradeitemid']]);
         if (!$item) {
-            throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+            throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
         }
         $item->gradepass = $values['gradepass'];
-        $item->update('local_completiondoctor');
+        $item->update('local_chronifycompliance');
     }
 }

@@ -14,24 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\site;
+namespace local_chronifycompliance\check\site;
 
 use core\check\result;
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\core_check_adapter;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\site_auditor;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\core_check_adapter;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\site_auditor;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Tests of the site checks and their Check API integration.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\site\completiontasks
+ * @covers \local_chronifycompliance\check\site\cronstale
+ * @covers \local_chronifycompliance\check\site\completiondisabled
+ * @covers \local_chronifycompliance\check\core_check_adapter
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(completiontasks::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(cronstale::class)]
@@ -107,7 +111,7 @@ final class site_checks_test extends \advanced_testcase {
         $this->assertSame('check:completiontasks:messagestale', $findings[0]->messagekey);
         $this->assertSame(base_check::SEVERITY_WARNING, $findings[0]->severity);
 
-        set_config('completiontaskmaxage', 180, 'local_completiondoctor');
+        set_config('completiontaskmaxage', 180, 'local_chronifycompliance');
         $this->assertSame([], $this->run_check('completiontasks'));
 
         $this->set_task($regular, false, time() - 60, 120);
@@ -132,7 +136,7 @@ final class site_checks_test extends \advanced_testcase {
     public function test_cronstale(): void {
         set_config('lastcronstart', time() - HOURSECS, 'tool_task');
         $this->assertSame('check:cronstale:message', $this->run_check('cronstale')[0]->messagekey);
-        set_config('cronmaxage', 120, 'local_completiondoctor');
+        set_config('cronmaxage', 120, 'local_chronifycompliance');
         $this->assertSame([], $this->run_check('cronstale'));
 
         unset_config('lastcronstart', 'tool_task');
@@ -173,14 +177,14 @@ final class site_checks_test extends \advanced_testcase {
             $checks[$check->get_ref()] = $check;
         }
         foreach (['completiontasks', 'cronstale', 'completiondisabled'] as $id) {
-            $this->assertArrayHasKey('local_completiondoctor_' . $id, $checks);
+            $this->assertArrayHasKey('local_chronifycompliance_' . $id, $checks);
         }
-        $this->assertSame(result::OK, $checks['local_completiondoctor_cronstale']->get_result()->get_status());
+        $this->assertSame(result::OK, $checks['local_chronifycompliance_cronstale']->get_result()->get_status());
 
         set_config('cron_enabled', 0);
-        $this->assertSame(result::CRITICAL, $checks['local_completiondoctor_cronstale']->get_result()->get_status());
+        $this->assertSame(result::CRITICAL, $checks['local_chronifycompliance_cronstale']->get_result()->get_status());
 
-        set_config('enabled_cronstale', 0, 'local_completiondoctor');
-        $this->assertSame(result::NA, $checks['local_completiondoctor_cronstale']->get_result()->get_status());
+        set_config('enabled_cronstale', 0, 'local_chronifycompliance');
+        $this->assertSame(result::NA, $checks['local_chronifycompliance_cronstale']->get_result()->get_status());
     }
 }

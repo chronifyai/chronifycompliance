@@ -1,4 +1,4 @@
-/* Completion Doctor: health tiles, pills, bars and chips. Colors are tints readable on light themes. */
+/* Chronify.Compliance: health tiles, pills, bars and chips. Colors are tints readable on light themes. */
 .lcd-tiles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));

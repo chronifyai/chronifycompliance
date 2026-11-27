@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/summary_bar
+    @template local_chronifycompliance/summary_bar
 
     Course health tiles: open findings by severity and the time of the last check.
 
@@ -27,26 +27,26 @@
 }}
 <div class="lcd-tiles lcd-tiles-course mb-3" role="status">
     <div class="lcd-tile lcd-tile-critical">
-        <span class="lcd-tile-label">{{#str}}severity:critical, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-label">{{#str}}severity:critical, local_chronifycompliance{{/str}}</span>
         <span class="lcd-tile-value">{{critical}}</span>
-        <span class="lcd-tile-detail">{{#str}}report:tile:critical, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:critical, local_chronifycompliance{{/str}}</span>
     </div>
     <div class="lcd-tile lcd-tile-warning">
-        <span class="lcd-tile-label">{{#str}}severity:warning, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-label">{{#str}}severity:warning, local_chronifycompliance{{/str}}</span>
         <span class="lcd-tile-value">{{warning}}</span>
-        <span class="lcd-tile-detail">{{#str}}report:tile:warning, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:warning, local_chronifycompliance{{/str}}</span>
     </div>
     <div class="lcd-tile lcd-tile-info">
-        <span class="lcd-tile-label">{{#str}}severity:info, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-label">{{#str}}severity:info, local_chronifycompliance{{/str}}</span>
         <span class="lcd-tile-value">{{info}}</span>
-        <span class="lcd-tile-detail">{{#str}}report:tile:info, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:info, local_chronifycompliance{{/str}}</span>
     </div>
     <div class="lcd-tile {{#healthy}}lcd-tile-healthy{{/healthy}}{{^healthy}}lcd-tile-neutral{{/healthy}}">
-        <span class="lcd-tile-label">{{#str}}report:tile:lastcheck, local_completiondoctor{{/str}}</span>
-        <span class="lcd-tile-value lcd-tile-value-small">{{#lastaudit}}{{lastaudit}}{{/lastaudit}}{{#neveraudited}}{{#str}}report:neveraudited, local_completiondoctor{{/str}}{{/neveraudited}}</span>
-        <span class="lcd-tile-detail">{{#healthy}}{{#str}}report:healthy, local_completiondoctor{{/str}}{{/healthy}}{{^healthy}}{{#str}}report:tile:total, local_completiondoctor, {{total}}{{/str}}{{/healthy}}</span>
+        <span class="lcd-tile-label">{{#str}}report:tile:lastcheck, local_chronifycompliance{{/str}}</span>
+        <span class="lcd-tile-value lcd-tile-value-small">{{#lastaudit}}{{lastaudit}}{{/lastaudit}}{{#neveraudited}}{{#str}}report:neveraudited, local_chronifycompliance{{/str}}{{/neveraudited}}</span>
+        <span class="lcd-tile-detail">{{#healthy}}{{#str}}report:healthy, local_chronifycompliance{{/str}}{{/healthy}}{{^healthy}}{{#str}}report:tile:total, local_chronifycompliance, {{total}}{{/str}}{{/healthy}}</span>
     </div>
 </div>
 {{#checkerrors}}
-    <div class="alert alert-warning">{{#str}}report:checkerrors, local_completiondoctor, {{checkerrors}}{{/str}}</div>
+    <div class="alert alert-warning">{{#str}}report:checkerrors, local_chronifycompliance, {{checkerrors}}{{/str}}</div>
 {{/checkerrors}}

@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\tests\demo\scenario;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\tests\demo\scenario;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Tests of the course checks: fixes with undo, and edge cases not covered by the demo scenarios.
@@ -31,15 +31,19 @@ use local_completiondoctor\local\finding_store;
  * The demo scenarios (tested in seeder_test) prove that each check fires on its bad course and that
  * the healthy course is clean.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\course_check
+ * @covers \local_chronifycompliance\availability\tree_validator
+ * @covers \local_chronifycompliance\availability\dependency_graph
+ * @covers \local_chronifycompliance\fix\criteria_editor
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course_check::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\availability\tree_validator::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\availability\dependency_graph::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\fix\criteria_editor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\course_check::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\tree_validator::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\dependency_graph::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\fix\criteria_editor::class)]
 final class course_checks_test extends \advanced_testcase {
     /** @var int Demo category. */
     private int $categoryid;
@@ -73,7 +77,7 @@ final class course_checks_test extends \advanced_testcase {
      * @return \stdClass
      */
     private function scenario(string $id): \stdClass {
-        $class = '\\local_completiondoctor\\tests\\demo\\scenario\\' . $id;
+        $class = '\\local_chronifycompliance\\tests\\demo\\scenario\\' . $id;
         /** @var scenario $scenario */
         $scenario = new $class();
         return $scenario->create($this->getDataGenerator(), $this->categoryid);
@@ -150,7 +154,7 @@ final class course_checks_test extends \advanced_testcase {
      */
     private function fix_undo_last(int $courseid): void {
         global $DB;
-        $logs = $DB->get_records('local_completiondoctor_fixlog', ['courseid' => $courseid, 'undone' => 0], 'id DESC');
+        $logs = $DB->get_records('local_chronifycompliance_fixlog', ['courseid' => $courseid, 'undone' => 0], 'id DESC');
         $this->assertTrue(fixer::undo((int) reset($logs)->id, 2)->success);
     }
 
@@ -257,7 +261,7 @@ final class course_checks_test extends \advanced_testcase {
     public function test_tree_validator(): void {
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
         $context = new audit_context(get_course($course->id));
-        $validator = new \local_completiondoctor\availability\tree_validator($context, 1000);
+        $validator = new \local_chronifycompliance\availability\tree_validator($context, 1000);
         $missinggroup = ['type' => 'group', 'id' => 999999];
         $anygroup = ['type' => 'group'];
         $past = ['type' => 'date', 'd' => '<', 't' => 500];

@@ -14,15 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Tests of the SCORM package analysis, on the synthetic packages in tests/fixtures/packages.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\scorm\package_reader
+ * @covers \local_chronifycompliance\scorm\manifest_parser
+ * @covers \local_chronifycompliance\scorm\tool_detector
+ * @covers \local_chronifycompliance\scorm\bandwidth_estimator
+ * @covers \local_chronifycompliance\scorm\media_probe
+ * @covers \local_chronifycompliance\scorm\package_analyzer
+ * @covers \local_chronifycompliance\scorm\stage_detector
+ * @covers \local_chronifycompliance\scorm\build_detector
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(package_reader::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(manifest_parser::class)]
@@ -59,7 +67,7 @@ final class analyzer_test extends \advanced_testcase {
         $this->assertTrue($reader->exists('index.html'));
         $reader->close();
 
-        set_config('maxpackagesize', 1, 'local_completiondoctor');
+        set_config('maxpackagesize', 1, 'local_chronifycompliance');
         try {
             new package_reader($this->fixture('heavy_media'));
             $this->fail('Size limit not enforced');
@@ -165,7 +173,7 @@ final class analyzer_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $file = get_file_storage()->create_file_from_pathname([
-            'contextid' => \context_system::instance()->id, 'component' => 'local_completiondoctor', 'filearea' => 'test',
+            'contextid' => \context_system::instance()->id, 'component' => 'local_chronifycompliance', 'filearea' => 'test',
             'itemid' => 0, 'filepath' => '/', 'filename' => 'p.zip',
         ], $this->fixture('storyline_fake'));
         $first = package_analyzer::analyze_stored_file($file);

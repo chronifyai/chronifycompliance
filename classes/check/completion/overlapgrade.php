@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\availability\dependency_graph;
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\activity_completion;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\availability\dependency_graph;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\activity_completion;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * "Receive a grade" is used without "receive a passing grade" although the activity has a pass grade.
@@ -33,7 +33,7 @@ use local_completiondoctor\fix\fix_result;
  * often not what the teacher expects (info).
  * Only activities that count (course criteria or completion restrictions) are reported.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -136,7 +136,7 @@ class overlapgrade extends course_check {
             ['cmid' => $finding->cmid, 'completionpassgrade' => 1]
         );
         $preview->add_row(get_string('completionpassgrade', 'completion'), get_string('no'), get_string('yes'));
-        $preview->add_warning(get_string('fix:warning:norecalculation', 'local_completiondoctor'));
+        $preview->add_warning(get_string('fix:warning:norecalculation', 'local_chronifycompliance'));
         return $preview;
     }
 

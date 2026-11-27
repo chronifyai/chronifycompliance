@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 /**
  * Tests for the finding value object.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\finding
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(finding::class)]
 final class finding_test extends \advanced_testcase {
@@ -95,7 +96,7 @@ final class finding_test extends \advanced_testcase {
      */
     public function test_get_message(): void {
         $finding = new finding('x', 5, 2, 'pluginname');
-        $this->assertSame('Completion Doctor', $finding->get_message());
+        $this->assertSame('Chronify.Compliance', $finding->get_message());
         $finding = new finding('x', 5, 2, 'nosuchstring');
         $this->assertSame('x: nosuchstring', $finding->get_message());
     }

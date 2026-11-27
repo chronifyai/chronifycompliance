@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Library callbacks for Completion Doctor.
+ * Library callbacks for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,11 +27,11 @@
  *
  * @return \core\check\check[]
  */
-function local_completiondoctor_status_checks(): array {
+function local_chronifycompliance_status_checks(): array {
     $checks = [];
-    $sitechecks = \local_completiondoctor\check\check_registry::get_checks([\local_completiondoctor\check\base_check::SCOPE_SITE]);
+    $sitechecks = \local_chronifycompliance\check\check_registry::get_checks([\local_chronifycompliance\check\base_check::SCOPE_SITE]);
     foreach ($sitechecks as $check) {
-        $checks[] = new \local_completiondoctor\check\core_check_adapter($check);
+        $checks[] = new \local_chronifycompliance\check\core_check_adapter($check);
     }
     return $checks;
 }
@@ -43,16 +43,16 @@ function local_completiondoctor_status_checks(): array {
  * @param stdClass $course
  * @param context $context
  */
-function local_completiondoctor_extend_navigation_course(navigation_node $navigation, stdClass $course, context $context): void {
-    if ((int) $course->id === (int) SITEID || !has_capability('local/completiondoctor:viewcoursereport', $context)) {
+function local_chronifycompliance_extend_navigation_course(navigation_node $navigation, stdClass $course, context $context): void {
+    if ((int) $course->id === (int) SITEID || !has_capability('local/chronifycompliance:viewcoursereport', $context)) {
         return;
     }
     $navigation->add(
-        get_string('report:navigation', 'local_completiondoctor'),
-        new moodle_url('/local/completiondoctor/course.php', ['id' => $course->id]),
+        get_string('report:navigation', 'local_chronifycompliance'),
+        new moodle_url('/local/chronifycompliance/course.php', ['id' => $course->id]),
         navigation_node::TYPE_SETTING,
         null,
-        'local_completiondoctor_report',
+        'local_chronifycompliance_report',
         new pix_icon('i/report', '')
     );
 }

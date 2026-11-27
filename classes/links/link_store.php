@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
 use stdClass;
 
 /**
  * Stores the links found by the last link check of each course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class link_store {
     /** @var string Link table. */
-    public const TABLE = 'local_completiondoctor_link';
+    public const TABLE = 'local_chronifycompliance_link';
 
     /**
      * Replace the links of a course with the result of a new check.

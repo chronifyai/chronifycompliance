@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor;
+namespace local_chronifycompliance;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\site_auditor;
-use local_completiondoctor\tests\demo\seeder;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\site_auditor;
+use local_chronifycompliance\tests\demo\seeder;
 
 /**
  * Proves that audits never write to tables outside the plugin.
@@ -26,10 +26,11 @@ use local_completiondoctor\tests\demo\seeder;
  * Every non-plugin table is counted and checksummed (max id and max timemodified where present)
  * before and after auditing all demo courses and the site.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversNothing
  */
 #[\PHPUnit\Framework\Attributes\CoversNothing]
 final class readonly_audit_test extends \advanced_testcase {
@@ -42,7 +43,7 @@ final class readonly_audit_test extends \advanced_testcase {
         global $DB;
         $snapshot = [];
         foreach ($DB->get_tables(false) as $table) {
-            if (str_starts_with($table, 'local_completiondoctor_')) {
+            if (str_starts_with($table, 'local_chronifycompliance_')) {
                 continue;
             }
             $columns = $DB->get_columns($table, false);

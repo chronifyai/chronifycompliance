@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 use cm_info;
-use local_completiondoctor\fix\activity_completion;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
-use local_completiondoctor\scorm\inspector;
+use local_chronifycompliance\fix\activity_completion;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
+use local_chronifycompliance\scorm\inspector;
 
 /**
  * Base class of the SCORM checks, with the shared "apply settings" fix.
  *
  * Fixable SCORM findings store the recommended scorm table values in details['recommended'].
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -88,7 +88,7 @@ abstract class scorm_check extends course_check {
      * @return string
      */
     public static function format_value(string $field, $value): string {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         if ($field === 'completionstatusrequired') {
             return get_string('scorm:status:' . (int) $value, $component);
         }
@@ -138,14 +138,14 @@ abstract class scorm_check extends course_check {
             $before[$field] = $current;
             $after[$field] = $value;
             $preview->add_row(
-                get_string('scorm:field:' . $field, 'local_completiondoctor'),
+                get_string('scorm:field:' . $field, 'local_chronifycompliance'),
                 self::format_value($field, $current),
                 self::format_value($field, $value)
             );
         }
         $preview->before = $before;
         $preview->after = $after;
-        $preview->add_warning(get_string('fix:warning:norecalculation', 'local_completiondoctor'));
+        $preview->add_warning(get_string('fix:warning:norecalculation', 'local_chronifycompliance'));
         return $preview;
     }
 

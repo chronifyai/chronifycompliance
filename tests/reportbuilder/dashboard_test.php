@@ -14,19 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\reportbuilder;
+namespace local_chronifycompliance\reportbuilder;
 
 use core_reportbuilder\system_report_factory;
-use local_completiondoctor\local\dashboard_data;
-use local_completiondoctor\reportbuilder\local\systemreports\dashboard;
+use local_chronifycompliance\local\dashboard_data;
+use local_chronifycompliance\reportbuilder\local\systemreports\dashboard;
 
 /**
  * Tests for the site dashboard system report.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\reportbuilder\local\systemreports\dashboard
+ * @covers \local_chronifycompliance\local\dashboard_data
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(dashboard::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(dashboard_data::class)]
@@ -64,7 +66,7 @@ final class dashboard_test extends \advanced_testcase {
         global $DB, $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $PAGE->set_url('/local/completiondoctor/index.php');
+        $PAGE->set_url('/local/chronifycompliance/index.php');
         $generator = $this->getDataGenerator();
         $audits = [
             'Mixed course' => [1, 1, 1],
@@ -74,7 +76,7 @@ final class dashboard_test extends \advanced_testcase {
         ];
         foreach ($audits as $name => [$critical, $warning, $info]) {
             $course = $generator->create_course(['fullname' => $name, 'enablecompletion' => 1]);
-            $DB->insert_record('local_completiondoctor_audit', ['courseid' => $course->id, 'timeaudited' => time(),
+            $DB->insert_record('local_chronifycompliance_audit', ['courseid' => $course->id, 'timeaudited' => time(),
                 'critical' => $critical, 'warning' => $warning, 'info' => $info]);
         }
 

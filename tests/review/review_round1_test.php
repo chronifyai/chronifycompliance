@@ -14,29 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor;
+namespace local_chronifycompliance;
 
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\links\link_checker;
-use local_completiondoctor\links\link_scan;
-use local_completiondoctor\links\link_store;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\scorm\package_analyzer;
-use local_completiondoctor\task\audit_course;
-use local_completiondoctor\task\check_course;
-use local_completiondoctor\task\cleanup;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\links\link_checker;
+use local_chronifycompliance\links\link_scan;
+use local_chronifycompliance\links\link_store;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\scorm\package_analyzer;
+use local_chronifycompliance\task\audit_course;
+use local_chronifycompliance\task\check_course;
+use local_chronifycompliance\task\cleanup;
 
 /**
  * Tests for the fixes of code review rounds 1 and 2: background requests, paused and cancelled scans,
  * package locks, dead link checks, bulk timestamps and the per-audit prerequisite cache.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\task\check_course
+ * @covers \local_chronifycompliance\local\audit_store
+ * @covers \local_chronifycompliance\local\scan_manager
+ * @covers \local_chronifycompliance\task\audit_course
+ * @covers \local_chronifycompliance\scorm\package_analyzer
+ * @covers \local_chronifycompliance\links\link_scan
+ * @covers \local_chronifycompliance\links\link_store
+ * @covers \local_chronifycompliance\local\finding_store
+ * @covers \local_chronifycompliance\check\completion\circular
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(check_course::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(audit_store::class)]
@@ -46,7 +55,7 @@ use local_completiondoctor\task\cleanup;
 #[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\check\course\circular::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\circular::class)]
 final class review_round1_test extends \advanced_testcase {
     /**
      * Reset after each test.
@@ -111,19 +120,19 @@ final class review_round1_test extends \advanced_testcase {
         $fresh = $this->course();
         audit_store::request((int) $fresh->id);
 
-        $dead = $DB->insert_record('local_completiondoctor_linkcheck', ['courseid' => $course->id, 'status' => 'running',
+        $dead = $DB->insert_record('local_chronifycompliance_linkcheck', ['courseid' => $course->id, 'status' => 'running',
             'timecreated' => time(), 'timemodified' => time() - link_scan::STUCK_AFTER - 1]);
-        $alive = $DB->insert_record('local_completiondoctor_linkcheck', ['courseid' => $fresh->id, 'status' => 'running',
+        $alive = $DB->insert_record('local_chronifycompliance_linkcheck', ['courseid' => $fresh->id, 'status' => 'running',
             'timecreated' => time(), 'timemodified' => time()]);
 
         $this->expectOutputRegex('/cleanup/');
         (new cleanup())->execute();
         $this->assertSame(0, audit_store::get_requested((int) $course->id));
         $this->assertGreaterThan(0, audit_store::get_requested((int) $fresh->id));
-        $this->assertSame(link_scan::STATUS_FAILED, $DB->get_field('local_completiondoctor_linkcheck', 'status', ['id' => $dead]));
+        $this->assertSame(link_scan::STATUS_FAILED, $DB->get_field('local_chronifycompliance_linkcheck', 'status', ['id' => $dead]));
         $this->assertSame(
             link_scan::STATUS_RUNNING,
-            $DB->get_field('local_completiondoctor_linkcheck', 'status', ['id' => $alive])
+            $DB->get_field('local_chronifycompliance_linkcheck', 'status', ['id' => $alive])
         );
     }
 
@@ -133,7 +142,7 @@ final class review_round1_test extends \advanced_testcase {
     public function test_dead_link_check_does_not_block(): void {
         global $DB;
         $course = $this->course();
-        $DB->insert_record('local_completiondoctor_linkcheck', ['courseid' => $course->id, 'status' => 'running',
+        $DB->insert_record('local_chronifycompliance_linkcheck', ['courseid' => $course->id, 'status' => 'running',
             'timecreated' => time(), 'timemodified' => time() - link_scan::STUCK_AFTER - 1]);
         $this->assertTrue(link_scan::queue((int) $course->id, 2));
         $this->assertSame(link_scan::STATUS_QUEUED, link_scan::get_state((int) $course->id)->status);
@@ -148,12 +157,12 @@ final class review_round1_test extends \advanced_testcase {
         $scanid = scan_manager::start_scan(0, null, null, ['nocriteria']);
         $DB->set_field(scan_manager::TABLE, 'timemodified', time() - scan_manager::STUCK_AFTER - 1, ['id' => $scanid]);
 
-        set_config('paused', 1, 'local_completiondoctor');
+        set_config('paused', 1, 'local_chronifycompliance');
         $this->expectOutputRegex('/batch postponed/');
         $this->runAdhocTasks(audit_course::class);
         $this->assertGreaterThan(time() - 60, (int) $DB->get_field(scan_manager::TABLE, 'timemodified', ['id' => $scanid]));
 
-        set_config('paused', 0, 'local_completiondoctor');
+        set_config('paused', 0, 'local_chronifycompliance');
         $this->assertSame((int) $scanid, (int) scan_manager::get_active_scan()->id);
         $this->assertSame(0, scan_manager::cancel_stuck());
 
@@ -184,7 +193,7 @@ final class review_round1_test extends \advanced_testcase {
     public function test_cancelled_scan_while_paused(): void {
         global $DB;
         $this->course();
-        set_config('paused', 1, 'local_completiondoctor');
+        set_config('paused', 1, 'local_chronifycompliance');
         $scanid = scan_manager::start_scan(0, null, null, ['nocriteria']);
         scan_manager::cancel($scanid);
 
@@ -201,10 +210,10 @@ final class review_round1_test extends \advanced_testcase {
         // Database locks are re-entrant within one connection; file locks are not, so the test can hold one.
         $CFG->lock_factory = '\\core\\lock\\file_lock_factory';
         $file = get_file_storage()->create_file_from_pathname([
-            'contextid' => \context_system::instance()->id, 'component' => 'local_completiondoctor', 'filearea' => 'test',
+            'contextid' => \context_system::instance()->id, 'component' => 'local_chronifycompliance', 'filearea' => 'test',
             'itemid' => 0, 'filepath' => '/', 'filename' => 'p.zip',
         ], __DIR__ . '/../fixtures/packages/storyline_fake.zip');
-        $factory = \core\lock\lock_config::get_lock_factory('local_completiondoctor');
+        $factory = \core\lock\lock_config::get_lock_factory('local_chronifycompliance');
         $lock = $factory->get_lock('package_' . $file->get_contenthash(), 0);
         $this->assertNotFalse($lock);
         try {
@@ -224,8 +233,8 @@ final class review_round1_test extends \advanced_testcase {
         course_auditor::audit((int) $course->id, true, ['nocriteria']);
         $DB->set_field(finding_store::TABLE, 'timemodified', 1000, ['courseid' => $course->id]);
 
-        set_config('enabled_nocriteria', 0, 'local_completiondoctor');
-        \local_completiondoctor\check\check_registry::reset();
+        set_config('enabled_nocriteria', 0, 'local_chronifycompliance');
+        \local_chronifycompliance\check\check_registry::reset();
         finding_store::apply_enabled_setting('nocriteria');
         $finding = $DB->get_record(finding_store::TABLE, ['courseid' => $course->id]);
         $this->assertSame(finding::STATUS_RESOLVED, $finding->status);

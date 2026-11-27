@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Reads the bitrate of media files in pure PHP, from a forward-only stream.
@@ -22,7 +22,7 @@ namespace local_completiondoctor\scorm;
  * MP4/M4A/M4V/MOV: walks the top-level atoms to moov/mvhd to get the duration (skipping mdat by
  * reading and discarding, as zip streams cannot seek). MP3: bitrate from the first frame header.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

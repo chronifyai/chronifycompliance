@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor;
+namespace local_chronifycompliance;
 
 /**
- * Installation smoke tests for Completion Doctor.
+ * Installation smoke tests for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversNothing
  */
 #[\PHPUnit\Framework\Attributes\CoversNothing]
 final class install_test extends \advanced_testcase {
@@ -31,12 +32,12 @@ final class install_test extends \advanced_testcase {
      */
     public function test_capabilities_installed(): void {
         $expected = [
-            'local/completiondoctor:viewcoursereport' => CONTEXT_COURSE,
-            'local/completiondoctor:viewlearnerdiagnostic' => CONTEXT_COURSE,
-            'local/completiondoctor:ignorefinding' => CONTEXT_COURSE,
-            'local/completiondoctor:applyfix' => CONTEXT_COURSE,
-            'local/completiondoctor:viewsitereport' => CONTEXT_SYSTEM,
-            'local/completiondoctor:runscan' => CONTEXT_SYSTEM,
+            'local/chronifycompliance:viewcoursereport' => CONTEXT_COURSE,
+            'local/chronifycompliance:viewlearnerdiagnostic' => CONTEXT_COURSE,
+            'local/chronifycompliance:ignorefinding' => CONTEXT_COURSE,
+            'local/chronifycompliance:applyfix' => CONTEXT_COURSE,
+            'local/chronifycompliance:viewsitereport' => CONTEXT_SYSTEM,
+            'local/chronifycompliance:runscan' => CONTEXT_SYSTEM,
         ];
         foreach ($expected as $name => $contextlevel) {
             $capability = get_capability_info($name);
@@ -61,7 +62,7 @@ final class install_test extends \advanced_testcase {
             $users[$role] = $generator->create_and_enrol($course, $role);
         }
 
-        $capabilities = $DB->get_fieldset_select('capabilities', 'name', 'component = ?', ['local_completiondoctor']);
+        $capabilities = $DB->get_fieldset_select('capabilities', 'name', 'component = ?', ['local_chronifycompliance']);
         $this->assertCount(7, $capabilities);
         foreach ($capabilities as $capability) {
             foreach ($users as $role => $user) {
