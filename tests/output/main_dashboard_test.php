@@ -39,7 +39,7 @@ final class main_dashboard_test extends \advanced_testcase {
      *
      * @return \renderer_base
      */
-    private function output(): \renderer_base {
+    private function get_output(): \renderer_base {
         global $PAGE;
         $PAGE->set_url('/local/chronifycompliance/index.php');
         $PAGE->set_context(\context_system::instance());
@@ -52,7 +52,7 @@ final class main_dashboard_test extends \advanced_testcase {
     public function test_not_set_up_and_scanning(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
-        $output = $this->output();
+        $output = $this->get_output();
 
         $data = (new main_dashboard())->export_for_template($output);
         $this->assertTrue($data['notsetup']);
@@ -80,7 +80,7 @@ final class main_dashboard_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $output = $this->output();
+        $output = $this->get_output();
         $courses = seeder::seed(['nopassgrade', 'nocriteria', 'weakcondition', 'healthy']);
         foreach ($courses as $courseid) {
             course_auditor::audit($courseid, true);
@@ -142,7 +142,7 @@ final class main_dashboard_test extends \advanced_testcase {
             course_auditor::audit($courseid, true);
         }
         $DB->set_field('local_chronifycompliance_finding', 'status', finding::STATUS_IGNORED, []);
-        $data = (new main_dashboard())->export_for_template($this->output());
+        $data = (new main_dashboard())->export_for_template($this->get_output());
         $this->assertFalse($data['hasactions']);
     }
 }
