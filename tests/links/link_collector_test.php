@@ -19,6 +19,10 @@ namespace local_chronifycompliance\links;
 use local_chronifycompliance\local\scan_manager;
 use local_chronifycompliance\task\check_links;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_collector::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(check_links::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\output\renderer::class)]
 /**
  * Tests of collecting the links of a course and of the link check task.
  *
@@ -31,10 +35,6 @@ use local_chronifycompliance\task\check_links;
  * @covers \local_chronifycompliance\task\check_links
  * @covers \local_chronifycompliance\output\renderer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_collector::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(check_links::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\output\renderer::class)]
 final class link_collector_test extends \advanced_testcase {
     /**
      * A course with links in many places.

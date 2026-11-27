@@ -22,6 +22,8 @@ use local_chronifycompliance\check\finding;
 use local_chronifycompliance\fix\fixer;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scormquiz::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\runtime_evidence::class)]
 /**
  * Tests of the SCORM quiz and completion check.
  *
@@ -32,8 +34,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\check\scorm\scormquiz
  * @covers \local_chronifycompliance\scorm\runtime_evidence
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scormquiz::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\runtime_evidence::class)]
 final class scormquiz_test extends \advanced_testcase {
     /**
      * Prepare.

@@ -20,6 +20,8 @@ use local_chronifycompliance\tests\check_testcase_trait;
 use local_chronifycompliance\tests\fake_check;
 use local_chronifycompliance\tests\fake_site_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(check_registry::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\hook\register_checks::class)]
 /**
  * Tests for the check registry and the register_checks hook.
  *
@@ -30,8 +32,6 @@ use local_chronifycompliance\tests\fake_site_check;
  * @covers \local_chronifycompliance\check\check_registry
  * @covers \local_chronifycompliance\hook\register_checks
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(check_registry::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\hook\register_checks::class)]
 final class check_registry_test extends \advanced_testcase {
     use check_testcase_trait;
 

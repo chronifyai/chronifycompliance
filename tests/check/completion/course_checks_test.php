@@ -25,6 +25,10 @@ use local_chronifycompliance\fix\fixer;
 use local_chronifycompliance\tests\demo\scenario;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\course_check::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\tree_validator::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\dependency_graph::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\fix\criteria_editor::class)]
 /**
  * Tests of the course checks: fixes with undo, and edge cases not covered by the demo scenarios.
  *
@@ -40,10 +44,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\availability\dependency_graph
  * @covers \local_chronifycompliance\fix\criteria_editor
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\course_check::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\tree_validator::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\availability\dependency_graph::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\fix\criteria_editor::class)]
 final class course_checks_test extends \advanced_testcase {
     /** @var int Demo category. */
     private int $categoryid;

@@ -16,6 +16,8 @@
 
 namespace local_chronifycompliance\scorm;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(recommender::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 /**
  * Tests of the runtime evidence and the recommender.
  *
@@ -26,8 +28,6 @@ namespace local_chronifycompliance\scorm;
  * @covers \local_chronifycompliance\scorm\recommender
  * @covers \local_chronifycompliance\scorm\runtime_evidence
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(recommender::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 final class recommender_test extends \advanced_testcase {
     /**
      * A scorm record with completion settings.

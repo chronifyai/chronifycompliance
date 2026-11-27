@@ -20,6 +20,8 @@ use core_reportbuilder\system_report_factory;
 use local_chronifycompliance\local\dashboard_data;
 use local_chronifycompliance\reportbuilder\local\systemreports\dashboard;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(dashboard::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(dashboard_data::class)]
 /**
  * Tests for the site dashboard system report.
  *
@@ -30,8 +32,6 @@ use local_chronifycompliance\reportbuilder\local\systemreports\dashboard;
  * @covers \local_chronifycompliance\reportbuilder\local\systemreports\dashboard
  * @covers \local_chronifycompliance\local\dashboard_data
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(dashboard::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(dashboard_data::class)]
 final class dashboard_test extends \advanced_testcase {
     /**
      * Downloads have no row actions: core builds them after the session is closed.

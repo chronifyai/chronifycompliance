@@ -25,6 +25,7 @@ use local_chronifycompliance\fix\fix_log;
 use local_chronifycompliance\local\finding_store;
 use local_chronifycompliance\local\scan_manager;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(provider::class)]
 /**
  * Privacy provider tests.
  *
@@ -34,7 +35,6 @@ use local_chronifycompliance\local\scan_manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\privacy\provider
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     /** @var \stdClass Course. */
     private \stdClass $course;

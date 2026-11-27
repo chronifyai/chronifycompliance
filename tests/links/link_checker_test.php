@@ -23,6 +23,8 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once(__DIR__ . '/../classes/fake_http_client.php');
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_checker::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
 /**
  * Tests of checking single links, with a fake HTTP client.
  *
@@ -33,8 +35,6 @@ require_once(__DIR__ . '/../classes/fake_http_client.php');
  * @covers \local_chronifycompliance\links\link_checker
  * @covers \local_chronifycompliance\links\link_store
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_checker::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
 final class link_checker_test extends \advanced_testcase {
     /** @var fake_http_client */
     private fake_http_client $http;

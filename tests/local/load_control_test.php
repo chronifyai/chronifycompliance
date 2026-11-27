@@ -23,6 +23,10 @@ use local_chronifycompliance\scorm\runtime_evidence;
 use local_chronifycompliance\task\analyze_queue;
 use local_chronifycompliance\task\audit_course;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(analyze_queue::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(audit_store::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 /**
  * Tests of the production load safeguards: recorded criteria save time, package queue, scan pace,
  * pause switch and the SCORM evidence cache.
@@ -36,10 +40,6 @@ use local_chronifycompliance\task\audit_course;
  * @covers \local_chronifycompliance\local\audit_store
  * @covers \local_chronifycompliance\scorm\runtime_evidence
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(analyze_queue::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(audit_store::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 final class load_control_test extends \advanced_testcase {
     /**
      * Prepare.

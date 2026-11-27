@@ -29,6 +29,15 @@ use local_chronifycompliance\task\audit_course;
 use local_chronifycompliance\task\check_course;
 use local_chronifycompliance\task\cleanup;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(check_course::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(audit_store::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(audit_course::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(package_analyzer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\circular::class)]
 /**
  * Tests for the fixes of code review rounds 1 and 2: background requests, paused and cancelled scans,
  * package locks, dead link checks, bulk timestamps and the per-audit prerequisite cache.
@@ -47,15 +56,6 @@ use local_chronifycompliance\task\cleanup;
  * @covers \local_chronifycompliance\local\finding_store
  * @covers \local_chronifycompliance\check\completion\circular
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(check_course::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(audit_store::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(audit_course::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(package_analyzer::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\circular::class)]
 final class review_round1_test extends \advanced_testcase {
     /**
      * Reset after each test.
@@ -129,7 +129,10 @@ final class review_round1_test extends \advanced_testcase {
         (new cleanup())->execute();
         $this->assertSame(0, audit_store::get_requested((int) $course->id));
         $this->assertGreaterThan(0, audit_store::get_requested((int) $fresh->id));
-        $this->assertSame(link_scan::STATUS_FAILED, $DB->get_field('local_chronifycompliance_linkcheck', 'status', ['id' => $dead]));
+        $this->assertSame(
+            link_scan::STATUS_FAILED,
+            $DB->get_field('local_chronifycompliance_linkcheck', 'status', ['id' => $dead])
+        );
         $this->assertSame(
             link_scan::STATUS_RUNNING,
             $DB->get_field('local_chronifycompliance_linkcheck', 'status', ['id' => $alive])

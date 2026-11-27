@@ -18,6 +18,7 @@ namespace local_chronifycompliance\links;
 
 use local_chronifycompliance\scorm\package_reader;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_extractor::class)]
 /**
  * Tests of finding links in HTML, PDF and Office files.
  *
@@ -27,7 +28,6 @@ use local_chronifycompliance\scorm\package_reader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\links\link_extractor
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_extractor::class)]
 final class link_extractor_test extends \advanced_testcase {
     /**
      * Links in HTML: attributes and bare addresses; mail, script and in-page links are ignored.

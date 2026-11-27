@@ -25,6 +25,7 @@ use local_chronifycompliance\hook_callbacks;
 use local_chronifycompliance\local\finding_store;
 use local_chronifycompliance\privacy\provider;
 
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 /**
  * Probes from the senior review (2026-10-28): each test asserts the behavior the plugin should have;
  * a failure reproduces a review finding. test_requireddeleted_fix_unblocks_learner follows decision D15:
@@ -36,7 +37,6 @@ use local_chronifycompliance\privacy\provider;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class review_probe_test extends \advanced_testcase {
     /**
      * Prepare.

@@ -20,6 +20,7 @@ use local_chronifycompliance\check\course_auditor;
 use local_chronifycompliance\check\site_auditor;
 use local_chronifycompliance\tests\demo\seeder;
 
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 /**
  * Proves that audits never write to tables outside the plugin.
  *
@@ -32,7 +33,6 @@ use local_chronifycompliance\tests\demo\seeder;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class readonly_audit_test extends \advanced_testcase {
     /**
      * Snapshot of every core and non-plugin table.

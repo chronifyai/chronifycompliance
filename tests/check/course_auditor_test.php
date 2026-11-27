@@ -22,6 +22,10 @@ use local_chronifycompliance\tests\failing_check;
 use local_chronifycompliance\tests\fake_check;
 use local_chronifycompliance\tests\fake_site_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(course_auditor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(site_auditor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(auditor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
 /**
  * Tests for the auditors and finding persistence.
  *
@@ -34,10 +38,6 @@ use local_chronifycompliance\tests\fake_site_check;
  * @covers \local_chronifycompliance\check\auditor
  * @covers \local_chronifycompliance\local\finding_store
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(course_auditor::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(site_auditor::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(auditor::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
 final class course_auditor_test extends \advanced_testcase {
     use check_testcase_trait;
 

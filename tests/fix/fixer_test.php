@@ -23,6 +23,8 @@ use local_chronifycompliance\local\finding_store;
 use local_chronifycompliance\tests\check_testcase_trait;
 use local_chronifycompliance\tests\fake_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(fixer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(fix_log::class)]
 /**
  * Tests for the fixer and the fix log.
  *
@@ -33,8 +35,6 @@ use local_chronifycompliance\tests\fake_check;
  * @covers \local_chronifycompliance\fix\fixer
  * @covers \local_chronifycompliance\fix\fix_log
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(fixer::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(fix_log::class)]
 final class fixer_test extends \advanced_testcase {
     use check_testcase_trait;
 

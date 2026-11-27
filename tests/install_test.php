@@ -16,6 +16,7 @@
 
 namespace local_chronifycompliance;
 
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 /**
  * Installation smoke tests for Chronify.Compliance.
  *
@@ -25,7 +26,6 @@ namespace local_chronifycompliance;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class install_test extends \advanced_testcase {
     /**
      * All capabilities are installed with the expected context levels.

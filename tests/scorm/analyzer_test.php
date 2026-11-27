@@ -16,6 +16,14 @@
 
 namespace local_chronifycompliance\scorm;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(package_reader::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(manifest_parser::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(tool_detector::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(bandwidth_estimator::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(media_probe::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(package_analyzer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(stage_detector::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(build_detector::class)]
 /**
  * Tests of the SCORM package analysis, on the synthetic packages in tests/fixtures/packages.
  *
@@ -32,14 +40,6 @@ namespace local_chronifycompliance\scorm;
  * @covers \local_chronifycompliance\scorm\stage_detector
  * @covers \local_chronifycompliance\scorm\build_detector
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(package_reader::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(manifest_parser::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(tool_detector::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(bandwidth_estimator::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(media_probe::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(package_analyzer::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(stage_detector::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(build_detector::class)]
 final class analyzer_test extends \advanced_testcase {
     /**
      * Path of a fixture package.

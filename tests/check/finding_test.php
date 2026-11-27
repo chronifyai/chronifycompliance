@@ -16,6 +16,7 @@
 
 namespace local_chronifycompliance\check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(finding::class)]
 /**
  * Tests for the finding value object.
  *
@@ -25,7 +26,6 @@ namespace local_chronifycompliance\check;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\check\finding
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(finding::class)]
 final class finding_test extends \advanced_testcase {
     /**
      * The fingerprint depends on identity only, not on message, severity or details.

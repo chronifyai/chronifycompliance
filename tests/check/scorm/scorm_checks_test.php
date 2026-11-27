@@ -22,6 +22,8 @@ use local_chronifycompliance\check\finding;
 use local_chronifycompliance\fix\fixer;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\scorm_check::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\inspector::class)]
 /**
  * Tests of the SCORM check fixes, using the demo scenarios.
  *
@@ -32,8 +34,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\check\scorm_check
  * @covers \local_chronifycompliance\scorm\inspector
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\scorm_check::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\inspector::class)]
 final class scorm_checks_test extends \advanced_testcase {
     /**
      * Prepare.

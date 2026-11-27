@@ -29,7 +29,9 @@
  */
 function local_chronifycompliance_status_checks(): array {
     $checks = [];
-    $sitechecks = \local_chronifycompliance\check\check_registry::get_checks([\local_chronifycompliance\check\base_check::SCOPE_SITE]);
+    $sitechecks = \local_chronifycompliance\check\check_registry::get_checks(
+        [\local_chronifycompliance\check\base_check::SCOPE_SITE]
+    );
     foreach ($sitechecks as $check) {
         $checks[] = new \local_chronifycompliance\check\core_check_adapter($check);
     }

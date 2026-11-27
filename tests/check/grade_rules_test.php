@@ -21,6 +21,8 @@ use local_chronifycompliance\check\scorm\scormgradenoscore;
 use local_chronifycompliance\fix\fixer;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scormgradenoscore::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(passgradeunreachable::class)]
 /**
  * Tests of the grade rule checks: SCORM requiring a grade without a score, and unreachable pass grades.
  *
@@ -31,8 +33,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\check\scorm\scormgradenoscore
  * @covers \local_chronifycompliance\check\completion\passgradeunreachable
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scormgradenoscore::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(passgradeunreachable::class)]
 final class grade_rules_test extends \advanced_testcase {
     /**
      * Prepare.

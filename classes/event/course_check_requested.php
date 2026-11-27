@@ -47,7 +47,8 @@ class course_check_requested extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' asked Chronify.Compliance to check the course with id '{$this->courseid}' again.";
+        return "The user with id '{$this->userid}' asked Chronify.Compliance to check the course with id " .
+            "'{$this->courseid}' again.";
     }
 
     /**

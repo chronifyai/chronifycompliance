@@ -20,6 +20,10 @@ use local_chronifycompliance\check\audit_context;
 use local_chronifycompliance\tests\check_testcase_trait;
 use local_chronifycompliance\tests\fake_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\audit_course::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\scan_site::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\observer::class)]
 /**
  * Tests for queued scans, the audit task and the event observers.
  *
@@ -32,10 +36,6 @@ use local_chronifycompliance\tests\fake_check;
  * @covers \local_chronifycompliance\task\scan_site
  * @covers \local_chronifycompliance\observer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scan_manager::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\audit_course::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\scan_site::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\observer::class)]
 final class scan_manager_test extends \advanced_testcase {
     use check_testcase_trait;
 

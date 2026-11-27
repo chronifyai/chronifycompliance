@@ -20,6 +20,13 @@ use core_external\external_api;
 use local_chronifycompliance\check\check_registry;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(audit_course::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(preview_fix::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(apply_fix::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(undo_fix::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(ignore_finding::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(get_scan_status::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\local\access::class)]
 /**
  * Tests of the web service functions used by the UI.
  *
@@ -35,13 +42,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\external\get_scan_status
  * @covers \local_chronifycompliance\local\access
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(audit_course::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(preview_fix::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(apply_fix::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(undo_fix::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(ignore_finding::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(get_scan_status::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\local\access::class)]
 final class external_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass Course with a nopassgrade finding. */
     private \stdClass $course;

@@ -18,6 +18,8 @@ namespace local_chronifycompliance\links;
 
 use local_chronifycompliance\task\check_links;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\schedule_link_checks::class)]
 /**
  * Tests of the automatic link checks of new courses: off by default, picked by a scheduled task from
  * the course cache revision, never queued by events.
@@ -29,8 +31,6 @@ use local_chronifycompliance\task\check_links;
  * @covers \local_chronifycompliance\links\link_scan
  * @covers \local_chronifycompliance\task\schedule_link_checks
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\schedule_link_checks::class)]
 final class link_auto_test extends \advanced_testcase {
     /**
      * Queued link check tasks.

@@ -25,6 +25,10 @@ use local_chronifycompliance\check\finding;
 use local_chronifycompliance\check\site_auditor;
 use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(completiontasks::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(cronstale::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(completiondisabled::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(core_check_adapter::class)]
 /**
  * Tests of the site checks and their Check API integration.
  *
@@ -37,10 +41,6 @@ use local_chronifycompliance\local\finding_store;
  * @covers \local_chronifycompliance\check\site\completiondisabled
  * @covers \local_chronifycompliance\check\core_check_adapter
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(completiontasks::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(cronstale::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(completiondisabled::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(core_check_adapter::class)]
 final class site_checks_test extends \advanced_testcase {
     /**
      * Prepare a site where everything is healthy.

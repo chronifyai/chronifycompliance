@@ -25,6 +25,14 @@ use local_chronifycompliance\local\finding_store;
 use local_chronifycompliance\task\cleanup;
 use local_chronifycompliance\task\notify_teachers;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\enrolment::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\datecriteria::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\activityrules::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\unreachable::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\manualrole::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\selfcompletionblock::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(notify_teachers::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(cleanup::class)]
 /**
  * Tests of the changes made after the senior review: new checks (enrolment, date criteria, activity
  * rules), softer unreachable rules, manual role capability, teacher notifications and clean-up.
@@ -42,14 +50,6 @@ use local_chronifycompliance\task\notify_teachers;
  * @covers \local_chronifycompliance\task\notify_teachers
  * @covers \local_chronifycompliance\task\cleanup
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\enrolment::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\datecriteria::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\activityrules::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\unreachable::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\manualrole::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\check\completion\selfcompletionblock::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(notify_teachers::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(cleanup::class)]
 final class review_changes_test extends \advanced_testcase {
     /**
      * Prepare.

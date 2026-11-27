@@ -20,6 +20,11 @@ use core_external\external_api;
 use local_chronifycompliance\check\check_registry;
 use local_chronifycompliance\check\course_auditor;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(get_findings::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(analyze_scorm::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(analyze_package::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(explain_user_completion::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(scorm_exporter::class)]
 /**
  * Tests of the API web services: findings, SCORM and package analysis, learner explanation, service.
  *
@@ -33,11 +38,6 @@ use local_chronifycompliance\check\course_auditor;
  * @covers \local_chronifycompliance\external\explain_user_completion
  * @covers \local_chronifycompliance\external\scorm_exporter
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(get_findings::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(analyze_scorm::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(analyze_package::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(explain_user_completion::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(scorm_exporter::class)]
 final class api_test extends \core_external\tests\externallib_testcase {
     /**
      * Prepare.

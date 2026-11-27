@@ -16,6 +16,7 @@
 
 namespace local_chronifycompliance\learner;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(explainer::class)]
 /**
  * Tests of the learner completion explainer.
  *
@@ -25,7 +26,6 @@ namespace local_chronifycompliance\learner;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\learner\explainer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(explainer::class)]
 final class explainer_test extends \advanced_testcase {
     /**
      * Unmet criteria block; all met but not aggregated is "pending"; nothing is written.

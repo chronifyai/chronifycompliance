@@ -20,6 +20,7 @@ use local_chronifycompliance\check\course_auditor;
 use local_chronifycompliance\tests\demo\seeder;
 use local_chronifycompliance\scorm\inspector;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(renderer::class)]
 /**
  * Smoke tests: every page renders through the real templates for every demo course.
  *
@@ -29,7 +30,6 @@ use local_chronifycompliance\scorm\inspector;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\output\renderer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(renderer::class)]
 final class renderer_test extends \advanced_testcase {
     /**
      * Render the course report, SCORM panels and learner diagnostic of all demo courses.

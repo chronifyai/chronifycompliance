@@ -19,6 +19,7 @@ namespace local_chronifycompliance\local\demo;
 use local_chronifycompliance\check\course_auditor;
 use local_chronifycompliance\tests\demo\seeder;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(seeder::class)]
 /**
  * Demo seeder tests. Every scenario must trigger exactly its expected checks.
  *
@@ -28,7 +29,6 @@ use local_chronifycompliance\tests\demo\seeder;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \local_chronifycompliance\tests\demo\seeder
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(seeder::class)]
 final class seeder_test extends \advanced_testcase {
     /**
      * The seeder refuses to run on large sites.
