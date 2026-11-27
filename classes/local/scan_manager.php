@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\persistent\scan_record;
-use local_completiondoctor\task\audit_course;
+use local_chronifycompliance\persistent\scan_record;
+use local_chronifycompliance\task\audit_course;
 use stdClass;
 
 /**
@@ -26,7 +26,7 @@ use stdClass;
  * Course ids are read with a recordset and queued in batches, so a scan of any size never holds
  * all courses in memory. Each batch task updates the progress counters of its scan row.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +58,7 @@ class scan_manager {
      * @return bool
      */
     public static function is_paused(): bool {
-        return (bool) get_config('local_completiondoctor', 'paused');
+        return (bool) get_config('local_chronifycompliance', 'paused');
     }
 
     /**
@@ -67,7 +67,7 @@ class scan_manager {
      * @return int
      */
     public static function get_pace(): int {
-        $pace = get_config('local_completiondoctor', 'scanpace');
+        $pace = get_config('local_chronifycompliance', 'scanpace');
         return $pace === false || $pace === '' ? self::DEFAULT_PACE : max(0, (int) $pace);
     }
 
@@ -87,7 +87,7 @@ class scan_manager {
         ?array $checkids = null
     ): int {
         global $DB;
-        $batchsize = (int) get_config('local_completiondoctor', 'scanbatchsize') ?: self::DEFAULT_BATCH_SIZE;
+        $batchsize = (int) get_config('local_chronifycompliance', 'scanbatchsize') ?: self::DEFAULT_BATCH_SIZE;
         $scan = new scan_record(0, (object) [
             'type' => $categoryid ? 'category' : 'site',
             'status' => self::STATUS_QUEUED,
@@ -130,7 +130,7 @@ class scan_manager {
             'timefinished' => $total ? null : time(),
         ])->update();
         if ($userid) {
-            \local_completiondoctor\event\scan_started::create(['context' => \context_system::instance(),
+            \local_chronifycompliance\event\scan_started::create(['context' => \context_system::instance(),
                 'objectid' => $scanid])->trigger();
         }
         return $scanid;
@@ -211,7 +211,7 @@ class scan_manager {
         }
         $scan->set_many(['status' => self::STATUS_CANCELLED, 'timefinished' => time()])->update();
         if ($log) {
-            \local_completiondoctor\event\scan_cancelled::create(['context' => \context_system::instance(),
+            \local_chronifycompliance\event\scan_cancelled::create(['context' => \context_system::instance(),
                 'objectid' => $scanid])->trigger();
         }
     }

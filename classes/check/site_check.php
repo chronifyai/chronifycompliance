@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 /**
  * Base class of the site checks. Site checks are also shown on Site administration > Reports > System status.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +31,15 @@ abstract class site_check extends base_check {
      */
     public function get_scope(): string {
         return self::SCOPE_SITE;
+    }
+
+    /**
+     * Site checks belong to the Site and performance pack.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return self::PACK_SITE;
     }
 
     /**

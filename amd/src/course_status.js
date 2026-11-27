@@ -16,13 +16,13 @@
 /**
  * Waits for a requested check of a course (or of a SCORM package) to finish, then reloads the page.
  *
- * @module     local_completiondoctor/course_status
+ * @module     local_chronifycompliance/course_status
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Notification from 'core/notification';
-import {getCourseStatus} from 'local_completiondoctor/repository';
+import {getCourseStatus} from 'local_chronifycompliance/repository';
 
 /** @type {Number} Milliseconds between two status requests. */
 const INTERVAL = 5000;

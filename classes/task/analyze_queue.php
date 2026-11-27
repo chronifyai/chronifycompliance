@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * Scheduled task analyzing queued SCORM packages a few at a time.
@@ -26,7 +26,7 @@ use local_completiondoctor\scorm\package_analyzer;
  * "packagesperrun" of them per run, only within "packagehours" when set, and not while scans are
  * paused. Courses using an analyzed package are queued for a re-audit so their SCORM findings appear.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ class analyze_queue extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:analyzequeue', 'local_completiondoctor');
+        return get_string('task:analyzequeue', 'local_chronifycompliance');
     }
 
     /**
@@ -49,14 +49,14 @@ class analyze_queue extends \core\task\scheduled_task {
     public function execute(): void {
         global $DB;
         if (scan_manager::is_paused()) {
-            mtrace('Completion Doctor scans are paused.');
+            mtrace('Chronify.Compliance scans are paused.');
             return;
         }
-        if (!self::within_allowed_hours((string) get_config('local_completiondoctor', 'packagehours'))) {
+        if (!self::within_allowed_hours((string) get_config('local_chronifycompliance', 'packagehours'))) {
             mtrace('Outside the allowed hours for package analysis.');
             return;
         }
-        $limit = (int) get_config('local_completiondoctor', 'packagesperrun') ?: self::DEFAULT_PER_RUN;
+        $limit = (int) get_config('local_chronifycompliance', 'packagesperrun') ?: self::DEFAULT_PER_RUN;
         // Least tried first, so a package that keeps failing never blocks the others.
         $queued = $DB->get_records(package_analyzer::TABLE, ['status' => package_analyzer::STATUS_QUEUED,
             'parserversion' => package_analyzer::PARSER_VERSION], 'attempts, id', 'id, contenthash, filesize, attempts', 0, $limit);

@@ -14,21 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\task\check_links;
+use local_chronifycompliance\task\check_links;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\task\schedule_link_checks::class)]
 /**
  * Tests of the automatic link checks of new courses: off by default, picked by a scheduled task from
  * the course cache revision, never queued by events.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\links\link_scan
+ * @covers \local_chronifycompliance\task\schedule_link_checks
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\task\schedule_link_checks::class)]
 final class link_auto_test extends \advanced_testcase {
     /**
      * Queued link check tasks.
@@ -74,7 +76,7 @@ final class link_auto_test extends \advanced_testcase {
      */
     public function test_changed_new_course(): void {
         global $DB;
-        set_config('linkautonew', 1, 'local_completiondoctor');
+        set_config('linkautonew', 1, 'local_chronifycompliance');
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
         $this->assertSame([], $this->tasks(), 'Events queue nothing');
@@ -100,7 +102,7 @@ final class link_auto_test extends \advanced_testcase {
      */
     public function test_request_and_old_courses(): void {
         global $DB;
-        set_config('linkautonew', 1, 'local_completiondoctor');
+        set_config('linkautonew', 1, 'local_chronifycompliance');
         $course = $this->getDataGenerator()->create_course();
         $cacherev = (int) $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         link_scan::queue_changed_courses($cacherev + link_scan::AUTO_DELAY);

@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Preview, apply or undo a Completion Doctor fix from the command line.
+ * Preview, apply or undo a Chronify.Compliance fix from the command line.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\local\finding_store;
 
 define('CLI_SCRIPT', true);
 
@@ -43,7 +43,7 @@ if ($unrecognized) {
 }
 
 $help = <<<EOT
-Preview, apply or undo a Completion Doctor fix.
+Preview, apply or undo a Chronify.Compliance fix.
 
 Without --confirm only the preview is printed and nothing is changed.
 

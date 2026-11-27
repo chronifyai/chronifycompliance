@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\links\link_scan;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\links\link_scan;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * Hourly cleanup of the plugin's own tables: stuck and old scans, dead and old link checks, check
  * requests that were never answered, resolved findings, analyses of packages that no longer exist or
  * of older parser versions, and rows of deleted courses.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +42,7 @@ class cleanup extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:cleanup', 'local_completiondoctor');
+        return get_string('task:cleanup', 'local_chronifycompliance');
     }
 
     /**
@@ -57,23 +57,23 @@ class cleanup extends \core\task\scheduled_task {
         $counts['stucklinkchecks'] = link_scan::fail_stuck($now);
         $counts['requests'] = audit_store::clear_expired_requests($now - check_course::REQUEST_EXPIRY);
         $counts['scans'] = $this->delete(
-            'local_completiondoctor_scan',
+            'local_chronifycompliance_scan',
             "status IN ('finished', 'cancelled') AND timemodified < :old",
             ['old' => $old]
         );
 
         // Link checks: keep the latest of each course.
         $counts['linkchecks'] = $this->delete(
-            'local_completiondoctor_linkcheck',
+            'local_chronifycompliance_linkcheck',
             "status IN ('finished', 'failed', 'cancelled') AND timemodified < :old
-             AND id NOT IN (SELECT latest FROM (SELECT MAX(id) AS latest FROM {local_completiondoctor_linkcheck}
+             AND id NOT IN (SELECT latest FROM (SELECT MAX(id) AS latest FROM {local_chronifycompliance_linkcheck}
                                                  GROUP BY courseid) keep)",
             ['old' => $old]
         );
 
         // Resolved findings; fixed and ignored ones stay (undo and the ignore reason need them).
         $counts['findings'] = $this->delete(
-            'local_completiondoctor_finding',
+            'local_chronifycompliance_finding',
             "status = 'resolved' AND timemodified < :old",
             ['old' => $old]
         );
@@ -86,10 +86,22 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // SCORM evidence of deleted activities.
+        $counts['scormevidence'] = \local_chronifycompliance\scorm\runtime_evidence::delete_orphans();
+
+        // Daily activity older than the retention period.
+        $keep = (int) get_config('local_chronifycompliance', 'refreshkeep');
+        $counts['activitydays'] = (new \local_chronifycompliance\data\datasets\activity())->delete_older_than(
+            $keep > 0 ? $keep : \local_chronifycompliance\data\datasets\activity::DEFAULT_KEEP
+        );
+
+        // State of datasets that no longer exist (removed in a newer plugin version).
+        $counts['refreshstates'] = $this->delete_unknown_dataset_states();
+
         // Rows of deleted courses (normally removed by the course_deleted observer).
         foreach (
-            ['local_completiondoctor_finding', 'local_completiondoctor_fixlog', 'local_completiondoctor_audit',
-                'local_completiondoctor_link', 'local_completiondoctor_linkcheck'] as $table
+            ['local_chronifycompliance_finding', 'local_chronifycompliance_fixlog', 'local_chronifycompliance_audit',
+                'local_chronifycompliance_link', 'local_chronifycompliance_linkcheck'] as $table
         ) {
             $counts[$table] = $this->delete(
                 $table,
@@ -99,9 +111,24 @@ class cleanup extends \core\task\scheduled_task {
         }
         $counts = array_filter($counts);
         if ($counts) {
-            \cache::make('local_completiondoctor', 'coursesummary')->purge();
-            mtrace('Completion Doctor cleanup: ' . json_encode($counts));
+            \cache::make('local_chronifycompliance', 'coursesummary')->purge();
+            mtrace('Chronify.Compliance cleanup: ' . json_encode($counts));
         }
+    }
+
+    /**
+     * Delete the refresh state of datasets that are no longer registered.
+     *
+     * @return int Rows deleted.
+     */
+    private function delete_unknown_dataset_states(): int {
+        global $DB;
+        $known = array_keys(\local_chronifycompliance\data\dataset_registry::get_datasets());
+        if (!$known) {
+            return $this->delete(\local_chronifycompliance\data\refresher::TABLE, '1 = 1', []);
+        }
+        [$notin, $params] = $DB->get_in_or_equal($known, SQL_PARAMS_NAMED, 'ds', false);
+        return $this->delete(\local_chronifycompliance\data\refresher::TABLE, "dataset {$notin}", $params);
     }
 
     /**

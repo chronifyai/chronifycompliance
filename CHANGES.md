@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.3.0 (unreleased): Chronify.Compliance, step A1
+
+- Renamed from Completion Doctor (`local_completiondoctor`) to Chronify.Compliance (`local_chronifycompliance`).
+  This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
+  old upgrade steps are removed.
+- Course completion checks moved from the `check\course` namespace to `check\completion`.
+- Step A2: every check belongs to a pack (Completion, SCORM and content, Site and performance, Security).
+  The registry filters and groups checks by pack, and the checks settings page lists them under a heading per pack.
+  Checks added through the `register_checks` hook can choose a pack; without one they go to Site (site scope)
+  or Completion.
+- Step A3: data layer core. New table `local_chronifycompliance_refresh` holds each dataset's read position
+  (high water mark) and last refresh outcome. Datasets (`data\dataset`, discovered in `data\datasets`) read
+  source rows after the high water mark in batches; the refresher saves each batch and the new mark in one
+  transaction, so an interrupted refresh resumes without duplicates. A scheduled task refreshes due datasets
+  inside the refresh window (default 1 to 5) within a time budget; an ad hoc task serves Refresh now. Both
+  respect Pause all scans. New settings: refresh window, rows per batch, seconds between batches, minutes per run.
+- Step A4: first dataset, Activity. One pass over the standard log fills events per user, course and day
+  (`local_chronifycompliance_actday`), site totals per day with active users, logins, failed logins and completions
+  (`local_chronifycompliance_siteday`), and the latest completion per user and course (`local_chronifycompliance_compl`).
+  The first load reads the last 90 days (setting); daily data is kept 730 days (setting). Privacy API covers the new
+  tables; deleting a course removes its rows. Measured on 100,000 users and 7.5 million log rows in 90 days: first
+  load 39 seconds of work, 13 minutes with the default pause between batches.
+- Step A5: SCORM evidence (what learners' latest attempts reported) is stored in `local_chronifycompliance_scormev`
+  instead of a one-day cache. Checks and background tasks collect it when it is more than a day old; the SCORM panel
+  and the analysis web service only read what is stored and show when it was collected, or that it is not collected
+  yet. Page views no longer read the SCORM tracking tables. The `evidence` cache definition is removed.
+
 ## 0.2.3 (unreleased): QA fixes
 
 - Site dashboard: "Scan all courses" and "Cancel scan" stay together on the right while a scan runs (VM-317).
