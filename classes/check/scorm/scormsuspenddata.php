@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\scorm\runtime_evidence;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\scorm\runtime_evidence;
 
 /**
  * SCORM 1.2 resume data (cmi.suspend_data) is over or close to the 4096 characters the standard allows.
@@ -28,7 +28,7 @@ use local_completiondoctor\scorm\runtime_evidence;
  * the learner resumes from an old position. Packages whose driver turns off its own limit
  * (USE_STRICT_SUSPEND_DATA_LIMITS = false) are at risk on such sites. SCORM 2004 allows 64000.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

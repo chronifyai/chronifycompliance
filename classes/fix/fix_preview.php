@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
 /**
  * Description of a change a fix would make, shown to the user before it is applied.
@@ -22,7 +22,7 @@ namespace local_completiondoctor\fix;
  * The before and after arrays hold the machine values that are stored in the fix log and
  * used for undo. The rows hold the human readable diff.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

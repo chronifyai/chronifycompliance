@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chronifycompliance/data_age
+
+    How old the data on the page is, with Refresh now.
+
+    Example context (json):
+    {
+        "dataset": "activity", "hastime": true, "time": "2:14 AM today",
+        "refreshing": false, "failed": false, "canrefresh": true
+    }
+}}
+<p class="local-chronifycompliance-dataage small text-muted mb-3" data-region="data-age" data-dataset="{{dataset}}">
+    {{#hastime}}{{#str}}dataage:updated, local_chronifycompliance, {{time}}{{/str}}{{/hastime}}
+    {{^hastime}}{{#str}}dataage:never, local_chronifycompliance{{/str}}{{/hastime}}
+    {{#refreshing}}<span class="ms-1">{{#str}}dataage:refreshing, local_chronifycompliance{{/str}}</span>{{/refreshing}}
+    {{#failed}}<span class="ms-1 text-danger">{{#str}}dataage:failed, local_chronifycompliance{{/str}}</span>{{/failed}}
+    {{#canrefresh}}
+        <button type="button" class="btn btn-link btn-sm p-0 ms-1 align-baseline" data-action="cc-refresh" data-dataset="{{dataset}}">
+            {{#str}}dataage:refreshnow, local_chronifycompliance{{/str}}
+        </button>
+    {{/canrefresh}}
+    <span class="ms-1 d-none" data-region="data-age-note" role="status"></span>
+</p>
+{{#js}}
+    require(['local_chronifycompliance/page_components'], function(components) {
+        components.init();
+    });
+{{/js}}

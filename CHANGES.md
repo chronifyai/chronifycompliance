@@ -1,5 +1,83 @@
 # Changelog
 
+## 0.3.0 (unreleased): Chronify.Compliance, step A1
+
+- Renamed from Completion Doctor (`local_completiondoctor`) to Chronify.Compliance (`local_chronifycompliance`).
+  This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
+  old upgrade steps are removed.
+- Course completion checks moved from the `check\course` namespace to `check\completion`.
+- Step A2: every check belongs to a pack (Completion, SCORM and content, Site and performance, Security).
+  The registry filters and groups checks by pack, and the checks settings page lists them under a heading per pack.
+  Checks added through the `register_checks` hook can choose a pack; without one they go to Site (site scope)
+  or Completion.
+- Step A3: data layer core. New table `local_chronifycompliance_refresh` holds each dataset's read position
+  (high water mark) and last refresh outcome. Datasets (`data\dataset`, discovered in `data\datasets`) read
+  source rows after the high water mark in batches; the refresher saves each batch and the new mark in one
+  transaction, so an interrupted refresh resumes without duplicates. A scheduled task refreshes due datasets
+  inside the refresh window (default 1 to 5) within a time budget; an ad hoc task serves Refresh now. Both
+  respect Pause all scans. New settings: refresh window, rows per batch, seconds between batches, minutes per run.
+- Step A4: first dataset, Activity. One pass over the standard log fills events per user, course and day
+  (`local_chronifycompliance_actday`), site totals per day with active users, logins, failed logins and completions
+  (`local_chronifycompliance_siteday`), and the latest completion per user and course (`local_chronifycompliance_compl`).
+  The first load reads the last 90 days (setting); daily data is kept 730 days (setting). Privacy API covers the new
+  tables; deleting a course removes its rows. Measured on 100,000 users and 7.5 million log rows in 90 days: first
+  load 39 seconds of work, 13 minutes with the default pause between batches.
+- Step A5: SCORM evidence (what learners' latest attempts reported) is stored in `local_chronifycompliance_scormev`
+  instead of a one-day cache. Checks and background tasks collect it when it is more than a day old; the SCORM panel
+  and the analysis web service only read what is stored and show when it was collected, or that it is not collected
+  yet. Page views no longer read the SCORM tracking tables. The `evidence` cache definition is removed.
+- Step A6: health score (`score\health_score`). Per pack: 100 minus 10 per critical, 3 per warning and 0.5 per info
+  finding (open findings of enabled checks; ignored ones count half), never below 0. Site scores count Completion and
+  SCORM findings per 100 audited courses. Overall: weighted average (Security 35, Completion 30, Site 20, SCORM 15) over
+  packs that have enabled checks. Labels: healthy from 80, needs attention from 50, at risk below. Course scores use
+  the course's own findings. A weekly task stores snapshots (`local_chronifycompliance_score`) for the trend; the
+  cleanup task drops snapshots older than two years.
+- Step A7: tables reserved for later releases: `local_chronifycompliance_connect` (Connect consent and status) and
+  `local_chronifycompliance_fixplan` (signed fix plans). Nothing writes to them yet; they are covered by the Privacy
+  API, course deletion and the cleanup task so the later features start from a complete schema.
+- Step B1: shared page components. Top navigation between the workspaces (only pages that exist are listed); a data
+  age line showing when the data was refreshed, with Refresh now (new web service
+  `local_chronifycompliance_request_refresh`) and refreshing, failed and no data states; an undo toast for 30 seconds
+  after a fix is applied; and a dismissible invitation slot (hidden for 30 days per user, user preferences
+  `local_chronifycompliance_invite_*`) with an admin switch to turn invitations off. An administrator component
+  gallery (`components.php`) shows every component in each state.
+- Step B2: main dashboard (`index.php`). Overall health score with its status and the change since last week, a
+  breakdown of the checks that cost the most points, one tile per pack (score and worst severity count, linking to
+  its workspace), the last 12 weekly scores as a chart, and the top 3 actions with one main action each (Preview fix,
+  Open course report or Review courses) and a Fix it for me button that is not active yet. States: Finish setup
+  before the first check, Scanning while a scan runs, Paused. The dashboard reads only the plugin's tables; measured
+  at about 0.1 seconds with 300 courses and 60,000 findings (`dev/measure-dashboard.php`). The course list with its
+  health tiles and filters moved to the Completion workspace (`completion.php`) until step B4 rebuilds it.
+- Step B3: first run wizard (`setup.php`). Three steps: sector and country, frameworks (NIST CSF 2.0 always
+  suggested, GDPR for Europe, FERPA for US education; ISO/IEC 27001, SOC 2, HIPAA and WCAG 2.2 shown as coming soon), and Start first
+  check, which checks the site settings at once and starts a scan whose first batch is the 20 most recently changed
+  visible courses. The dashboard opens the wizard until it is finished or skipped (never on a site that already has
+  results); after Skip it shows a Finish setup card. Answers are stored as plugin settings (`sector`, `country`,
+  `frameworks`) for the framework views in Stage D. Site administration has a Set up link to run it again.
+- Step B4: Completion workspace (`completion.php`). Last full scan line with Scan all courses; tiles for courses
+  with critical problems, with warnings and healthy; the course table (Report Builder, exports to CSV, Excel and PDF)
+  with Critical and Warnings columns, sorted worst first, and a tick box per course; Fix all one click problems,
+  which shows one combined preview of every fix that needs no decision in the ticked courses, applies only those, and
+  offers Undo for all of them (new web services `local_chronifycompliance_preview_bulk_fix` and
+  `local_chronifycompliance_apply_bulk_fix`; at most 200 fixes per run; Security findings are never fixed in bulk);
+  a SCORM strip (packages analyzed, activities with SCORM problems, link to those courses); site checks from the
+  stored findings. The page no longer runs the site checks live or counts packages in the file table, and the
+  `sitehealth` cache is removed.
+- Step B5: course report restyled. Header with the time of the last check, Check again, "Why hasn't a learner
+  completed?" and the completion settings. Tabs Problems, Ignored, Fixed and Links (`course.php?tab=`); only the
+  open tab is built. Finding cards have one main action by fix level (Preview fix for users who may apply fixes,
+  otherwise Set up for the activity settings, SCORM analysis, Reopen or Undo) and a More menu with Details, Ignore
+  and the other links. The Fixed tab is the course's fix history (who applied each fix and when, undone or not)
+  with Undo on the latest fix of each problem. Check links moved into the Links tab.
+- Step B6: learner diagnostic and SCORM analysis restyled. The diagnostic ("Why hasn't this learner completed?")
+  shows the status in one line, every condition as Met, Not met or Blocking with its evidence, and a verdict
+  (`learner\verdict`): a course setting problem (deleted or hidden required activity, or an open problem on the
+  blocking activity, named, with Preview fix when the user may apply it) or what the learner still needs to do.
+  Copy summary puts a plain text version on the clipboard for a support reply. The SCORM analysis shows the
+  package and what learners reported side by side, a Confidence column in the recommended settings, Preview
+  recommended settings (the activity's fixable problem), Fix it for me (not active yet) and a republish guide when
+  attempts never send a score.
+
 ## 0.2.3 (unreleased): QA fixes
 
 - Site dashboard: "Scan all courses" and "Cancel scan" stay together on the right while a scan runs (VM-317).

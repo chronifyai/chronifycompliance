@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\fix\activity_completion;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\fix\activity_completion;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * The SCORM activity requires a grade, but the package has no quiz and never sends a score.
@@ -33,7 +33,7 @@ use local_completiondoctor\scorm\package_analyzer;
  * finishes, so the rule only works as "finished" and every learner shows 0 in the gradebook (info).
  * Activities graded by "learning objects" are skipped: their grade is the number of completed SCOs.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -168,7 +168,7 @@ class scormgradenoscore extends scorm_check {
         $after = ['completiongradeitemnumber' => null, 'completionpassgrade' => 0,
             'completionstatusrequired' => $current ?: $status] + $before;
         $preview = new fix_preview('scormgraderules', $before, $after);
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         if ($before['completiongradeitemnumber'] !== null) {
             $preview->add_row(get_string('completionusegrade', 'completion'), get_string('yes'), get_string('no'));
         }

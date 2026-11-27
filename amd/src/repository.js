@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Web service calls of Completion Doctor.
+ * Web service calls of Chronify.Compliance.
  *
- * @module     local_completiondoctor/repository
+ * @module     local_chronifycompliance/repository
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ import {call as fetchMany} from 'core/ajax';
  * @returns {Promise}
  */
 export const previewFix = (findingid, params = []) => fetchMany([{
-    methodname: 'local_completiondoctor_preview_fix',
+    methodname: 'local_chronifycompliance_preview_fix',
     args: {findingid, params},
 }])[0];
 
@@ -43,7 +43,7 @@ export const previewFix = (findingid, params = []) => fetchMany([{
  * @returns {Promise}
  */
 export const applyFix = (findingid, params = []) => fetchMany([{
-    methodname: 'local_completiondoctor_apply_fix',
+    methodname: 'local_chronifycompliance_apply_fix',
     args: {findingid, params},
 }])[0];
 
@@ -54,7 +54,7 @@ export const applyFix = (findingid, params = []) => fetchMany([{
  * @returns {Promise}
  */
 export const undoFix = (fixlogid) => fetchMany([{
-    methodname: 'local_completiondoctor_undo_fix',
+    methodname: 'local_chronifycompliance_undo_fix',
     args: {fixlogid},
 }])[0];
 
@@ -67,7 +67,7 @@ export const undoFix = (fixlogid) => fetchMany([{
  * @returns {Promise}
  */
 export const ignoreFinding = (findingid, reason, ignore = true) => fetchMany([{
-    methodname: 'local_completiondoctor_ignore_finding',
+    methodname: 'local_chronifycompliance_ignore_finding',
     args: {findingid, reason, ignore},
 }])[0];
 
@@ -77,7 +77,7 @@ export const ignoreFinding = (findingid, reason, ignore = true) => fetchMany([{
  * @returns {Promise}
  */
 export const getScanStatus = () => fetchMany([{
-    methodname: 'local_completiondoctor_get_scan_status',
+    methodname: 'local_chronifycompliance_get_scan_status',
     args: {},
 }])[0];
 
@@ -88,6 +88,40 @@ export const getScanStatus = () => fetchMany([{
  * @returns {Promise}
  */
 export const getCourseStatus = (courseid) => fetchMany([{
-    methodname: 'local_completiondoctor_get_course_status',
+    methodname: 'local_chronifycompliance_get_course_status',
     args: {courseid},
+}])[0];
+
+/**
+ * Queue a background refresh of a dataset (Refresh now).
+ *
+ * @param {String} dataset
+ * @returns {Promise}
+ */
+export const requestRefresh = (dataset) => fetchMany([{
+    methodname: 'local_chronifycompliance_request_refresh',
+    args: {dataset},
+}])[0];
+
+/**
+ * Combined preview of the one click fixes of many courses.
+ *
+ * @param {Number[]} courseids
+ * @returns {Promise}
+ */
+export const previewBulkFix = (courseids) => fetchMany([{
+    methodname: 'local_chronifycompliance_preview_bulk_fix',
+    args: {courseids},
+}])[0];
+
+/**
+ * Apply the previewed one click fixes.
+ *
+ * @param {Number[]} courseids
+ * @param {Number[]} findingids
+ * @returns {Promise}
+ */
+export const applyBulkFix = (courseids, findingids) => fetchMany([{
+    methodname: 'local_chronifycompliance_apply_bulk_fix',
+    args: {courseids, findingids},
 }])[0];

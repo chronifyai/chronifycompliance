@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\local\audit_store;
+use local_chronifycompliance\local\audit_store;
 
 /**
  * Whether a requested check of a course is still waiting, so the course report knows when to reload.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +51,7 @@ class get_course_status extends external_api {
         ['courseid' => $courseid] = self::validate_parameters(self::execute_parameters(), ['courseid' => $courseid]);
         $context = \context_course::instance($courseid);
         self::validate_context($context);
-        require_capability('local/completiondoctor:viewcoursereport', $context);
+        require_capability('local/chronifycompliance:viewcoursereport', $context);
         $audit = audit_store::get($courseid);
         return [
             'pending' => audit_store::get_requested($courseid) > 0,
