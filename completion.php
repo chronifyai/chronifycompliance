@@ -40,18 +40,19 @@ scan_controls::handle($action, $url);
 
 $view = optional_param('view', '', PARAM_ALPHA);
 $checkid = optional_param('checkid', '', PARAM_ALPHANUMEXT);
-if (!in_array($view, ['', 'critical', 'warning', 'info', 'completionoff', 'waiting', 'healthy'], true)) {
+if (!in_array($view, ['', 'critical', 'warning', 'info', 'completionoff', 'waiting', 'healthy', 'scorm'], true)) {
     $view = '';
 }
 
 \local_chronifycompliance\event\dashboard_viewed::create(['context' => $context])->trigger();
 $renderer = $PAGE->get_renderer('local_chronifycompliance');
 $PAGE->requires->js_call_amd('local_chronifycompliance/scan_progress', 'init', ['[data-region="scan-progress"]']);
+$PAGE->requires->js_call_amd('local_chronifycompliance/bulk_fix', 'init');
 
 echo $OUTPUT->header();
-echo $OUTPUT->render(new \local_chronifycompliance\output\workspace_nav('completion'));
 echo $renderer->dashboard_header($view, $checkid);
 
 $report = system_report_factory::create(dashboard::class, $context, '', '', 0, ['view' => $view, 'checkid' => $checkid]);
 echo $report->output();
+echo $OUTPUT->render(new \local_chronifycompliance\output\dashboard_header($view, $checkid, true));
 echo $OUTPUT->footer();

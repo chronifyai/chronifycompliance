@@ -98,7 +98,7 @@ class component_gallery {
 
         // Undo toast.
         $html .= $output->heading(get_string('components:toast', $component), 3);
-        $html .= $output->render_from_template("{$component}/undo_toast", ['fixlogid' => 0, 'inline' => true,
+        $html .= $output->render_from_template("{$component}/undo_toast", ['inline' => true,
             'message' => 'Grade to pass set to 7 out of 10.']);
         return $html;
     }

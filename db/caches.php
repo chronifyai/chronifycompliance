@@ -32,10 +32,4 @@ $definitions = [
         'staticacceleration' => true,
         'staticaccelerationsize' => 50,
     ],
-    'sitehealth' => [
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => false,
-        'ttl' => 600,
-    ],
 ];

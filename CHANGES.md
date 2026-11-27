@@ -54,6 +54,15 @@
   visible courses. The dashboard opens the wizard until it is finished or skipped (never on a site that already has
   results); after Skip it shows a Finish setup card. Answers are stored as plugin settings (`sector`, `country`,
   `frameworks`) for the framework views in Stage D. Site administration has a Set up link to run it again.
+- Step B4: Completion workspace (`completion.php`). Last full scan line with Scan all courses; tiles for courses
+  with critical problems, with warnings and healthy; the course table (Report Builder, exports to CSV, Excel and PDF)
+  with Critical and Warnings columns, sorted worst first, and a tick box per course; Fix all one click problems,
+  which shows one combined preview of every fix that needs no decision in the ticked courses, applies only those, and
+  offers Undo for all of them (new web services `local_chronifycompliance_preview_bulk_fix` and
+  `local_chronifycompliance_apply_bulk_fix`; at most 200 fixes per run; Security findings are never fixed in bulk);
+  a SCORM strip (packages analyzed, activities with SCORM problems, link to those courses); site checks from the
+  stored findings. The page no longer runs the site checks live or counts packages in the file table, and the
+  `sitehealth` cache is removed.
 
 ## 0.2.3 (unreleased): QA fixes
 

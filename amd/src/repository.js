@@ -102,3 +102,26 @@ export const requestRefresh = (dataset) => fetchMany([{
     methodname: 'local_chronifycompliance_request_refresh',
     args: {dataset},
 }])[0];
+
+/**
+ * Combined preview of the one click fixes of many courses.
+ *
+ * @param {Number[]} courseids
+ * @returns {Promise}
+ */
+export const previewBulkFix = (courseids) => fetchMany([{
+    methodname: 'local_chronifycompliance_preview_bulk_fix',
+    args: {courseids},
+}])[0];
+
+/**
+ * Apply the previewed one click fixes.
+ *
+ * @param {Number[]} courseids
+ * @param {Number[]} findingids
+ * @returns {Promise}
+ */
+export const applyBulkFix = (courseids, findingids) => fetchMany([{
+    methodname: 'local_chronifycompliance_apply_bulk_fix',
+    args: {courseids, findingids},
+}])[0];

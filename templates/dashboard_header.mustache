@@ -17,28 +17,25 @@
 {{!
     @template local_chronifycompliance/dashboard_header
 
-    Site dashboard header: title and scan action, health tiles, top problems, site health and view chips.
+    Top of the Completion workspace: scan line, health tiles, view chips and the bulk fix bar.
 
     Example context (json):
     {
-        "status": "193 of 193 courses checked", "canscan": true, "cancancel": false,
+        "nav": "", "status": "193 of 193 courses checked", "lastscan": "Last full scan: 1:30 AM today, 193 courses",
+        "canscan": true, "cancancel": false, "canfix": true,
         "scanurl": "https://example.com/local/chronifycompliance/completion.php", "sesskey": "abc",
         "tiles": [{"group": "critical", "label": "Courses with critical problems", "value": 38,
-            "detail": "39 critical findings", "url": "https://example.com/?view=critical", "active": false}],
-        "problems": [{"checkid": "nocriteria", "name": "No completion conditions", "severityname": "critical",
-            "severitylabel": "Critical", "courses": 49, "courseslabel": "49 courses", "percent": 100, "url": "https://example.com/?checkid=nocriteria",
-            "active": false}],
-        "hasproblems": true,
-        "sitehealth": [{"ok": true, "neutral": false, "text": "Cron is running"}],
+            "detail": "Critical findings: 39", "url": "https://example.com/?view=critical", "active": false}],
         "chips": [{"label": "All 193", "url": "https://example.com/", "active": true}],
         "checkname": null, "clearurl": "https://example.com/"
     }
 }}
-<div class="local-chronifycompliance-dashboard mb-3">
+<div class="local-chronifycompliance-dashboard local-chronifycompliance-completion mb-3">
+    <h2 class="h3 mb-2">{{#str}}dashboard:title, local_chronifycompliance{{/str}}</h2>
+    {{{nav}}}
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
         <div class="me-3 mb-2">
-            <h2 class="h3 mb-1">{{#str}}dashboard:title, local_chronifycompliance{{/str}}</h2>
-            <div class="text-muted small">{{status}}</div>
+            <div class="small text-muted">{{#lastscan}}{{lastscan}}. {{/lastscan}}{{status}}</div>
             <div class="small mt-1" data-region="scan-progress" aria-live="polite"></div>
         </div>
         <div class="d-flex flex-wrap mb-2">
@@ -46,7 +43,7 @@
                 <form method="post" action="{{scanurl}}">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="action" value="scan">
-                    <button type="submit" class="btn btn-primary">{{#pix}}i/reload, core{{/pix}} {{#str}}dashboard:scanall, local_chronifycompliance{{/str}}</button>
+                    <button type="submit" class="btn btn-outline-secondary">{{#str}}dashboard:scanall, local_chronifycompliance{{/str}}</button>
                 </form>
             {{/canscan}}
             {{#cancancel}}
@@ -59,7 +56,7 @@
         </div>
     </div>
 
-    <div class="lcd-tiles mb-3">
+    <div class="lcd-tiles lcc-tiles-3 mb-3">
         {{#tiles}}
             <a class="lcd-tile lcd-tile-{{group}}{{#active}} lcd-active{{/active}}" href="{{url}}"{{#active}} aria-current="true"{{/active}}>
                 <span class="lcd-tile-label">{{label}}</span>
@@ -69,46 +66,17 @@
         {{/tiles}}
     </div>
 
-    <div class="lcd-panels mb-3">
-        <section class="card lcd-panel">
-            <div class="card-body">
-                <h3 class="h6 mb-3">{{#str}}dashboard:topproblems, local_chronifycompliance{{/str}}</h3>
-                {{#hasproblems}}
-                    <ul class="list-unstyled mb-1">
-                        {{#problems}}
-                            <li>
-                                <a class="lcd-problem{{#active}} lcd-active{{/active}}" href="{{url}}">
-                                    <span class="lcd-problem-name"><span class="lcd-pill lcd-pill-{{severityname}}" title="{{severitylabel}}">{{severitylabel}}</span> {{name}}</span>
-                                    <span class="lcd-bar" aria-hidden="true"><span class="lcd-bar-fill lcd-bar-{{severityname}}" style="width: {{percent}}%"></span></span>
-                                    <span class="lcd-problem-count">{{courseslabel}}</span>
-                                </a>
-                            </li>
-                        {{/problems}}
-                    </ul>
-                    <div class="small text-muted">{{#str}}dashboard:topproblems:help, local_chronifycompliance{{/str}}</div>
-                {{/hasproblems}}
-                {{^hasproblems}}<p class="text-muted mb-0">{{#str}}dashboard:noproblems, local_chronifycompliance{{/str}}</p>{{/hasproblems}}
-            </div>
-        </section>
-        <section class="card lcd-panel">
-            <div class="card-body">
-                <h3 class="h6 mb-3">{{#str}}dashboard:sitehealth, local_chronifycompliance{{/str}}</h3>
-                <ul class="list-unstyled mb-0">
-                    {{#sitehealth}}
-                        <li class="lcd-health">
-                            {{#neutral}}<span class="lcd-dot lcd-dot-neutral" aria-hidden="true"></span>{{/neutral}}
-                            {{^neutral}}{{#ok}}<span class="lcd-dot lcd-dot-ok" aria-hidden="true"></span>{{/ok}}{{^ok}}<span class="lcd-dot lcd-dot-bad" aria-hidden="true"></span>{{/ok}}{{/neutral}}
-                            <span>{{text}}</span>
-                        </li>
-                    {{/sitehealth}}
-                </ul>
-            </div>
-        </section>
-    </div>
-
-    <h3 class="h5 mb-2">{{#str}}dashboard:courses, local_chronifycompliance{{/str}}</h3>
     <nav class="lcd-chips mb-2" aria-label="{{#str}}dashboard:courses, local_chronifycompliance{{/str}}">
         {{#chips}}<a class="lcd-chip{{#active}} lcd-active{{/active}}" href="{{url}}"{{#active}} aria-current="true"{{/active}}>{{label}}</a>{{/chips}}
         {{#checkname}}<span class="lcd-chip lcd-active">{{checkname}} <a href="{{clearurl}}" class="ms-1" aria-label="{{#str}}dashboard:clearfilter, local_chronifycompliance{{/str}}">&times;</a></span>{{/checkname}}
     </nav>
+
+    {{#canfix}}
+        <div class="d-flex flex-wrap align-items-center mb-2" data-region="bulk-fix">
+            <button type="button" class="btn btn-primary btn-sm me-2" data-action="cc-bulk-fix">
+                {{#str}}bulk:button, local_chronifycompliance{{/str}}
+            </button>
+            <span class="small text-muted">{{#str}}bulk:help, local_chronifycompliance{{/str}}</span>
+        </div>
+    {{/canfix}}
 </div>

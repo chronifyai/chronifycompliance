@@ -48,12 +48,13 @@ const take = () => {
 /**
  * Remember an applied fix so the next page load offers Undo.
  *
- * @param {Number} fixlogid
+ * @param {Number|Number[]} fixlogid One fix, or all fixes of a bulk fix (undone together).
  * @param {String} message
  */
 export const remember = (fixlogid, message) => {
+    const fixlogids = Array.isArray(fixlogid) ? fixlogid : [fixlogid];
     try {
-        window.sessionStorage.setItem(KEY, JSON.stringify({fixlogid, message, until: Date.now() + SHOW_FOR}));
+        window.sessionStorage.setItem(KEY, JSON.stringify({fixlogids, message, until: Date.now() + SHOW_FOR}));
     } catch (error) {
         // Storage is not available: the Undo button on the finding still works.
     }
@@ -62,7 +63,7 @@ export const remember = (fixlogid, message) => {
 /**
  * Show the toast for a fix.
  *
- * @param {Object} fix {fixlogid, message, until}
+ * @param {Object} fix {fixlogids, message, until}
  */
 export const show = async(fix) => {
     const pending = new Pending('local_chronifycompliance/undo_toast');
@@ -87,7 +88,10 @@ export const show = async(fix) => {
             const undoing = new Pending('local_chronifycompliance/toast_undo');
             button.disabled = true;
             try {
-                await undoFix(fix.fixlogid);
+                // Newest first, so fixes of the same course are undone in reverse order.
+                for (const fixlogid of [...fix.fixlogids].reverse()) {
+                    await undoFix(fixlogid);
+                }
                 window.location.reload();
             } catch (error) {
                 button.disabled = false;

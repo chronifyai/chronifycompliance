@@ -68,10 +68,23 @@ class dashboard extends system_report {
         $this->add_columns_from_entities([
             'course:coursefullnamewithlink',
             'course_category:name',
-            'audit:problems',
+            'audit:critical',
+            'audit:warning',
             'audit:topcheck',
             'audit:timeaudited',
         ]);
+        // Worst courses first: by critical, then warnings, then info.
+        $this->get_column('audit:critical')->set_is_sortable(true, ["{$alias}.critical", "{$alias}.warning", "{$alias}.info"]);
+        $this->get_column('audit:warning')->set_title(new lang_string('dashboard:warnings', 'local_chronifycompliance'));
+        if (
+            optional_param('download', '', PARAM_ALPHA) === ''
+                && has_capability('local/chronifycompliance:applyfix', \context_system::instance())
+        ) {
+            $this->set_checkbox_toggleall(static fn(\stdClass $row): array => [
+                $row->courseid,
+                get_string('bulk:select', 'local_chronifycompliance', $row->courseid),
+            ]);
+        }
         $this->get_column('course:coursefullnamewithlink')
             ->set_title(new lang_string('dashboard:course', 'local_chronifycompliance'));
         $this->get_column('course_category:name')
@@ -84,7 +97,7 @@ class dashboard extends system_report {
             'audit:check',
             'audit:critical',
         ]);
-        $this->set_initial_sort_column('audit:problems', SORT_DESC);
+        $this->set_initial_sort_column('audit:critical', SORT_DESC);
 
         // Core builds the actions menu of every row even in a download, after the session is closed, and
         // rendering its icon builds the navigation, which writes to the session. Downloads have no actions column.
@@ -110,6 +123,9 @@ class dashboard extends system_report {
         $view = $this->get_parameter('view', '', PARAM_ALPHA);
         if (isset($conditions[$view])) {
             $this->add_base_condition_sql($conditions[$view]);
+        } else if ($view === 'scorm') {
+            [$sql, $params] = \local_chronifycompliance\local\dashboard_data::scorm_condition($alias);
+            $this->add_base_condition_sql($sql, $params);
         }
         $checkid = $this->get_parameter('checkid', '', PARAM_ALPHANUMEXT);
         if ($checkid !== '') {
