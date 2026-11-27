@@ -74,7 +74,10 @@ class dashboard extends system_report {
             'audit:timeaudited',
         ]);
         // Worst courses first: by critical, then warnings, then info.
-        $this->get_column('audit:critical')->set_is_sortable(true, ["{$alias}.critical", "{$alias}.warning", "{$alias}.info"]);
+        // Sort fields must be fields of the column, so the column also selects the warning and info counts.
+        $this->get_column('audit:critical')
+            ->add_fields("{$alias}.warning, {$alias}.info")
+            ->set_is_sortable(true, ["{$alias}.critical", "{$alias}.warning", "{$alias}.info"]);
         $this->get_column('audit:warning')->set_title(new lang_string('dashboard:warnings', 'local_chronifycompliance'));
         if (
             optional_param('download', '', PARAM_ALPHA) === ''
