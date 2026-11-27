@@ -43,6 +43,9 @@ Feature: Teachers fix and ignore completion problems in the course report
     And I click on "Fixed (1)" "link"
     And I press "Undo fix"
     And I click on "Undo fix" "button" in the "Undo fix" "dialogue"
+    Then I should see "Undone" in the "[data-region='fix-history']" "css_element"
+    And "Undo fix" "button" should not exist in the "[data-region='fix-history']" "css_element"
+    When I click on "Problems (1)" "link"
     Then I should see "Pass grade missing"
     And I should see "Preview fix"
 
