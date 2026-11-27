@@ -55,6 +55,7 @@ final class load_control_test extends \advanced_testcase {
      * Saving the completion settings is recorded by the observer and used without the log.
      */
     public function test_criteria_saved_recorded(): void {
+        global $CFG;
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
@@ -65,6 +66,7 @@ final class load_control_test extends \advanced_testcase {
         $this->assertNull(audit_store::get((int) $course->id), 'A recorded save is not an audit');
 
         // With no log at all, addedaftercriteria still works from the recorded time.
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_activity.php');
         $generator = $this->getDataGenerator();
         $assign = $generator->create_module('assign', ['course' => $course->id, 'completion' => 2, 'completionsubmit' => 1]);
         $config = (object) ['id' => $course->id, 'criteria_activity' => [$assign->cmid => 1]];
