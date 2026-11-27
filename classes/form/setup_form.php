@@ -82,16 +82,18 @@ class setup_form extends \moodleform {
             ]));
         }
 
+        // Back and Skip leave the step without checking its fields, as Moodle does for its own no-submit buttons.
+        $nosubmit = ['data-skip-validation' => 1, 'data-no-submit' => 1, 'onclick' => 'skipClientValidation = true;'];
         $buttons = [];
         if ($step > 1) {
-            $buttons[] = $mform->createElement('submit', 'back', get_string('back'));
+            $buttons[] = $mform->createElement('submit', 'back', get_string('back'), $nosubmit);
         }
         $buttons[] = $mform->createElement(
             'submit',
             'next',
             get_string($step === 3 ? 'setup:start' : 'next', $step === 3 ? $component : 'moodle')
         );
-        $buttons[] = $mform->createElement('submit', 'skip', get_string('setup:skip', $component));
+        $buttons[] = $mform->createElement('submit', 'skip', get_string('setup:skip', $component), $nosubmit);
         $mform->addGroup($buttons, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
         foreach (['back', 'skip'] as $name) {
