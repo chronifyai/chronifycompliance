@@ -38,6 +38,13 @@ $ADMIN->add('reports', new admin_externalpage(
     true
 ));
 $ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_setup',
+    new lang_string('setup', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/setup.php'),
+    'local/chronifycompliance:runscan',
+    true
+));
+$ADMIN->add('reports', new admin_externalpage(
     'local_chronifycompliance_components',
     new lang_string('components', 'local_chronifycompliance'),
     new moodle_url('/local/chronifycompliance/components.php'),

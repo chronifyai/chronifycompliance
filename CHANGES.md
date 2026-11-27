@@ -48,6 +48,12 @@
   before the first check, Scanning while a scan runs, Paused. The dashboard reads only the plugin's tables; measured
   at about 0.1 seconds with 300 courses and 60,000 findings (`dev/measure-dashboard.php`). The course list with its
   health tiles and filters moved to the Completion workspace (`completion.php`) until step B4 rebuilds it.
+- Step B3: first run wizard (`setup.php`). Three steps: sector and country, frameworks (NIST CSF 2.0 always
+  suggested, GDPR for Europe, FERPA for US education; ISO/IEC 27001 and SOC 2 shown as coming soon), and Start first
+  check, which checks the site settings at once and starts a scan whose first batch is the 20 most recently changed
+  visible courses. The dashboard opens the wizard until it is finished or skipped (never on a site that already has
+  results); after Skip it shows a Finish setup card. Answers are stored as plugin settings (`sector`, `country`,
+  `frameworks`) for the framework views in Stage D. Site administration has a Set up link to run it again.
 
 ## 0.2.3 (unreleased): QA fixes
 

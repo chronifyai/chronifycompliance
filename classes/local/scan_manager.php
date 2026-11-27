@@ -78,13 +78,15 @@ class scan_manager {
      * @param int|null $categoryid Only courses in this category and its subcategories.
      * @param int|null $limit Maximum number of courses.
      * @param string[]|null $checkids Only these checks.
+     * @param int[] $firstids Courses checked first, before the others (the quick first pass of the setup).
      * @return int Scan id.
      */
     public static function start_scan(
         int $userid,
         ?int $categoryid = null,
         ?int $limit = null,
-        ?array $checkids = null
+        ?array $checkids = null,
+        array $firstids = []
     ): int {
         global $DB;
         $batchsize = (int) get_config('local_chronifycompliance', 'scanbatchsize') ?: self::DEFAULT_BATCH_SIZE;
@@ -107,7 +109,18 @@ class scan_manager {
         $batches = 0;
         $total = 0;
         $lastcourseid = 0;
+        $firstids = array_map('intval', $firstids);
+        $first = array_flip($firstids);
+        foreach (array_chunk($firstids, $batchsize) as $chunk) {
+            self::queue_batch($scanid, $chunk, $checkids, $starttime + $batches * $pace, $batches);
+            $batches++;
+            $total += count($chunk);
+        }
         foreach ($recordset as $record) {
+            if (isset($first[(int) $record->id])) {
+                $lastcourseid = max($lastcourseid, (int) $record->id);
+                continue;
+            }
             $batch[] = (int) $record->id;
             $lastcourseid = (int) $record->id;
             if (count($batch) >= $batchsize) {

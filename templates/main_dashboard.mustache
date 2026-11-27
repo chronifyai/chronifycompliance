@@ -24,7 +24,8 @@
         "nav": "", "dataage": "", "notsetup": false, "scanning": false, "paused": false,
         "settingsurl": "https://example.com/admin/settings.php?section=local_chronifycompliance",
         "canscan": true, "cancancel": false, "scanurl": "https://example.com/local/chronifycompliance/index.php",
-        "sesskey": "abc", "invitation": null,
+        "sesskey": "abc", "invitation": null, "setupdone": false,
+        "setupurl": "https://example.com/local/chronifycompliance/setup.php",
         "score": {"value": 72, "hasvalue": true, "status": "attention", "statuslabel": "Needs attention",
             "change": "Up 4 since last week"},
         "packs": [
@@ -81,11 +82,16 @@
                 <h3 class="h5">{{#str}}dashboard:setup, local_chronifycompliance{{/str}}</h3>
                 <p>{{#str}}dashboard:setup:help, local_chronifycompliance{{/str}}</p>
                 {{#canscan}}
-                    <form method="post" action="{{scanurl}}">
-                        <input type="hidden" name="sesskey" value="{{sesskey}}">
-                        <input type="hidden" name="action" value="scan">
-                        <button type="submit" class="btn btn-primary">{{#str}}dashboard:setup:start, local_chronifycompliance{{/str}}</button>
-                    </form>
+                    {{^setupdone}}
+                        <a class="btn btn-primary" href="{{setupurl}}">{{#str}}dashboard:setup:finish, local_chronifycompliance{{/str}}</a>
+                    {{/setupdone}}
+                    {{#setupdone}}
+                        <form method="post" action="{{scanurl}}">
+                            <input type="hidden" name="sesskey" value="{{sesskey}}">
+                            <input type="hidden" name="action" value="scan">
+                            <button type="submit" class="btn btn-primary">{{#str}}dashboard:setup:start, local_chronifycompliance{{/str}}</button>
+                        </form>
+                    {{/setupdone}}
                 {{/canscan}}
                 {{^canscan}}<p class="text-muted mb-0">{{#str}}dashboard:setup:askadmin, local_chronifycompliance{{/str}}</p>{{/canscan}}
             </div>

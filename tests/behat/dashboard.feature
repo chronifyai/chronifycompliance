@@ -4,26 +4,6 @@ Feature: Administrators see the health of their site on the main dashboard
   As an administrator
   I need one score, a score per pack and the top actions
 
-  Scenario: Finish setup with the first check
-    Given the following config values are set as admin:
-      | config   | value | plugin                   |
-      | scanpace | 0     | local_chronifycompliance |
-    And the following "courses" exist:
-      | fullname     | shortname | enablecompletion |
-      | Plain course | plain     | 1                |
-    When I am on the "local_chronifycompliance > Dashboard" page logged in as "admin"
-    Then I should see "Finish setup"
-    When I press "Run the first check"
-    Then I should see "Scan queued for"
-    And I should see "Checking your site"
-    And I wait "1" seconds
-    And I run all adhoc tasks
-    And I am on the "local_chronifycompliance > Dashboard" page
-    Then I should see "Overall health"
-    And I should not see "Finish setup"
-    And I should see "No checks yet" in the "[data-pack='security']" "css_element"
-    And I should see "The trend appears after the second weekly score"
-
   Scenario: See the score, the breakdown and fix the top action
     Given the Chronify.Compliance demo course "nopassgrade" exists
     When I am on the "local_chronifycompliance > Dashboard" page logged in as "admin"

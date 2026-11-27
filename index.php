@@ -34,6 +34,9 @@ require_capability('local/chronifycompliance:viewsitereport', $context);
 $url = new moodle_url('/local/chronifycompliance/index.php');
 
 scan_controls::handle(optional_param('action', '', PARAM_ALPHA), $url);
+if (\local_chronifycompliance\local\setup::needs_wizard() && has_capability('local/chronifycompliance:runscan', $context)) {
+    redirect(new moodle_url('/local/chronifycompliance/setup.php'));
+}
 
 \local_chronifycompliance\event\dashboard_viewed::create(['context' => $context])->trigger();
 $PAGE->requires->js_call_amd('local_chronifycompliance/scan_progress', 'init', ['[data-region="scan-progress"]']);

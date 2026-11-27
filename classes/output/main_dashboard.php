@@ -81,6 +81,8 @@ class main_dashboard implements \core\output\named_templatable, \renderable {
             'scanurl' => (new moodle_url('/local/chronifycompliance/index.php'))->out(false),
             'sesskey' => sesskey(),
             'invitation' => null,
+            'setupdone' => \local_chronifycompliance\local\setup::is_done(),
+            'setupurl' => (new moodle_url('/local/chronifycompliance/setup.php'))->out(false),
         ];
         if ($setup) {
             return $data;
