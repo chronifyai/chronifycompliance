@@ -361,6 +361,10 @@ $string['notify:body'] = 'Chronify.Compliance found new critical problems in the
 
 {$a->problems}';
 $string['notify:subject'] = 'New critical completion problems in {$a->course}: {$a->count}';
+$string['pack:completion'] = 'Completion';
+$string['pack:scorm'] = 'SCORM and content';
+$string['pack:security'] = 'Security';
+$string['pack:site'] = 'Site and performance';
 $string['package:error:badmanifest'] = 'imsmanifest.xml is not valid XML.';
 $string['package:error:missingfile'] = 'The package file is missing from the file storage.';
 $string['package:error:notzip'] = 'The package is not a zip file.';
@@ -543,6 +547,7 @@ $string['settings:notifyteachers'] = 'Notify teachers about new critical finding
 $string['settings:notifyteachers_desc'] = 'Send a popup notification (never e-mail) to the people who can see the course report when a course that was checked before gets a new Critical problem. Sent by a background task after the check.';
 $string['settings:packagehours'] = 'Analyze packages only between these hours';
 $string['settings:packagehours_desc'] = 'For example 0-6 for midnight to 6 AM (server time). Leave empty to allow any time.';
+$string['settings:packchecks'] = 'Checks in this pack: {$a}.';
 $string['settings:packagesperrun'] = 'Packages analyzed per run';
 $string['settings:packagesperrun_desc'] = 'Number of queued SCORM packages analyzed each time the scheduled task runs (every 5 minutes).';
 $string['settings:paused'] = 'Pause all scans';

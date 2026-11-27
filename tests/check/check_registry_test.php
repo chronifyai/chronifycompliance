@@ -101,4 +101,80 @@ final class check_registry_test extends \advanced_testcase {
         set_config('severity_fakecheck', 99, 'local_chronifycompliance');
         $this->assertSame(base_check::SEVERITY_WARNING, $check->get_severity());
     }
+
+    /**
+     * Every built-in check belongs to the expected pack. A new check must be added here on purpose.
+     */
+    public function test_builtin_check_packs(): void {
+        $expected = [
+            base_check::PACK_COMPLETION => [
+                'activityrules', 'addedaftercriteria', 'circular', 'datecriteria', 'enrolment', 'manualrole',
+                'nocriteria', 'nopassgrade', 'overlapgrade', 'passgradeunreachable', 'prereqbroken', 'requireddeleted',
+                'selfcompletionblock', 'trackednotrequired', 'trackingoff', 'unreachable', 'weakcondition',
+            ],
+            base_check::PACK_SCORM => [
+                'scormgradenoscore', 'scormheavy', 'scormmultibuild', 'scormmultisco', 'scormnostatus', 'scormpassgrade',
+                'scormquiz', 'scormreplaced', 'scormrequireview', 'scormstage', 'scormstatusmismatch', 'scormsuspenddata',
+            ],
+            base_check::PACK_SITE => ['completiondisabled', 'completiontasks', 'cronstale'],
+            base_check::PACK_SECURITY => [],
+        ];
+        $actual = array_map(fn(array $checks): array => array_keys($checks), check_registry::get_checks_by_pack());
+        $this->assertSame(base_check::get_packs(), array_keys($actual), 'Every pack is listed, in display order.');
+        foreach ($expected as $pack => $ids) {
+            $this->assertSame($ids, $actual[$pack], "Checks of pack {$pack}");
+        }
+        $this->assertCount(32, check_registry::get_checks());
+    }
+
+    /**
+     * Checks can be filtered by pack, and every pack has a name.
+     */
+    public function test_filter_by_pack(): void {
+        $scorm = check_registry::get_checks(null, false, [base_check::PACK_SCORM]);
+        $this->assertCount(12, $scorm);
+        foreach ($scorm as $check) {
+            $this->assertSame(base_check::PACK_SCORM, $check->get_pack());
+        }
+        $both = check_registry::get_checks(null, false, [base_check::PACK_SITE, base_check::PACK_COMPLETION]);
+        $this->assertCount(20, $both);
+        $this->assertSame([], check_registry::get_checks(null, false, [base_check::PACK_SECURITY]));
+        foreach (base_check::get_packs() as $pack) {
+            $this->assertNotEmpty(base_check::get_pack_name($pack));
+        }
+    }
+
+    /**
+     * Hook checks without their own pack go to Site when they run for the site, to Completion otherwise.
+     * Checks with an unknown pack are skipped.
+     */
+    public function test_hook_check_packs(): void {
+        $badpack = new class extends fake_check {
+            /**
+             * Id of this check.
+             *
+             * @return string
+             */
+            public function get_id(): string {
+                return 'fakebadpack';
+            }
+
+            /**
+             * A pack that does not exist.
+             *
+             * @return string
+             */
+            public function get_pack(): string {
+                return 'nosuchpack';
+            }
+        };
+        $this->register_checks([new fake_check(), new fake_site_check(), $badpack]);
+        $this->assertSame(base_check::PACK_COMPLETION, check_registry::get_check('fakecheck')->get_pack());
+        $this->assertSame(base_check::PACK_SITE, check_registry::get_check('fakesitecheck')->get_pack());
+        $this->assertNull(check_registry::get_check('fakebadpack'));
+        $this->assertDebuggingCalled();
+        $bypack = check_registry::get_checks_by_pack();
+        $this->assertArrayHasKey('fakecheck', $bypack[base_check::PACK_COMPLETION]);
+        $this->assertArrayHasKey('fakesitecheck', $bypack[base_check::PACK_SITE]);
+    }
 }

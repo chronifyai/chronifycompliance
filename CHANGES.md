@@ -6,6 +6,10 @@
   This is a fresh install: tables, capabilities, settings and language strings use the new name, and the
   old upgrade steps are removed.
 - Course completion checks moved from the `check\course` namespace to `check\completion`.
+- Step A2: every check belongs to a pack (Completion, SCORM and content, Site and performance, Security).
+  The registry filters and groups checks by pack, and the checks settings page lists them under a heading per pack.
+  Checks added through the `register_checks` hook can choose a pack; without one they go to Site (site scope)
+  or Completion.
 
 ## 0.2.3 (unreleased): QA fixes
 

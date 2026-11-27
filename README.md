@@ -97,7 +97,8 @@ For development, `tests/cli/seed_demo.php` creates demo courses that trigger eac
 
 Other plugins can add checks by listening to the `\local_chronifycompliance\hook\register_checks` hook
 in their `db/hooks.php` and calling `$hook->add_check(new my_check())`, where `my_check` extends
-`\local_chronifycompliance\check\base_check`.
+`\local_chronifycompliance\check\base_check`. Override `get_pack()` to place the check in a pack (`base_check::PACK_*`);
+without it, site checks go to Site and performance, the others to Completion.
 
 ## Large sites
 

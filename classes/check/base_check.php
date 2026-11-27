@@ -48,6 +48,15 @@ abstract class base_check {
     /** @var string Check runs per course and reports per activity. */
     public const SCOPE_ACTIVITY = 'activity';
 
+    /** @var string Pack of the course completion checks. */
+    public const PACK_COMPLETION = 'completion';
+    /** @var string Pack of the SCORM and content checks. */
+    public const PACK_SCORM = 'scorm';
+    /** @var string Pack of the security checks. */
+    public const PACK_SECURITY = 'security';
+    /** @var string Pack of the site and performance checks. */
+    public const PACK_SITE = 'site';
+
     /**
      * Unique id of the check, [a-z0-9]+.
      *
@@ -76,6 +85,38 @@ abstract class base_check {
      * @return finding[]
      */
     abstract public function run(audit_context $context): array;
+
+    /**
+     * Pack the check belongs to, one of the PACK_* constants.
+     *
+     * A pack groups checks for the workspaces, the settings page and the health score. Checks added
+     * through the register_checks hook that do not override this go to the Site pack when they run
+     * once for the site, and to the Completion pack otherwise.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return $this->get_scope() === self::SCOPE_SITE ? self::PACK_SITE : self::PACK_COMPLETION;
+    }
+
+    /**
+     * All packs, in display order.
+     *
+     * @return string[]
+     */
+    public static function get_packs(): array {
+        return [self::PACK_SECURITY, self::PACK_COMPLETION, self::PACK_SITE, self::PACK_SCORM];
+    }
+
+    /**
+     * Name of a pack.
+     *
+     * @param string $pack One of the PACK_* constants.
+     * @return string
+     */
+    public static function get_pack_name(string $pack): string {
+        return get_string('pack:' . $pack, 'local_chronifycompliance');
+    }
 
     /**
      * Component owning the check and its language strings.

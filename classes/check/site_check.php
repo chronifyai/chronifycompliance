@@ -34,6 +34,15 @@ abstract class site_check extends base_check {
     }
 
     /**
+     * Site checks belong to the Site and performance pack.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return self::PACK_SITE;
+    }
+
+    /**
      * Site finding helper.
      *
      * @param string $messagekey

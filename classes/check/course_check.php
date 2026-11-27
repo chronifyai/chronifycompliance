@@ -39,6 +39,15 @@ abstract class course_check extends base_check {
     }
 
     /**
+     * Course completion checks belong to the Completion pack.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return self::PACK_COMPLETION;
+    }
+
+    /**
      * Only courses with completion enabled (and completion enabled on the site).
      *
      * @param stdClass $course

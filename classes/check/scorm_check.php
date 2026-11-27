@@ -46,6 +46,15 @@ abstract class scorm_check extends course_check {
     }
 
     /**
+     * SCORM checks belong to the SCORM and content pack.
+     *
+     * @return string
+     */
+    public function get_pack(): string {
+        return self::PACK_SCORM;
+    }
+
+    /**
      * SCORM activities of the course that are not being deleted.
      *
      * @param audit_context $context

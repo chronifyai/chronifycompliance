@@ -250,7 +250,8 @@ if ($hassiteconfig) {
     // Per-check settings.
     $checkspage = new admin_settingpage('local_chronifycompliance_checks', new lang_string('settings:checks', $component));
     if ($ADMIN->fulltree) {
-        $checks = \local_chronifycompliance\check\check_registry::get_checks();
+        $checksbypack = \local_chronifycompliance\check\check_registry::get_checks_by_pack();
+        $checks = array_merge(...array_values($checksbypack));
         if (!$checks) {
             $checkspage->add(new admin_setting_heading(
                 "{$component}/nochecks",
@@ -264,30 +265,44 @@ if ($hassiteconfig) {
             \local_chronifycompliance\check\base_check::SEVERITY_WARNING => new lang_string('severity:warning', $component),
             \local_chronifycompliance\check\base_check::SEVERITY_CRITICAL => new lang_string('severity:critical', $component),
         ];
-        foreach ($checks as $id => $check) {
+        foreach ($checksbypack as $pack => $packchecks) {
+            if (!$packchecks) {
+                continue;
+            }
             $checkspage->add(new admin_setting_heading(
-                "{$component}/checkheading_{$id}",
-                $check->get_name(),
-                $check->get_description()
+                "{$component}/packheading_{$pack}",
+                \local_chronifycompliance\check\base_check::get_pack_name($pack),
+                new lang_string('settings:packchecks', $component, count($packchecks))
             ));
-            // Changes apply to the stored findings at once, not only after the next audit of each course.
-            $enabled = new admin_setting_configcheckbox(
-                "{$component}/enabled_{$id}",
-                new lang_string('settings:checkenabled', $component),
-                '',
-                1
-            );
-            $enabled->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
-            $checkspage->add($enabled);
-            $severity = new admin_setting_configselect(
-                "{$component}/severity_{$id}",
-                new lang_string('settings:checkseverity', $component),
-                new lang_string('settings:checkseverity_desc', $component, $severities[$check->get_default_severity()]->out()),
-                0,
-                $severities
-            );
-            $severity->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
-            $checkspage->add($severity);
+            foreach ($packchecks as $id => $check) {
+                $checkspage->add(new admin_setting_heading(
+                    "{$component}/checkheading_{$id}",
+                    $check->get_name(),
+                    $check->get_description()
+                ));
+                // Changes apply to the stored findings at once, not only after the next audit of each course.
+                $enabled = new admin_setting_configcheckbox(
+                    "{$component}/enabled_{$id}",
+                    new lang_string('settings:checkenabled', $component),
+                    '',
+                    1
+                );
+                $enabled->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
+                $checkspage->add($enabled);
+                $severity = new admin_setting_configselect(
+                    "{$component}/severity_{$id}",
+                    new lang_string('settings:checkseverity', $component),
+                    new lang_string(
+                        'settings:checkseverity_desc',
+                        $component,
+                        $severities[$check->get_default_severity()]->out()
+                    ),
+                    0,
+                    $severities
+                );
+                $severity->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
+                $checkspage->add($severity);
+            }
         }
     }
     $ADMIN->add('local_chronifycompliance_category', $checkspage);
