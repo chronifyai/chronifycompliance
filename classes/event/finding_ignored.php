@@ -1,0 +1,93 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace local_completiondoctor\event;
+
+/**
+ * Completion Doctor finding ignored.
+ *
+ * @package    local_completiondoctor
+ * @copyright  2026 Sebale {@link https://sebale.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class finding_ignored extends \core\event\base {
+    /**
+     * Init.
+     */
+    protected function init() {
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'local_completiondoctor_finding';
+    }
+
+    /**
+     * Name of the event.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('event:findingignored', 'local_completiondoctor');
+    }
+
+    /**
+     * Description of the event.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with id '{$this->userid}' ignored the Completion Doctor finding with id '{$this->objectid}'"
+            . " (check '{$this->other['checkid']}') in the course with id '{$this->courseid}'.";
+    }
+
+    /**
+     * Link to the related page.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/local/completiondoctor/course.php', ['id' => $this->courseid]);
+    }
+
+    /**
+     * Validate the event data.
+     *
+     * @throws \coding_exception
+     */
+    protected function validate_data() {
+        parent::validate_data();
+        if (!isset($this->other['checkid'])) {
+            throw new \coding_exception('The \'checkid\' value must be set in other.');
+        }
+    }
+
+    /**
+     * Mapping of the object id for backup and restore: not restored.
+     *
+     * @return array
+     */
+    public static function get_objectid_mapping() {
+        return ['db' => 'local_completiondoctor_finding', 'restore' => \core\event\base::NOT_MAPPED];
+    }
+
+    /**
+     * Mapping of the other data for backup and restore: nothing to map.
+     *
+     * @return bool
+     */
+    public static function get_other_mapping() {
+        return false;
+    }
+}

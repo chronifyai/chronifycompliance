@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_completiondoctor/fix_preview
+
+    Body of the fix preview modal: what will change, warnings and parameters.
+
+    Example context (json):
+    {
+        "findingid": 3, "error": "",
+        "rows": [{"label": "Grade to pass", "before": "0.00", "after": "50.00"}],
+        "warnings": ["Existing completion states are not recalculated now."],
+        "parameters": [{"name": "gradepass", "label": "Grade to pass", "value": "50"}]
+    }
+}}
+<div data-region="fix-preview" data-findingid="{{findingid}}">
+    {{#parameters.0}}
+        <div class="mb-3">
+            {{#parameters}}
+                <label class="form-label" for="cd-param-{{name}}">{{label}}</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control me-2" id="cd-param-{{name}}" name="{{name}}" value="{{value}}"
+                        data-region="fix-param">
+                    <button type="button" class="btn btn-secondary" data-action="cd-update-preview">
+                        {{#str}}report:updatepreview, local_completiondoctor{{/str}}
+                    </button>
+                </div>
+            {{/parameters}}
+        </div>
+    {{/parameters.0}}
+    {{#error}}<div class="alert alert-danger">{{error}}</div>{{/error}}
+    {{#rows.0}}
+        <table class="table table-sm">
+            <caption class="lcd-visually-hidden">{{#str}}report:changes, local_completiondoctor{{/str}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}report:setting, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}report:before, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}report:after, local_completiondoctor{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rows}}<tr><td>{{label}}</td><td>{{before}}</td><td><strong>{{after}}</strong></td></tr>{{/rows}}
+            </tbody>
+        </table>
+    {{/rows.0}}
+    {{#warnings}}<div class="alert alert-warning">{{.}}</div>{{/warnings}}
+    <p class="small text-muted mb-0">{{#str}}report:undoable, local_completiondoctor{{/str}}</p>
+</div>

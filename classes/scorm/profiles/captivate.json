@@ -1,0 +1,21 @@
+{
+    "name": "captivate",
+    "label": "Adobe Captivate",
+    "experimental": true,
+    "fingerprints": [
+        {"glob": "assets/js/CPXHRLoader.js", "weight": 40},
+        {"glob": "assets/js/CPM.js", "weight": 30},
+        {"glob": "index_scorm.html", "weight": 20},
+        {"file": "index_scorm.html", "regex": "Captivate", "weight": 10}
+    ],
+    "version": [
+        {"file": "index_scorm.html", "regex": "Adobe Captivate ([0-9][0-9.]*)"}
+    ],
+    "reporting": [],
+    "passmark": [],
+    "stage": [
+        {"file": "index_scorm.html", "regex": "width\\s*[:=]\\s*\"?(\\d{3,4})\"?[,;\\s]+height\\s*[:=]\\s*\"?(\\d{3,4})", "pick": "first"}
+    ],
+    "fluid": false,
+    "firstscreen": ["index_scorm.html", "assets/js/*", "assets/css/*", "scormdriver.js", "SCORM_utilities.js", "Utilities.js"]
+}

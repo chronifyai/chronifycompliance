@@ -1,0 +1,19 @@
+{
+    "name": "evolve",
+    "label": "Evolve (Intellimedia)",
+    "experimental": true,
+    "fingerprints": [
+        {"glob": "adapt/js/adapt.min.js", "weight": 30},
+        {"glob": "course/config.json", "weight": 20},
+        {"file": "index.html", "regex": "[Ee]volve", "weight": 40},
+        {"file": "course/config.json", "regex": "[Ee]volve", "weight": 20}
+    ],
+    "version": [],
+    "reporting": [
+        {"file": "course/config.json", "regex": "\"_onTrackingCriteriaMet\"\\s*:\\s*\"(\\w+)\"[\\s\\S]{0,400}?\"_onAssessmentFailure\"\\s*:\\s*\"(\\w+)\""}
+    ],
+    "passmark": [],
+    "stage": [],
+    "fluid": true,
+    "firstscreen": ["index.html", "adapt/js/*", "adapt/css/*", "course/config.json", "course/*/*.json", "libraries/*"]
+}

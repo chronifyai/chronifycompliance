@@ -1,0 +1,19 @@
+{
+    "name": "ispring",
+    "label": "iSpring Suite",
+    "experimental": true,
+    "fingerprints": [
+        {"glob": "res/index.html", "weight": 30},
+        {"glob": "data/*", "weight": 10},
+        {"file": "index_lms.html", "regex": "iSpring", "weight": 50},
+        {"file": "res/index.html", "regex": "iSpring", "weight": 30}
+    ],
+    "version": [
+        {"file": "index_lms.html", "regex": "iSpring (?:Suite|Presenter|Pro)?\\s*([0-9][0-9.]*)"}
+    ],
+    "reporting": [],
+    "passmark": [],
+    "stage": [],
+    "fluid": false,
+    "firstscreen": ["index_lms.html", "res/index.html", "res/lib/*", "res/data/*.js", "lms/*"]
+}

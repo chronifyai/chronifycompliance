@@ -1,0 +1,20 @@
+{
+    "name": "lectora",
+    "label": "Lectora",
+    "experimental": true,
+    "fingerprints": [
+        {"glob": "a001index.html", "weight": 40},
+        {"glob": "trivantis*.js", "weight": 30},
+        {"file": "a001index.html", "regex": "[Tt]rivantis|Lectora", "weight": 30}
+    ],
+    "version": [
+        {"file": "a001index.html", "regex": "Lectora[^0-9]{0,20}([0-9][0-9.]*)"}
+    ],
+    "reporting": [],
+    "passmark": [],
+    "stage": [
+        {"file": "a001index.html", "regex": "width\\s*[:=]\\s*(\\d{3,4})px[;\\s]+height\\s*[:=]\\s*(\\d{3,4})px", "pick": "first"}
+    ],
+    "fluid": false,
+    "firstscreen": ["a001index.html", "trivantis*.js", "*.css", "images/*"]
+}

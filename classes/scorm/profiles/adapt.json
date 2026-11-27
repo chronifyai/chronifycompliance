@@ -1,0 +1,22 @@
+{
+    "name": "adapt",
+    "label": "Adapt Learning",
+    "experimental": true,
+    "fingerprints": [
+        {"glob": "adapt/js/adapt.min.js", "weight": 40},
+        {"glob": "course/config.json", "weight": 30},
+        {"glob": "course/*/course.json", "weight": 20}
+    ],
+    "version": [
+        {"file": "adapt/js/build.min.js", "regex": "\"version\"\\s*:\\s*\"([0-9][0-9.]*)\""}
+    ],
+    "reporting": [
+        {"file": "course/config.json", "regex": "\"_onTrackingCriteriaMet\"\\s*:\\s*\"(\\w+)\"[\\s\\S]{0,400}?\"_onAssessmentFailure\"\\s*:\\s*\"(\\w+)\""}
+    ],
+    "passmark": [
+        {"file": "course/*/course.json", "regex": "\"_scoreToPass\"\\s*:\\s*(\\d+)"}
+    ],
+    "stage": [],
+    "fluid": true,
+    "firstscreen": ["index.html", "adapt/js/*", "adapt/css/*", "course/config.json", "course/*/*.json", "libraries/*"]
+}

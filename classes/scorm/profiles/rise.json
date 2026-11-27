@@ -1,0 +1,52 @@
+{
+    "name": "rise",
+    "label": "Articulate Rise 360",
+    "experimental": false,
+    "fingerprints": [
+        {
+            "glob": "scormcontent/index.html",
+            "weight": 40
+        },
+        {
+            "glob": "scormcontent/lib/*",
+            "weight": 30
+        },
+        {
+            "glob": "scormdriver/scormdriver.js",
+            "weight": 20
+        },
+        {
+            "file": "scormcontent/index.html",
+            "regex": "courseData|__loadJsonp",
+            "weight": 10
+        }
+    ],
+    "version": [],
+    "reporting": [
+        {
+            "file": "scormcontent/index.html",
+            "regex": "courseData = \"([A-Za-z0-9+/=]+)\"",
+            "decode": "base64",
+            "then": "\"reporting\":\"(\\w+)-(\\w+)\""
+        },
+        {
+            "file": "scormcontent/locales/*.js",
+            "regex": "__resolveJsonp\\(\"course:[^\"]*\",\"([A-Za-z0-9+/=]+)\"",
+            "decode": "base64",
+            "then": "\"reporting\":\"(\\w+)-(\\w+)\""
+        }
+    ],
+    "passmark": [],
+    "stage": [],
+    "fluid": true,
+    "firstscreen": [
+        "scormcontent/index.html",
+        "scormcontent/lib/main.bundle.js",
+        "scormcontent/lib/main.bundle.css",
+        "scormcontent/lib/mondrian/entry.js",
+        "scormcontent/locales/*",
+        "scormdriver/indexAPI.html",
+        "scormdriver/scormdriver.js",
+        "scormdriver/driverOptions.js"
+    ]
+}

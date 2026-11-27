@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_completiondoctor/summary_bar
+
+    Course health tiles: open findings by severity and the time of the last check.
+
+    Example context (json):
+    {
+        "critical": 2, "warning": 1, "info": 3, "total": 6, "healthy": false, "neveraudited": false,
+        "lastaudit": "Wednesday, 14 October 2026, 10:00 AM", "checkerrors": null
+    }
+}}
+<div class="lcd-tiles lcd-tiles-course mb-3" role="status">
+    <div class="lcd-tile lcd-tile-critical">
+        <span class="lcd-tile-label">{{#str}}severity:critical, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-value">{{critical}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:critical, local_completiondoctor{{/str}}</span>
+    </div>
+    <div class="lcd-tile lcd-tile-warning">
+        <span class="lcd-tile-label">{{#str}}severity:warning, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-value">{{warning}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:warning, local_completiondoctor{{/str}}</span>
+    </div>
+    <div class="lcd-tile lcd-tile-info">
+        <span class="lcd-tile-label">{{#str}}severity:info, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-value">{{info}}</span>
+        <span class="lcd-tile-detail">{{#str}}report:tile:info, local_completiondoctor{{/str}}</span>
+    </div>
+    <div class="lcd-tile {{#healthy}}lcd-tile-healthy{{/healthy}}{{^healthy}}lcd-tile-neutral{{/healthy}}">
+        <span class="lcd-tile-label">{{#str}}report:tile:lastcheck, local_completiondoctor{{/str}}</span>
+        <span class="lcd-tile-value lcd-tile-value-small">{{#lastaudit}}{{lastaudit}}{{/lastaudit}}{{#neveraudited}}{{#str}}report:neveraudited, local_completiondoctor{{/str}}{{/neveraudited}}</span>
+        <span class="lcd-tile-detail">{{#healthy}}{{#str}}report:healthy, local_completiondoctor{{/str}}{{/healthy}}{{^healthy}}{{#str}}report:tile:total, local_completiondoctor, {{total}}{{/str}}{{/healthy}}</span>
+    </div>
+</div>
+{{#checkerrors}}
+    <div class="alert alert-warning">{{#str}}report:checkerrors, local_completiondoctor, {{checkerrors}}{{/str}}</div>
+{{/checkerrors}}

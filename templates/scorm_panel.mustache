@@ -1,0 +1,159 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_completiondoctor/scorm_panel
+
+    SCORM package analysis, what learners reported, recommended settings, speed and display.
+
+    Example context (json):
+    {
+        "cmid": 5, "name": "Safety training", "ok": true, "error": null, "version": "SCORM_1.2", "edition": null,
+        "scocount": 1, "tool": "Articulate Storyline", "toolversion": "Storyline 360 3.90", "toolconfidence": 100,
+        "toolexperimental": false, "reportingmode": "passed-incomplete", "masteryscore": null, "attempts": 12,
+        "statuses": [{"value": "passed", "count": 8}], "hasstatuses": true, "nostatus": 0, "withscore": 8,
+        "hasrecommendation": true, "confidence": "High",
+        "settings": [{"label": "Require status", "current": "Completed", "recommended": "Passed", "changed": true}],
+        "reasons": ["The package reports passed."], "warnings": [], "size": "20 MB", "files": 150,
+        "bandwidth": "Works well from 5.4 Mbps.", "stage": "960×540", "stageissues": [], "hasstageissues": false,
+        "builds": [], "hasbuilds": false, "builddifferences": [], "findings": [], "hasfindings": false,
+        "courseurl": "https://example.com/local/completiondoctor/course.php?id=2",
+        "editurl": "https://example.com/course/modedit.php?update=5",
+        "refreshurl": "https://example.com/local/completiondoctor/scorm.php?cmid=5", "sesskey": "abc",
+        "pending": false, "checking": false
+    }
+}}
+<div class="local-completiondoctor-scorm" data-region="scorm-panel" data-cmid="{{cmid}}">
+    <div class="mb-3">
+        <a class="btn btn-outline-secondary" href="{{courseurl}}">{{#str}}panel:backtoreport, local_completiondoctor{{/str}}</a>
+        <a class="btn btn-outline-secondary" href="{{editurl}}">{{#str}}report:editsettings, local_completiondoctor{{/str}}</a>
+        <form method="post" action="{{refreshurl}}" class="d-inline">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="action" value="refresh">
+            <button type="submit" class="btn btn-secondary">{{#str}}panel:reanalyze, local_completiondoctor{{/str}}</button>
+        </form>
+    </div>
+
+    {{#hasfindings}}
+        <section class="mb-4">
+            <h3 class="h5">{{#str}}panel:findings, local_completiondoctor{{/str}}</h3>
+            {{#findings}}{{> local_completiondoctor/finding }}{{/findings}}
+        </section>
+    {{/hasfindings}}
+
+    {{#checking}}<div class="alert alert-info" data-region="checking">{{#str}}panel:checking, local_completiondoctor{{/str}}</div>{{/checking}}
+    {{^checking}}{{#pending}}
+        <div class="alert alert-info d-flex flex-wrap align-items-center" data-region="pending">
+            <span class="me-2">{{#str}}panel:pending, local_completiondoctor{{/str}}</span>
+            <form method="post" action="{{refreshurl}}">
+                <input type="hidden" name="sesskey" value="{{sesskey}}">
+                <input type="hidden" name="action" value="analyze">
+                <button type="submit" class="btn btn-sm btn-secondary">{{#str}}report:analyzenow, local_completiondoctor{{/str}}</button>
+            </form>
+        </div>
+    {{/pending}}{{/checking}}
+    {{#error}}<div class="alert alert-warning">{{error}}</div>{{/error}}
+
+    <section class="mb-4">
+        <h3 class="h5">{{#str}}panel:package, local_completiondoctor{{/str}}</h3>
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{#str}}panel:version, local_completiondoctor{{/str}}</dt>
+            <dd class="col-sm-8">{{version}} {{edition}}</dd>
+            <dt class="col-sm-4">{{#str}}panel:scos, local_completiondoctor{{/str}}</dt>
+            <dd class="col-sm-8">{{scocount}}</dd>
+            {{#ok}}
+                <dt class="col-sm-4">{{#str}}panel:tool, local_completiondoctor{{/str}}</dt>
+                <dd class="col-sm-8">
+                    {{tool}} {{toolversion}}
+                    <span class="text-muted">({{#str}}panel:toolconfidence, local_completiondoctor, {{toolconfidence}}{{/str}})</span>
+                    {{#toolexperimental}}<span class="badge bg-secondary text-white">{{#str}}panel:experimental, local_completiondoctor{{/str}}</span>{{/toolexperimental}}
+                </dd>
+                {{#reportingmode}}
+                    <dt class="col-sm-4">{{#str}}panel:reportingmode, local_completiondoctor{{/str}}</dt>
+                    <dd class="col-sm-8">{{reportingmode}}</dd>
+                {{/reportingmode}}
+                {{#masteryscore}}
+                    <dt class="col-sm-4">{{#str}}panel:masteryscore, local_completiondoctor{{/str}}</dt>
+                    <dd class="col-sm-8">{{masteryscore}}</dd>
+                {{/masteryscore}}
+                <dt class="col-sm-4">{{#str}}panel:size, local_completiondoctor{{/str}}</dt>
+                <dd class="col-sm-8">{{size}}, {{#str}}panel:files, local_completiondoctor, {{files}}{{/str}}</dd>
+            {{/ok}}
+        </dl>
+    </section>
+
+    {{#hasbuilds}}
+        <section class="mb-4">
+            <h3 class="h5">{{#str}}panel:builds, local_completiondoctor{{/str}}</h3>
+            <table class="table table-sm">
+                <thead><tr>
+                    <th scope="col">{{#str}}panel:build, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:playerversion, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:slides, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:variables, local_completiondoctor{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#builds}}<tr><td>{{label}}</td><td>{{version}}</td><td>{{slides}}</td><td>{{variables}}</td></tr>{{/builds}}
+                </tbody>
+            </table>
+            {{#builddifferences}}<div class="alert alert-danger mb-1">{{.}}</div>{{/builddifferences}}
+        </section>
+    {{/hasbuilds}}
+
+    <section class="mb-4">
+        <h3 class="h5">{{#str}}panel:evidence, local_completiondoctor, {{attempts}}{{/str}}</h3>
+        {{#hasstatuses}}
+            <table class="table table-sm w-auto">
+                <thead><tr>
+                    <th scope="col">{{#str}}panel:status, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:count, local_completiondoctor{{/str}}</th>
+                </tr></thead>
+                <tbody>{{#statuses}}<tr><td>{{value}}</td><td>{{count}}</td></tr>{{/statuses}}</tbody>
+            </table>
+        {{/hasstatuses}}
+        {{^hasstatuses}}<p class="text-muted">{{#str}}panel:nostatuses, local_completiondoctor{{/str}}</p>{{/hasstatuses}}
+        <p class="small text-muted mb-0">{{#str}}panel:evidencedetail, local_completiondoctor, {"nostatus": {{nostatus}}, "withscore": {{withscore}} }{{/str}}</p>
+    </section>
+
+    {{#hasrecommendation}}
+        <section class="mb-4">
+            <h3 class="h5">{{#str}}panel:recommendation, local_completiondoctor, {{confidence}}{{/str}}</h3>
+            <table class="table table-sm">
+                <thead><tr>
+                    <th scope="col">{{#str}}report:setting, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:current, local_completiondoctor{{/str}}</th>
+                    <th scope="col">{{#str}}panel:recommended, local_completiondoctor{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#settings}}
+                        <tr{{#changed}} class="table-warning"{{/changed}}><td>{{label}}</td><td>{{current}}</td><td>{{#changed}}<strong>{{recommended}}</strong>{{/changed}}{{^changed}}{{recommended}}{{/changed}}</td></tr>
+                    {{/settings}}
+                </tbody>
+            </table>
+            <ul class="mb-2">{{#reasons}}<li>{{.}}</li>{{/reasons}}</ul>
+            {{#warnings}}<div class="alert alert-warning mb-1">{{.}}</div>{{/warnings}}
+        </section>
+    {{/hasrecommendation}}
+
+    {{#ok}}
+        <section class="mb-4">
+            <h3 class="h5">{{#str}}panel:delivery, local_completiondoctor{{/str}}</h3>
+            <p class="mb-1">{{bandwidth}}</p>
+            {{#stage}}<p class="mb-1">{{#str}}panel:stage, local_completiondoctor, {{stage}}{{/str}}</p>{{/stage}}
+            {{#stageissues}}<div class="alert alert-info mb-1">{{.}}</div>{{/stageissues}}
+        </section>
+    {{/ok}}
+</div>

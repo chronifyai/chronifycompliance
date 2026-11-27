@@ -1,0 +1,78 @@
+{
+    "name": "storyline",
+    "label": "Articulate Storyline",
+    "experimental": false,
+    "fingerprints": [
+        {
+            "glob": "story_content/*",
+            "weight": 40
+        },
+        {
+            "glob": "html5/data/js/data.js",
+            "weight": 30
+        },
+        {
+            "glob": "story.html",
+            "weight": 20
+        },
+        {
+            "file": "story.html",
+            "regex": "Storyline|articulate",
+            "weight": 10
+        }
+    ],
+    "version": [
+        {
+            "file": "story.html",
+            "regex": "(Storyline 360|Storyline 3|Storyline 2)"
+        },
+        {
+            "file": "html5/data/js/data.js",
+            "regex": "\"version\":\"([0-9][0-9.]+)\""
+        }
+    ],
+    "reporting": [
+        {
+            "file": "html5/data/js/data.js",
+            "regex": "\"passStatus\":\"(\\w+)\",\"failStatus\":\"(\\w+)\"",
+            "map": {
+                "pass": "passed",
+                "complete": "completed",
+                "incomplete": "incomplete",
+                "fail": "failed"
+            }
+        }
+    ],
+    "passmark": [
+        {
+            "file": "html5/data/js/data.js",
+            "regex": "\"type\":\"quiz\"[^{}]*?\"passPercent\":(\\d+)"
+        }
+    ],
+    "stage": [
+        {
+            "file": "html5/data/js/data.js",
+            "regex": "\"width\":(\\d{3,4}),\"height\":(\\d{3,4})",
+            "pick": "mostfrequent"
+        }
+    ],
+    "fluid": false,
+    "firstscreen": [
+        "story.html",
+        "index_lms.html",
+        "index_lms_html5.html",
+        "html5/data/js/data.js",
+        "html5/data/js/frame.js",
+        "html5/data/js/paths.js",
+        "html5/lib/scripts/*",
+        "html5/lib/stylesheets/*",
+        "html5/data/css/*",
+        "lms/*",
+        "story_content/user.js",
+        "story_content/triggers.js"
+    ],
+    "ignore": [
+        "mobile/*",
+        "story_content/external_files/*"
+    ]
+}

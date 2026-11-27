@@ -1,0 +1,94 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_completiondoctor/links_panel
+
+    Links panel of the course report: state of the last link check and the broken links.
+
+    Example context (json):
+    {
+        "refreshurl": "https://example.com/local/completiondoctor/course.php?id=2#cd-links",
+        "never": false, "starting": false, "scheduled": null, "running": false, "busy": false, "progress": null, "failed": null,
+        "checked": "Checked 16 October 2026: 42 links, 1 broken, 1 could not be verified.",
+        "nobroken": false, "skipped": null, "skippedfiles": null, "truncated": false, "hasgroups": true,
+        "groups": [{"name": "broken", "label": "Broken", "pillclass": "lcd-pill lcd-pill-critical", "count": 1,
+            "help": null, "more": null,
+            "locations": [{"icon": "https://example.com/theme/image.php/boost/page/1/monologo", "type": "Page",
+                "name": "Week 1 reading", "section": "Section: Week 1", "count": 1,
+                "openurl": "https://example.com/mod/page/view.php?id=4",
+                "editurl": "https://example.com/course/modedit.php?update=4",
+                "links": [{"display": "https://goglec.com/", "href": "https://goglec.com/", "linktext": "Link text: \"Search\"",
+                    "where": "page content", "reason": "The domain does not exist"}]}]}]
+    }
+}}
+<section class="mb-4 lcd-links" id="cd-links" aria-labelledby="cd-links-title">
+    <h3 class="h5" id="cd-links-title">{{#str}}links:title, local_completiondoctor{{/str}} <span class="lcd-extra">{{#str}}links:extra, local_completiondoctor{{/str}}</span></h3>
+    {{#never}}{{^busy}}{{^scheduled}}<p class="text-muted">{{#str}}links:never, local_completiondoctor{{/str}}</p>{{/scheduled}}{{/busy}}{{/never}}
+    {{#starting}}<div class="alert alert-info">{{#str}}links:starting, local_completiondoctor{{/str}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_completiondoctor{{/str}}</a></div>{{/starting}}
+    {{#scheduled}}<p class="small text-muted">{{scheduled}}</p>{{/scheduled}}
+    {{#running}}<div class="alert alert-info">{{progress}} <a href="{{refreshurl}}" data-action="cd-links-refresh">{{#str}}links:refresh, local_completiondoctor{{/str}}</a></div>{{/running}}
+    {{#failed}}<div class="alert alert-warning">{{failed}}</div>{{/failed}}
+    {{#checked}}
+        <p class="mb-2">{{checked}}</p>
+        {{#nobroken}}<p class="text-success mb-2">{{#str}}links:nobroken, local_completiondoctor{{/str}}</p>{{/nobroken}}
+        {{#skipped}}<p class="small text-muted mb-1">{{skipped}}</p>{{/skipped}}
+        {{#skippedfiles}}<p class="small text-muted mb-1">{{skippedfiles}}</p>{{/skippedfiles}}
+        {{#truncated}}<p class="small text-muted mb-1">{{#str}}links:truncated, local_completiondoctor{{/str}}</p>{{/truncated}}
+    {{/checked}}
+    {{#groups}}
+        <h4 class="h6 mt-3">{{label}} ({{count}})</h4>
+        {{#help}}<p class="small text-muted mb-2">{{help}}</p>{{/help}}
+        <div data-region="links-{{name}}">
+            {{#locations}}
+                <div class="card mb-2 lcd-link-location">
+                    <div class="card-header d-flex flex-wrap align-items-center justify-content-between py-2">
+                        <div class="me-2">
+                            {{#icon}}<img src="{{icon}}" class="icon activityicon me-1" alt="" aria-hidden="true">{{/icon}}
+                            {{#type}}<span class="text-muted">{{type}}:</span>{{/type}}
+                            <strong>{{name}}</strong> <span class="text-muted small">({{count}})</span>
+                            {{#section}}<div class="small text-muted">{{section}}</div>{{/section}}
+                        </div>
+                        <div class="text-nowrap">
+                            {{#openurl}}<a class="btn btn-sm btn-outline-secondary me-1" href="{{openurl}}">{{#str}}links:open, local_completiondoctor{{/str}}</a>{{/openurl}}
+                            {{#editurl}}<a class="btn btn-sm btn-outline-secondary" href="{{editurl}}">{{#str}}links:edit, local_completiondoctor{{/str}}</a>{{/editurl}}
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {{#links}}
+                            <li class="list-group-item py-2">
+                                <div class="lcd-link-url"><span class="{{pillclass}} me-2">{{label}}</span>{{#href}}<a href="{{href}}" target="_blank" rel="noopener noreferrer">{{display}}</a>{{/href}}{{^href}}{{display}}{{/href}}</div>
+                                {{#reason}}<div class="small">{{reason}}</div>{{/reason}}
+                                {{#linktext}}<div class="small">{{linktext}}</div>{{/linktext}}
+                                {{#where}}<div class="small text-muted">{{where}}</div>{{/where}}
+                            </li>
+                        {{/links}}
+                    </ul>
+                </div>
+            {{/locations}}
+        </div>
+        {{#more}}<p class="small text-muted">{{more}}</p>{{/more}}
+    {{/groups}}
+</section>
+{{#js}}
+    document.querySelectorAll('[data-action="cd-links-refresh"]').forEach((link) => {
+        link.addEventListener('click', (e) => {
+            // The link points to an anchor on the same page; reload so the new progress shows.
+            e.preventDefault();
+            window.location.reload();
+        });
+    });
+{{/js}}
