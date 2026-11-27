@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 use DOMDocument;
 use DOMElement;
@@ -27,7 +27,7 @@ use DOMXPath;
  * the parser never accesses the network. Element and attribute names are matched by local name,
  * so the many namespace variants found in real packages work.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

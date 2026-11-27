@@ -1,4 +1,4 @@
-@local @local_completiondoctor @javascript
+@local @local_chronifycompliance @javascript
 Feature: Teachers fix and ignore completion problems in the course report
   In order to make sure learners can complete my course
   As a teacher
@@ -8,18 +8,20 @@ Feature: Teachers fix and ignore completion problems in the course report
     Given the following "users" exist:
       | username | firstname | lastname |
       | teacher1 | Terry     | Teacher  |
-    And the Completion Doctor demo course "nopassgrade" exists
-    And the Completion Doctor demo course "weakcondition" exists
+    And the Chronify.Compliance demo course "nopassgrade" exists
+    And the Chronify.Compliance demo course "weakcondition" exists
     And the following "course enrolments" exist:
       | user     | course                | role           |
       | teacher1 | cd-demo-nopassgrade   | editingteacher |
       | teacher1 | cd-demo-weakcondition | editingteacher |
     And the following "permission overrides" exist:
       | capability                         | permission | role           | contextlevel | reference           |
-      | local/completiondoctor:applyfix    | Allow      | editingteacher | Course       | cd-demo-nopassgrade |
+      | local/chronifycompliance:applyfix    | Allow      | editingteacher | Course       | cd-demo-nopassgrade |
+      | local/chronifycompliance:viewcoursereport | Allow | editingteacher | System       |                     |
+      | local/chronifycompliance:ignorefinding    | Allow | editingteacher | System       |                     |
 
   Scenario: Preview, apply and undo a fix
-    Given I am on the "cd-demo-nopassgrade" "local_completiondoctor > Course report" page logged in as "teacher1"
+    Given I am on the "cd-demo-nopassgrade" "local_chronifycompliance > Course report" page logged in as "teacher1"
     Then I should see "Pass grade missing"
     When I press "Preview fix"
     And I set the field "Grade to pass" to "60"
@@ -34,7 +36,7 @@ Feature: Teachers fix and ignore completion problems in the course report
     And I should see "Preview fix"
 
   Scenario: Ignore a finding and reopen it
-    Given I am on the "cd-demo-weakcondition" "local_completiondoctor > Course report" page logged in as "teacher1"
+    Given I am on the "cd-demo-weakcondition" "local_chronifycompliance > Course report" page logged in as "teacher1"
     Then I should see "Weak completion condition"
     And I should not see "Preview fix"
     When I press "Ignore"

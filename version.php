@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version details for Completion Doctor.
+ * Version details for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_completiondoctor';
-$plugin->version = 2026111000;
+$plugin->component = 'local_chronifycompliance';
+$plugin->version = 2026112702;
 $plugin->requires = 2024100700;
 $plugin->supported = [405, 503];
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.2.3';
+$plugin->release = '0.3.0';

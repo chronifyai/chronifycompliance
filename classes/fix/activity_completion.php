@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
 /**
  * Changes the completion rules of one activity the way core's bulk completion edit does
@@ -22,7 +22,7 @@ namespace local_completiondoctor\fix;
  * course cache rebuild), without resetting learners' completion states: learners are evaluated
  * against the new rules the next time their progress in the activity changes.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

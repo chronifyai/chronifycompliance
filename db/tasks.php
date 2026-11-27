@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Scheduled tasks for Completion Doctor.
+ * Scheduled tasks for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => '\local_completiondoctor\task\scan_site',
+        'classname' => '\local_chronifycompliance\task\scan_site',
         'blocking' => 0,
         'minute' => 'R',
         'hour' => '3',
@@ -36,7 +36,7 @@ $tasks = [
         'disabled' => 1,
     ],
     [
-        'classname' => '\local_completiondoctor\task\analyze_queue',
+        'classname' => '\local_chronifycompliance\task\analyze_queue',
         'blocking' => 0,
         'minute' => '*/5',
         'hour' => '*',
@@ -45,7 +45,7 @@ $tasks = [
         'month' => '*',
     ],
     [
-        'classname' => '\local_completiondoctor\task\schedule_link_checks',
+        'classname' => '\local_chronifycompliance\task\schedule_link_checks',
         'blocking' => 0,
         'minute' => '*/10',
         'hour' => '*',
@@ -54,7 +54,16 @@ $tasks = [
         'month' => '*',
     ],
     [
-        'classname' => '\local_completiondoctor\task\cleanup',
+        'classname' => '\local_chronifycompliance\task\refresh_datasets',
+        'blocking' => 0,
+        'minute' => '*/15',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+    [
+        'classname' => '\local_chronifycompliance\task\cleanup',
         'blocking' => 0,
         'minute' => 'R',
         'hour' => '*',
