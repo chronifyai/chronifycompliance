@@ -185,14 +185,22 @@ class dashboard_data {
      * SQL condition for courses with open problems of the SCORM and content pack.
      *
      * @param string $alias Alias of the audit table.
+     * @param callable $paramname Returns a new parameter name (Report Builder needs its own names).
      * @return array [sql, params]
      */
-    public static function scorm_condition(string $alias): array {
-        global $DB;
+    public static function scorm_condition(string $alias, callable $paramname): array {
         $scormchecks = array_keys(check_registry::get_checks(null, true, [base_check::PACK_SCORM])) ?: ['-'];
-        [$insql, $params] = $DB->get_in_or_equal($scormchecks, SQL_PARAMS_NAMED, 'cdscorm');
-        $params['cdscormopen'] = finding::STATUS_OPEN;
+        $params = [];
+        $placeholders = [];
+        foreach ($scormchecks as $checkid) {
+            $name = $paramname();
+            $params[$name] = $checkid;
+            $placeholders[] = ':' . $name;
+        }
+        $open = $paramname();
+        $params[$open] = finding::STATUS_OPEN;
         return ["EXISTS (SELECT 1 FROM {" . finding_store::TABLE . "} cds
-                 WHERE cds.courseid = {$alias}.courseid AND cds.status = :cdscormopen AND cds.checkid {$insql})", $params];
+                 WHERE cds.courseid = {$alias}.courseid AND cds.status = :{$open}
+                   AND cds.checkid IN (" . implode(', ', $placeholders) . "))", $params];
     }
 }

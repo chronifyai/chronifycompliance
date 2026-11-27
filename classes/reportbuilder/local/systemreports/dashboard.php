@@ -127,7 +127,10 @@ class dashboard extends system_report {
         if (isset($conditions[$view])) {
             $this->add_base_condition_sql($conditions[$view]);
         } else if ($view === 'scorm') {
-            [$sql, $params] = \local_chronifycompliance\local\dashboard_data::scorm_condition($alias);
+            [$sql, $params] = \local_chronifycompliance\local\dashboard_data::scorm_condition(
+                $alias,
+                fn() => database::generate_param_name()
+            );
             $this->add_base_condition_sql($sql, $params);
         }
         $checkid = $this->get_parameter('checkid', '', PARAM_ALPHANUMEXT);

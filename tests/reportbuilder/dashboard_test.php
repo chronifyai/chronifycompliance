@@ -113,4 +113,48 @@ final class dashboard_test extends \advanced_testcase {
             }
         }
     }
+
+    /**
+     * The SCORM view lists courses with open SCORM problems, and the critical column sorts worst first.
+     */
+    public function test_scorm_view_and_sort(): void {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/local/chronifycompliance/completion.php');
+        $generator = $this->getDataGenerator();
+        $scorm = $generator->create_course(['fullname' => 'Scorm course']);
+        $other = $generator->create_course(['fullname' => 'Other course']);
+        $worse = $generator->create_course(['fullname' => 'Worse course']);
+        foreach ([[$scorm, 1, 0], [$other, 1, 1], [$worse, 1, 5]] as [$course, $critical, $warning]) {
+            $DB->insert_record('local_chronifycompliance_audit', ['courseid' => $course->id, 'timeaudited' => time(),
+                'critical' => $critical, 'warning' => $warning, 'info' => 0]);
+        }
+        $DB->insert_record('local_chronifycompliance_finding', ['courseid' => $scorm->id, 'checkid' => 'scormnostatus',
+            'component' => 'local_chronifycompliance', 'severity' => 3, 'baseseverity' => 3, 'fingerprint' => sha1('s'),
+            'status' => 'open', 'messagekey' => 'x', 'timecreated' => time(), 'timemodified' => time()]);
+
+        $html = system_report_factory::create(
+            dashboard::class,
+            \context_system::instance(),
+            '',
+            '',
+            0,
+            ['view' => 'scorm', 'checkid' => '']
+        )->output();
+        $this->assertStringContainsString('Scorm course', $html);
+        $this->assertStringNotContainsString('Other course', $html);
+
+        \core_reportbuilder\manager::reset_caches();
+        $html = system_report_factory::create(
+            dashboard::class,
+            \context_system::instance(),
+            '',
+            '',
+            0,
+            ['view' => '', 'checkid' => '']
+        )->output();
+        $this->assertLessThan(strpos($html, 'Other course'), strpos($html, 'Worse course'));
+        $this->assertLessThan(strpos($html, 'Scorm course'), strpos($html, 'Other course'));
+    }
 }
