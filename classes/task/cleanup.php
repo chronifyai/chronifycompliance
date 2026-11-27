@@ -86,6 +86,9 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // Health score snapshots older than two years.
+        $counts['scoresnapshots'] = \local_chronifycompliance\score\health_score::delete_old();
+
         // SCORM evidence of deleted activities.
         $counts['scormevidence'] = \local_chronifycompliance\scorm\runtime_evidence::delete_orphans();
 

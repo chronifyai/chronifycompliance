@@ -115,5 +115,23 @@ function xmldb_local_chronifycompliance_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026112703, 'local', 'chronifycompliance');
     }
 
+    if ($oldversion < 2026112704) {
+        // Weekly snapshots of the health score.
+        $table = new xmldb_table('local_chronifycompliance_score');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('pack', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('score', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('critical', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('warning', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('info', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('packtime', XMLDB_INDEX_NOTUNIQUE, ['pack', 'timecreated']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2026112704, 'local', 'chronifycompliance');
+    }
+
     return true;
 }

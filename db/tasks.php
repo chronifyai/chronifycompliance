@@ -63,6 +63,15 @@ $tasks = [
         'month' => '*',
     ],
     [
+        'classname' => '\local_chronifycompliance\task\score_snapshot',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '6',
+        'day' => '*',
+        'dayofweek' => '1',
+        'month' => '*',
+    ],
+    [
         'classname' => '\local_chronifycompliance\task\cleanup',
         'blocking' => 0,
         'minute' => 'R',

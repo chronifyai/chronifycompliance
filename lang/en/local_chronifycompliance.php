@@ -611,3 +611,4 @@ $string['task:refreshdataset'] = 'Refresh one dataset of Chronify.Compliance';
 $string['task:refreshdatasets'] = 'Refresh the Chronify.Compliance data';
 $string['task:scansite'] = 'Chronify.Compliance: scan all courses';
 $string['task:schedulelinkchecks'] = 'Chronify.Compliance: check links of new courses';
+$string['task:scoresnapshot'] = 'Store the weekly Chronify.Compliance health score';

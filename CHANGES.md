@@ -26,6 +26,12 @@
   instead of a one-day cache. Checks and background tasks collect it when it is more than a day old; the SCORM panel
   and the analysis web service only read what is stored and show when it was collected, or that it is not collected
   yet. Page views no longer read the SCORM tracking tables. The `evidence` cache definition is removed.
+- Step A6: health score (`score\health_score`). Per pack: 100 minus 10 per critical, 3 per warning and 0.5 per info
+  finding (open findings of enabled checks; ignored ones count half), never below 0. Site scores count Completion and
+  SCORM findings per 100 audited courses. Overall: weighted average (Security 35, Completion 30, Site 20, SCORM 15) over
+  packs that have enabled checks. Labels: healthy from 80, needs attention from 50, at risk below. Course scores use
+  the course's own findings. A weekly task stores snapshots (`local_chronifycompliance_score`) for the trend; the
+  cleanup task drops snapshots older than two years.
 
 ## 0.2.3 (unreleased): QA fixes
 

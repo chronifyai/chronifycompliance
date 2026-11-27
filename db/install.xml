@@ -300,5 +300,22 @@
         <INDEX NAME="scormid" UNIQUE="true" FIELDS="scormid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_chronifycompliance_score" COMMENT="Weekly snapshots of the health score, per pack and overall.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pack" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="A pack, or overall."/>
+        <FIELD NAME="score" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="0 to 100."/>
+        <FIELD NAME="critical" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Open critical findings in the pack."/>
+        <FIELD NAME="warning" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Open warnings in the pack."/>
+        <FIELD NAME="info" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Open info findings in the pack."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="packtime" UNIQUE="false" FIELDS="pack, timecreated"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>
