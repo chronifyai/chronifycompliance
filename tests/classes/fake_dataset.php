@@ -66,10 +66,10 @@ class fake_dataset extends dataset {
      */
     public function read(int $after, int $limit): array {
         global $DB;
-        $rows = $DB->get_records_select('user', 'id > :after', ['after' => $after], 'id', 'id AS key, id AS userid', 0, $limit);
+        $rows = $DB->get_records_select('user', 'id > :after', ['after' => $after], 'id', 'id AS rowkey, id AS userid', 0, $limit);
         if ($this->badkeys) {
             foreach ($rows as $row) {
-                $row->key = $after;
+                $row->rowkey = $after;
             }
         }
         return array_values($rows);

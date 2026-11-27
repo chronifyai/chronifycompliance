@@ -196,10 +196,10 @@ class refresher {
     private static function check_keys(dataset $dataset, array $rows, int $after): int {
         $highest = $after;
         foreach ($rows as $row) {
-            if (!isset($row->key) || (int) $row->key <= $after) {
+            if (!isset($row->rowkey) || (int) $row->rowkey <= $after) {
                 throw new \coding_exception('Dataset ' . $dataset->get_id() . ' returned a row without a key above ' . $after);
             }
-            $highest = max($highest, (int) $row->key);
+            $highest = max($highest, (int) $row->rowkey);
         }
         return $highest;
     }

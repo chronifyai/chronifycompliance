@@ -43,7 +43,7 @@ abstract class dataset {
     /**
      * Read up to $limit source rows whose key is greater than $after, in key order.
      *
-     * Must not write. Every row must have the key as property "key" (an integer that only grows,
+     * Must not write. Every row must have the key as property "rowkey" (an integer that only grows,
      * usually the id of the source table).
      *
      * @param int $after High water mark: key of the last row already stored.
