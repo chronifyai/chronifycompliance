@@ -324,6 +324,22 @@ class refresher {
     }
 
     /**
+     * Whether a Refresh now of a dataset is waiting for cron or running.
+     *
+     * @param string $datasetid
+     * @return bool
+     */
+    public static function is_requested(string $datasetid): bool {
+        foreach (\core\task\manager::get_adhoc_tasks(\local_chronifycompliance\task\refresh_dataset::class) as $task) {
+            $data = $task->get_custom_data();
+            if ($data && ($data->dataset ?? null) === $datasetid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Source rows per batch (setting).
      *
      * @return int

@@ -125,4 +125,19 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertSame(0, $DB->count_records_select('local_chronifycompliance_fixlog', 'userid > 0 OR undoneby > 0'));
         $this->assertSame(0, $DB->count_records_select('local_chronifycompliance_finding', 'ignoredby > 0'));
     }
+
+    /**
+     * Dismissed invitations are exported as user preferences.
+     */
+    public function test_export_user_preferences(): void {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        set_user_preference('local_chronifycompliance_invite_dashboard', 1764201600, $user);
+        provider::export_user_preferences((int) $user->id);
+        $writer = writer::with_context(\context_system::instance());
+        $this->assertTrue($writer->has_any_data());
+        $preferences = $writer->get_user_preferences('local_chronifycompliance');
+        $this->assertObjectHasProperty('local_chronifycompliance_invite_dashboard', $preferences);
+        $this->assertObjectNotHasProperty('local_chronifycompliance_invite_security', $preferences);
+    }
 }

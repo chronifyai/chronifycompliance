@@ -30,6 +30,13 @@ $ADMIN->add('reports', new admin_externalpage(
     new moodle_url('/local/chronifycompliance/index.php'),
     'local/chronifycompliance:viewsitereport'
 ));
+$ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_components',
+    new lang_string('components', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/components.php'),
+    'moodle/site:config',
+    true
+));
 
 if ($hassiteconfig) {
     $component = 'local_chronifycompliance';
@@ -292,6 +299,12 @@ if ($hassiteconfig) {
             new lang_string('settings:notifyteachers', $component),
             new lang_string('settings:notifyteachers_desc', $component),
             0
+        ));
+        $settings->add(new admin_setting_configcheckbox(
+            "{$component}/invitations",
+            new lang_string('settings:invitations', $component),
+            new lang_string('settings:invitations_desc', $component),
+            1
         ));
     }
     $ADMIN->add('local_chronifycompliance_category', $settings);

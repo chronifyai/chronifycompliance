@@ -197,7 +197,7 @@ final class api_test extends \core_external\tests\externallib_testcase {
             [$service->id]
         );
         $plugin = $DB->get_fieldset_select('external_functions', 'name', 'component = ?', ['local_chronifycompliance']);
-        $this->assertCount(11, $plugin);
+        $this->assertCount(12, $plugin);
         foreach ($plugin as $name) {
             $this->assertContains($name, $functions);
         }

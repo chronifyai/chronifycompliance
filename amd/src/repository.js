@@ -91,3 +91,14 @@ export const getCourseStatus = (courseid) => fetchMany([{
     methodname: 'local_chronifycompliance_get_course_status',
     args: {courseid},
 }])[0];
+
+/**
+ * Queue a background refresh of a dataset (Refresh now).
+ *
+ * @param {String} dataset
+ * @returns {Promise}
+ */
+export const requestRefresh = (dataset) => fetchMany([{
+    methodname: 'local_chronifycompliance_request_refresh',
+    args: {dataset},
+}])[0];

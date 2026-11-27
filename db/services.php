@@ -53,6 +53,13 @@ $functions = [
         'ajax' => true,
         'capabilities' => 'local/chronifycompliance:applyfix',
     ],
+    'local_chronifycompliance_request_refresh' => [
+        'classname' => \local_chronifycompliance\external\request_refresh::class,
+        'description' => 'Queue a background refresh of one dataset of the data layer.',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'local/chronifycompliance:runscan',
+    ],
     'local_chronifycompliance_ignore_finding' => [
         'classname' => \local_chronifycompliance\external\ignore_finding::class,
         'description' => 'Ignore a finding with a reason, or reopen it.',
@@ -119,6 +126,7 @@ $services = [
             'local_chronifycompliance_explain_user_completion',
             'local_chronifycompliance_get_scan_status',
             'local_chronifycompliance_get_course_status',
+            'local_chronifycompliance_request_refresh',
             'core_files_upload',
         ],
         'restrictedusers' => 1,

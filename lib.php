@@ -58,3 +58,21 @@ function local_chronifycompliance_extend_navigation_course(navigation_node $navi
         new pix_icon('i/report', '')
     );
 }
+
+/**
+ * User preferences of the plugin: when each invitation was dismissed.
+ *
+ * @return array
+ */
+function local_chronifycompliance_user_preferences(): array {
+    $preferences = [];
+    foreach (\local_chronifycompliance\output\invitation::KEYS as $key) {
+        $preferences[\local_chronifycompliance\output\invitation::preference($key)] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 0,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ];
+    }
+    return $preferences;
+}

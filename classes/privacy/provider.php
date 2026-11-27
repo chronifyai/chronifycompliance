@@ -24,6 +24,7 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\core_userlist_provider;
 use core_privacy\local\request\plugin\provider as plugin_provider;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\user_preference_provider;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
@@ -40,7 +41,7 @@ use core_privacy\local\request\writer;
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements core_userlist_provider, metadata_provider, plugin_provider {
+class provider implements core_userlist_provider, metadata_provider, plugin_provider, user_preference_provider {
     /** @var array User id columns of tables with a course id (the site id means the system context). */
     private const COURSE_TABLES = [
         'local_chronifycompliance_finding' => ['ignoredby', 'usermodified'],
@@ -116,7 +117,33 @@ class provider implements core_userlist_provider, metadata_provider, plugin_prov
             'timecompleted' => 'privacy:metadata:compl:timecompleted',
         ], 'privacy:metadata:compl');
         $collection->add_subsystem_link('core_message', [], 'privacy:metadata:core_message');
+        foreach (\local_chronifycompliance\output\invitation::KEYS as $key) {
+            $collection->add_user_preference(
+                \local_chronifycompliance\output\invitation::preference($key),
+                'privacy:metadata:preference:invite'
+            );
+        }
         return $collection;
+    }
+
+    /**
+     * Export the user's preferences: when each invitation was dismissed.
+     *
+     * @param int $userid
+     */
+    public static function export_user_preferences(int $userid): void {
+        foreach (\local_chronifycompliance\output\invitation::KEYS as $key) {
+            $name = \local_chronifycompliance\output\invitation::preference($key);
+            $value = get_user_preferences($name, null, $userid);
+            if ($value) {
+                writer::export_user_preference(
+                    'local_chronifycompliance',
+                    $name,
+                    transform::datetime((int) $value),
+                    get_string('privacy:metadata:preference:invite', 'local_chronifycompliance')
+                );
+            }
+        }
     }
 
     /**

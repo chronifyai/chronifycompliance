@@ -20,7 +20,7 @@ Feature: Teachers fix and ignore completion problems in the course report
       | local/chronifycompliance:viewcoursereport | Allow | editingteacher | System       |                     |
       | local/chronifycompliance:ignorefinding    | Allow | editingteacher | System       |                     |
 
-  Scenario: Preview, apply and undo a fix
+  Scenario: Preview, apply and undo a fix from the toast
     Given I am on the "cd-demo-nopassgrade" "local_chronifycompliance > Course report" page logged in as "teacher1"
     Then I should see "Pass grade missing"
     When I press "Preview fix"
@@ -29,7 +29,18 @@ Feature: Teachers fix and ignore completion problems in the course report
     Then I should see "60.00" in the "Preview fix" "dialogue"
     When I click on "Apply fix" "button" in the "Preview fix" "dialogue"
     Then I should see "No open problems."
-    When I click on "Fixed (1)" "text"
+    And "[data-region='undo-toast']" "css_element" should be visible
+    When I click on "Undo fix" "button" in the "[data-region='undo-toast']" "css_element"
+    Then I should see "Pass grade missing"
+    And "[data-region='undo-toast']" "css_element" should not exist
+
+  Scenario: Undo a fix later from the fixed list
+    Given I am on the "cd-demo-nopassgrade" "local_chronifycompliance > Course report" page logged in as "teacher1"
+    When I press "Preview fix"
+    And I click on "Apply fix" "button" in the "Preview fix" "dialogue"
+    Then I should see "No open problems."
+    When I click on "[data-action='cc-toast-close']" "css_element"
+    And I click on "Fixed (1)" "text"
     And I press "Undo fix"
     And I click on "Undo fix" "button" in the "Undo fix" "dialogue"
     Then I should see "Pass grade missing"

@@ -35,6 +35,12 @@
 - Step A7: tables reserved for later releases: `local_chronifycompliance_connect` (Connect consent and status) and
   `local_chronifycompliance_fixplan` (signed fix plans). Nothing writes to them yet; they are covered by the Privacy
   API, course deletion and the cleanup task so the later features start from a complete schema.
+- Step B1: shared page components. Top navigation between the workspaces (only pages that exist are listed); a data
+  age line showing when the data was refreshed, with Refresh now (new web service
+  `local_chronifycompliance_request_refresh`) and refreshing, failed and no data states; an undo toast for 30 seconds
+  after a fix is applied; and a dismissible invitation slot (hidden for 30 days per user, user preferences
+  `local_chronifycompliance_invite_*`) with an admin switch to turn invitations off. An administrator component
+  gallery (`components.php`) shows every component in each state.
 
 ## 0.2.3 (unreleased): QA fixes
 

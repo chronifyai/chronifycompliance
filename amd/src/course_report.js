@@ -28,6 +28,7 @@ import Pending from 'core/pending';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
 import {previewFix, applyFix, undoFix, ignoreFinding} from 'local_chronifycompliance/repository';
+import * as UndoToast from 'local_chronifycompliance/undo_toast';
 
 /**
  * Parameter values entered in the preview modal.
@@ -88,6 +89,7 @@ const showFixModal = async(findingid) => {
             const result = await applyFix(findingid, getParams(modal.getBody()[0]));
             modal.destroy();
             if (result.success) {
+                UndoToast.remember(result.fixlogid, result.message);
                 window.location.reload();
             } else {
                 Notification.addNotification({message: result.message, type: 'error'});
@@ -178,6 +180,7 @@ const reopen = async(findingid) => {
  * @param {String} selector Selector of the report region.
  */
 export const init = (selector) => {
+    UndoToast.init();
     const root = document.querySelector(selector);
     if (!root) {
         return;
