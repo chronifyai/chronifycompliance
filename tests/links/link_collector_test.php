@@ -146,7 +146,7 @@ final class link_collector_test extends \advanced_testcase {
         // The course report lists the broken links, with no missing strings.
         $PAGE->set_url('/local/chronifycompliance/course.php');
         $PAGE->set_context(\context_system::instance());
-        $html = $PAGE->get_renderer('local_chronifycompliance')->course_report(get_course($course->id));
+        $html = $PAGE->get_renderer('local_chronifycompliance')->course_report(get_course($course->id), 'links');
         $this->assertStringContainsString('id="cd-links"', $html);
         $this->assertStringContainsString(get_string('links:reason:cmdeleted', 'local_chronifycompliance'), $html);
         $this->assertStringContainsString(get_string('links:embedded', 'local_chronifycompliance', 'missing.png'), $html);

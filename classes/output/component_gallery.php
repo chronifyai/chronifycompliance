@@ -83,7 +83,10 @@ class component_gallery {
         ];
         foreach ($findings as $name => $changes) {
             $html .= $state($name);
-            $html .= $output->render_from_template("{$component}/finding", array_merge($finding, $changes));
+            $html .= $output->render_from_template(
+                "{$component}/finding",
+                finding_exporter::add_main_action(array_merge($finding, $changes))
+            );
         }
 
         // Invitation. The real one for the dashboard, so dismissing it works.

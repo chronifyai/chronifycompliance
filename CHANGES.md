@@ -63,6 +63,12 @@
   a SCORM strip (packages analyzed, activities with SCORM problems, link to those courses); site checks from the
   stored findings. The page no longer runs the site checks live or counts packages in the file table, and the
   `sitehealth` cache is removed.
+- Step B5: course report restyled. Header with the time of the last check, Check again, "Why hasn't a learner
+  completed?" and the completion settings. Tabs Problems, Ignored, Fixed and Links (`course.php?tab=`); only the
+  open tab is built. Finding cards have one main action by fix level (Preview fix for users who may apply fixes,
+  otherwise Set up for the activity settings, SCORM analysis, Reopen or Undo) and a More menu with Details, Ignore
+  and the other links. The Fixed tab is the course's fix history (who applied each fix and when, undone or not)
+  with Undo on the latest fix of each problem. Check links moved into the Links tab.
 
 ## 0.2.3 (unreleased): QA fixes
 

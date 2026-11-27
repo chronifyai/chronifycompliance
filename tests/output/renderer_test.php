@@ -45,10 +45,12 @@ final class renderer_test extends \advanced_testcase {
         foreach (seeder::seed() as $id => $courseid) {
             course_auditor::audit($courseid, true);
             $course = get_course($courseid);
-            $html = $renderer->course_report($course);
-            $this->assertStringContainsString('data-region="course-report"', $html, $id);
-            $this->assertStringNotContainsString('[[', $html, "Missing string in {$id}");
-            $this->assertStringNotContainsString('}}', $html, "Broken template comment in {$id}");
+            foreach (course_report::TABS as $tab) {
+                $html = $renderer->course_report($course, $tab);
+                $this->assertStringContainsString('data-region="course-report"', $html, $id);
+                $this->assertStringNotContainsString('[[', $html, "Missing string in {$id}, tab {$tab}");
+                $this->assertStringNotContainsString('}}', $html, "Broken template comment in {$id}, tab {$tab}");
+            }
 
             foreach (get_fast_modinfo($courseid)->get_instances_of('scorm') as $cm) {
                 $panel = $renderer->scorm_panel($cm, inspector::inspect($cm));

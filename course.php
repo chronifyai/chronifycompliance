@@ -30,6 +30,7 @@ require(__DIR__ . '/../../config.php');
 
 $courseid = required_param('id', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
+$tab = optional_param('tab', 'problems', PARAM_ALPHA);
 
 $course = get_course($courseid);
 require_login($course);
@@ -56,7 +57,12 @@ if ($action === 'recheck' || $action === 'analyzescorm') {
     }
     check_course::request((int) $course->id, $cmid);
     \local_chronifycompliance\event\course_check_requested::create(['context' => $context])->trigger();
-    redirect($url, get_string('report:checkqueued', 'local_chronifycompliance'), null, \core\output\notification::NOTIFY_INFO);
+    redirect(
+        new moodle_url($url, ['tab' => $tab]),
+        get_string('report:checkqueued', 'local_chronifycompliance'),
+        null,
+        \core\output\notification::NOTIFY_INFO
+    );
 }
 
 if ($action === 'checklinks') {
@@ -67,7 +73,7 @@ if ($action === 'checklinks') {
     }
     $queued = link_scan::queue((int) $course->id, (int) $USER->id);
     redirect(
-        new moodle_url($url, [], 'cd-links'),
+        new moodle_url($url, ['tab' => 'links']),
         get_string($queued ? 'links:queued' : 'links:alreadyqueued', 'local_chronifycompliance'),
         null,
         $queued ? \core\output\notification::NOTIFY_SUCCESS : \core\output\notification::NOTIFY_INFO
@@ -87,5 +93,5 @@ if (audit_store::get_requested((int) $course->id)) {
 
 $renderer = $PAGE->get_renderer('local_chronifycompliance');
 echo $OUTPUT->header();
-echo $renderer->course_report($course);
+echo $renderer->course_report($course, $tab);
 echo $OUTPUT->footer();

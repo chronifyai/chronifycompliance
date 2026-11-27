@@ -77,7 +77,10 @@ class links_panel implements \core\output\named_templatable, \renderable {
         $data = [
             'cancheck' => has_capability('local/chronifycompliance:checklinks', \context_course::instance($courseid)),
             'checkurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $courseid]))->out(false),
-            'refreshurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $courseid], 'cd-links'))->out(false),
+            'refreshurl' => (new moodle_url(
+                '/local/chronifycompliance/course.php',
+                ['id' => $courseid, 'tab' => 'links']
+            ))->out(false),
             'sesskey' => sesskey(),
             'never' => !$state,
             'starting' => $status === 'queued' && !$runat,

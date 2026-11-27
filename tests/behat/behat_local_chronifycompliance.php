@@ -39,6 +39,19 @@ use local_chronifycompliance\check\course_auditor;
  */
 class behat_local_chronifycompliance extends behat_base {
     /**
+     * Named selectors: "Finding", the card of a finding, located by its check name.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector('Finding', [
+                "//div[@data-region='finding'][.//h4[contains(normalize-space(.), %locator%)]]",
+            ]),
+        ];
+    }
+
+    /**
      * Create a Chronify.Compliance demo course and audit it. The course short name is "cd-demo-<scenario>".
      *
      * @Given /^the Chronify.Compliance demo course "(?P<scenario_string>[a-z0-9]+)" exists$/

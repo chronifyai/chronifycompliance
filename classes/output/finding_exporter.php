@@ -89,6 +89,34 @@ class finding_exporter {
             $log = fix_log::get_latest_active((int) $finding->id);
             $item['fixlogid'] = $log ? (int) $log->id : null;
         }
+        return self::add_main_action($item);
+    }
+
+    /**
+     * One main action per card, by fix level: Preview fix, Undo, Reopen, Set up (activity settings) or the
+     * SCORM analysis. The other actions go in the card's menu.
+     *
+     * @param array $item
+     * @return array
+     */
+    public static function add_main_action(array $item): array {
+        $main = null;
+        if ($item['canfix']) {
+            $main = 'fix';
+        } else if ($item['fixlogid']) {
+            $main = 'undo';
+        } else if ($item['canreopen']) {
+            $main = 'reopen';
+        } else if ($item['scormurl']) {
+            $main = 'scorm';
+        } else if ($item['editurl']) {
+            $main = 'setup';
+        }
+        foreach (['fix', 'undo', 'reopen', 'scorm', 'setup'] as $action) {
+            $item['main' . $action] = $main === $action;
+        }
+        $item['menuedit'] = $item['editurl'] && $main !== 'setup';
+        $item['menuscorm'] = $item['scormurl'] && $main !== 'scorm';
         return $item;
     }
 

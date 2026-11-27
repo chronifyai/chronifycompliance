@@ -29,10 +29,11 @@ class renderer extends \plugin_renderer_base {
      * Course report.
      *
      * @param \stdClass $course
+     * @param string $tab Open tab, see course_report::TABS.
      * @return string
      */
-    public function course_report(\stdClass $course): string {
-        return $this->render(new course_report($course));
+    public function course_report(\stdClass $course, string $tab = 'problems'): string {
+        return $this->render(new course_report($course, $tab));
     }
 
     /**

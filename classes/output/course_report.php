@@ -16,7 +16,9 @@
 
 namespace local_chronifycompliance\output;
 
+use local_chronifycompliance\check\check_registry;
 use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fix_log;
 use local_chronifycompliance\local\audit_store;
 use local_chronifycompliance\local\finding_store;
 use local_chronifycompliance\scorm\package_analyzer;
@@ -35,15 +37,23 @@ class course_report implements \core\output\named_templatable, \renderable {
     private \stdClass $course;
     /** @var \course_modinfo Activities of the course. */
     private \course_modinfo $modinfo;
+    /** @var string Open tab: problems, ignored, fixed or links. */
+    private string $tab;
+    /** @var string[] Tabs. */
+    public const TABS = ['problems', 'ignored', 'fixed', 'links'];
+    /** @var int Fix history entries shown. */
+    public const HISTORY = 50;
 
     /**
      * Constructor.
      *
      * @param \stdClass $course
+     * @param string $tab One of TABS.
      */
-    public function __construct(\stdClass $course) {
+    public function __construct(\stdClass $course, string $tab = 'problems') {
         $this->course = $course;
         $this->modinfo = get_fast_modinfo($course);
+        $this->tab = in_array($tab, self::TABS, true) ? $tab : 'problems';
     }
 
     /**
@@ -63,55 +73,136 @@ class course_report implements \core\output\named_templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
+        global $DB;
+        $component = 'local_chronifycompliance';
         $context = \context_course::instance($this->course->id);
         $caps = [
             'canfix' => has_capability('local/chronifycompliance:applyfix', $context),
             'canignore' => has_capability('local/chronifycompliance:ignorefinding', $context),
         ];
-        $all = finding_store::get_course_findings((int) $this->course->id, null);
+        $courseid = (int) $this->course->id;
+        $url = new moodle_url('/local/chronifycompliance/course.php', ['id' => $courseid]);
+        $counts = ['problems' => 0, 'ignored' => 0, 'fixed' => $DB->count_records(fix_log::TABLE, ['courseid' => $courseid])];
         $groups = [];
         foreach (finding_exporter::SEVERITIES as $severity => $name) {
-            $groups[$severity] = ['severity' => $name, 'label' => get_string('severity:' . $name, 'local_chronifycompliance'),
+            $groups[$severity] = ['severity' => $name, 'label' => get_string('severity:' . $name, $component),
                 'badgeclass' => finding_exporter::BADGES[$name], 'findings' => []];
         }
         $ignored = [];
-        $fixed = [];
-        $modinfo = $this->modinfo;
-        foreach ($all as $finding) {
-            $item = finding_exporter::export($finding, $modinfo, $caps);
+        foreach (finding_store::get_course_findings($courseid, null) as $finding) {
             if ($finding->status === finding::STATUS_OPEN) {
-                $groups[$finding->severity]['findings'][] = $item;
+                $counts['problems']++;
+                if ($this->tab === 'problems') {
+                    $groups[$finding->severity]['findings'][] = finding_exporter::export($finding, $this->modinfo, $caps);
+                }
             } else if ($finding->status === finding::STATUS_IGNORED) {
-                $ignored[] = $item;
-            } else if ($finding->status === finding::STATUS_FIXED) {
-                $fixed[] = $item;
+                $counts['ignored']++;
+                if ($this->tab === 'ignored') {
+                    $ignored[] = finding_exporter::export($finding, $this->modinfo, $caps);
+                }
             }
         }
         foreach ($groups as $severity => $group) {
             $groups[$severity]['count'] = count($group['findings']);
-            $groups[$severity]['hasfindings'] = $groups[$severity]['count'] > 0;
         }
+        $groups = array_values(array_filter($groups, fn($g) => $g['count'] > 0));
+
+        $tabs = [];
+        foreach (self::TABS as $tab) {
+            $label = get_string('report:tab:' . $tab, $component);
+            $tabs[] = [
+                'key' => $tab,
+                'label' => isset($counts[$tab]) ? get_string('report:tabcount', $component, ['tab' => $label,
+                    'count' => $counts[$tab]]) : $label,
+                'url' => (new moodle_url($url, ['tab' => $tab]))->out(false),
+                'active' => $tab === $this->tab,
+            ];
+        }
+        $audit = audit_store::get($courseid);
 
         $data = [
-            'courseid' => (int) $this->course->id,
-            'checking' => audit_store::get_requested((int) $this->course->id) > 0,
-            'summary' => self::summary((int) $this->course->id),
-            'recheckurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $this->course->id]))->out(false),
+            'courseid' => $courseid,
+            'tab' => $this->tab,
+            'tabs' => $tabs,
+            'isproblems' => $this->tab === 'problems',
+            'isignored' => $this->tab === 'ignored',
+            'isfixed' => $this->tab === 'fixed',
+            'islinks' => $this->tab === 'links',
+            'checking' => audit_store::get_requested($courseid) > 0,
+            'checked' => $audit ? get_string(
+                'report:checkedat',
+                $component,
+                data_age::format_time((int) $audit->timeaudited)
+            ) : null,
+            'summary' => self::summary($courseid),
+            'recheckurl' => (new moodle_url($url, ['tab' => $this->tab]))->out(false),
             'sesskey' => sesskey(),
-            'groups' => array_values(array_filter($groups, fn($g) => $g['hasfindings'])),
-            'hasopen' => (bool) array_filter($groups, fn($g) => $g['hasfindings']),
+            'groups' => $groups,
+            'hasopen' => (bool) $groups,
             'ignored' => $ignored,
             'hasignored' => (bool) $ignored,
-            'fixed' => $fixed,
-            'hasfixed' => (bool) $fixed,
-            'fixedcount' => count($fixed),
+            'history' => $this->tab === 'fixed' ? $this->history($caps['canfix']) : [],
             'learnerurl' => has_capability('local/chronifycompliance:viewlearnerdiagnostic', $context)
-                ? (new moodle_url('/local/chronifycompliance/learner.php', ['courseid' => $this->course->id]))->out(false) : null,
-            'completionsettingsurl' => (new moodle_url('/course/completion.php', ['id' => $this->course->id]))->out(false),
-            'links' => (new links_panel($this->course, $modinfo))->export_for_template($output),
-            'scormwaiting' => $this->waiting_packages(),
+                ? (new moodle_url('/local/chronifycompliance/learner.php', ['courseid' => $courseid]))->out(false) : null,
+            'completionsettingsurl' => (new moodle_url('/course/completion.php', ['id' => $courseid]))->out(false),
+            'links' => $this->tab === 'links'
+                ? (new links_panel($this->course, $this->modinfo))->export_for_template($output) : null,
+            'scormwaiting' => $this->tab === 'problems' ? $this->waiting_packages() : null,
         ];
+        $data['hashistory'] = (bool) $data['history'];
         return $data;
+    }
+
+    /**
+     * Fix history of the course, newest first. Undo is offered for the latest fix of each finding that is
+     * not undone yet.
+     *
+     * @param bool $canfix Whether the user may undo.
+     * @return array
+     */
+    private function history(bool $canfix): array {
+        global $DB;
+        $component = 'local_chronifycompliance';
+        $records = $DB->get_records(fix_log::TABLE, ['courseid' => $this->course->id], 'id DESC', '*', 0, self::HISTORY);
+        $userids = [];
+        foreach ($records as $record) {
+            $userids[] = (int) $record->userid;
+            $userids[] = (int) $record->undoneby;
+        }
+        $users = $userids ? $DB->get_records_list(
+            'user',
+            'id',
+            array_unique(array_filter($userids)),
+            '',
+            implode(',', \core_user\fields::get_name_fields()) . ', id'
+        ) : [];
+        $name = fn(int $userid) => isset($users[$userid]) ? fullname($users[$userid]) : get_string('unknownuser');
+        $cms = $this->modinfo->get_cms();
+        $latest = [];
+        $rows = [];
+        foreach ($records as $record) {
+            $check = check_registry::get_check($record->checkid);
+            $undoable = $canfix && !$record->undone && !isset($latest[$record->findingid]);
+            if (!$record->undone) {
+                $latest[$record->findingid] = true;
+            }
+            $rows[] = [
+                'fixlogid' => (int) $record->id,
+                'checkname' => $check ? $check->get_name() : $record->checkid,
+                'cmname' => $record->cmid && isset($cms[$record->cmid]) ? $cms[$record->cmid]->get_formatted_name() : null,
+                'applied' => get_string('report:history:applied', $component, ['time' => userdate(
+                    (int) $record->timecreated,
+                    get_string('strftimedatetimeshort', 'langconfig')
+                ), 'user' => $name((int) $record->userid)]),
+                'undone' => $record->undone ? get_string('report:history:undone', $component, ['time' => userdate(
+                    (int) $record->timeundone,
+                    get_string('strftimedatetimeshort', 'langconfig')
+                ),
+                    'user' => $name((int) $record->undoneby)]) : null,
+                'canundo' => $undoable,
+            ];
+        }
+        return $rows;
     }
 
     /**

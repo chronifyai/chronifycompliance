@@ -27,6 +27,7 @@ Feature: Teachers check the links of a course
 
   Scenario: Check links and see a domain that does not exist
     Given I am on the "links" "local_chronifycompliance > Course report" page logged in as "teacher1"
+    And I click on "Links" "link" in the ".nav-tabs" "css_element"
     And I should see "Links in this course have not been checked yet."
     When I press "Check links"
     Then I should see "Link check queued."
@@ -34,6 +35,7 @@ Feature: Teachers check the links of a course
     And I wait "1" seconds
     And I run all adhoc tasks
     And I am on the "links" "local_chronifycompliance > Course report" page
+    And I click on "Links" "link" in the ".nav-tabs" "css_element"
     And I should see "Broken (1)"
     And I should see "https://www.mistyped.invalid/"
     And I should see "The domain does not exist"
@@ -50,6 +52,7 @@ Feature: Teachers check the links of a course
       | user     | course    | role           |
       | teacher1 | newcourse | editingteacher |
     And I am on the "newcourse" "local_chronifycompliance > Course report" page logged in as "teacher1"
+    And I click on "Links" "link" in the ".nav-tabs" "css_element"
     And I should not see "Link check queued"
     And the Chronify.Compliance link checks of changed new courses are queued
     And I reload the page
@@ -57,5 +60,6 @@ Feature: Teachers check the links of a course
     When I wait "1" seconds
     And I run all adhoc tasks
     And I am on the "newcourse" "local_chronifycompliance > Course report" page
+    And I click on "Links" "link" in the ".nav-tabs" "css_element"
     Then I should see "Links: 0. Broken: 0."
     And the "Check links" "button" should be enabled

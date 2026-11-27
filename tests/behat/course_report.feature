@@ -40,7 +40,7 @@ Feature: Teachers fix and ignore completion problems in the course report
     And I click on "Apply fix" "button" in the "Preview fix" "dialogue"
     Then I should see "No open problems."
     When I click on "[data-action='cc-toast-close']" "css_element"
-    And I click on "Fixed (1)" "text"
+    And I click on "Fixed (1)" "link"
     And I press "Undo fix"
     And I click on "Undo fix" "button" in the "Undo fix" "dialogue"
     Then I should see "Pass grade missing"
@@ -50,11 +50,13 @@ Feature: Teachers fix and ignore completion problems in the course report
     Given I am on the "cd-demo-weakcondition" "local_chronifycompliance > Course report" page logged in as "teacher1"
     Then I should see "Weak completion condition"
     And I should not see "Preview fix"
-    When I press "Ignore"
+    When I click on "More" "button" in the "Weak completion condition" "local_chronifycompliance > Finding"
+    And I click on "Ignore" "link" in the "Weak completion condition" "local_chronifycompliance > Finding"
     And I set the field "Why is this not a problem?" to "Reading is enough for this page"
     And I click on "Ignore" "button" in the "Ignore" "dialogue"
     Then I should see "No open problems."
-    When I click on "Ignored" "text"
+    And I should see "Ignored (1)"
+    When I click on "Ignored (1)" "link"
     Then I should see "Ignored: Reading is enough for this page"
     When I press "Reopen"
     Then I should see "Weak completion condition"
@@ -72,3 +74,24 @@ Feature: Teachers fix and ignore completion problems in the course report
     And I am on the "cd-demo-nopassgrade" "Course" page logged in as "teacher1"
     And I navigate to "Completion health" in current page administration
     And I should see "Pass grade missing"
+
+  Scenario: Teachers who may not apply fixes see where to set things up instead
+    Given the following "users" exist:
+      | username | firstname | lastname |
+      | teacher2 | Tina      | Teacher  |
+    And the following "course enrolments" exist:
+      | user     | course              | role    |
+      | teacher2 | cd-demo-nopassgrade | teacher |
+    And the following "permission overrides" exist:
+      | capability                                | permission | role    | contextlevel | reference |
+      | local/chronifycompliance:viewcoursereport | Allow      | teacher | System       |           |
+      | local/chronifycompliance:ignorefinding    | Allow      | teacher | System       |           |
+    When I am on the "cd-demo-nopassgrade" "local_chronifycompliance > Course report" page logged in as "teacher2"
+    Then I should see "Pass grade missing"
+    And I should not see "Preview fix"
+    And I should see "Set up" in the "Pass grade missing" "local_chronifycompliance > Finding"
+    When I click on "More" "button" in the "Pass grade missing" "local_chronifycompliance > Finding"
+    And I click on "Details" "link" in the "Pass grade missing" "local_chronifycompliance > Finding"
+    Then I should see "A passing grade is required, but no pass grade is set." in the "Pass grade missing" "local_chronifycompliance > Finding"
+    When I click on "Fixed (0)" "link"
+    Then I should see "No fixes were applied in this course yet."
