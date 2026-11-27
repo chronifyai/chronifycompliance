@@ -32,7 +32,7 @@ class setup {
     /** @var string[] Frameworks available now. */
     public const FRAMEWORKS = ['nistcsf2', 'gdpr', 'ferpa'];
     /** @var string[] Frameworks shown as coming soon. */
-    public const SOON = ['iso27001', 'soc2'];
+    public const SOON = ['iso27001', 'soc2', 'hipaa', 'wcag22'];
     /** @var int Courses checked first, so the dashboard fills within minutes. */
     public const SAMPLE = 20;
     /** @var string[] Countries where GDPR (or the UK and Swiss equivalents) applies: EU, EEA, UK, Switzerland. */

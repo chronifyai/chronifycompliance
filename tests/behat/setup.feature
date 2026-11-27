@@ -24,7 +24,7 @@ Feature: Administrators set up Chronify.Compliance on first use
     And the field "NIST CSF 2.0" matches value "1"
     And the field "FERPA" matches value "1"
     And the field "GDPR" matches value "0"
-    And I should see "ISO/IEC 27001"
+    And I should see "ISO/IEC 27001, SOC 2, HIPAA, WCAG 2.2"
     When I set the field "GDPR" to "1"
     And I press "Next"
     Then I should see "Step 3 of 3"
