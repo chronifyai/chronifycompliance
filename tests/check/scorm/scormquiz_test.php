@@ -118,7 +118,7 @@ final class scormquiz_test extends \advanced_testcase {
         $DB->set_field('scorm', 'completionstatusrequired', 2, ['id' => $scorm->id]);
         $DB->execute("UPDATE {local_chronifycompliance_pkg} SET analysis = REPLACE(analysis, 'completed-incomplete',
             'passed-incomplete')");
-        \cache::make('local_chronifycompliance', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
         $this->assertSame([], $this->audit((int) $course->id), 'Package needs the quiz to report passed');
 
         [$course] = $this->course('scorm12_single', []);
@@ -146,7 +146,7 @@ final class scormquiz_test extends \advanced_testcase {
         $this->assertSame(10.0, $evidence['maxraw']);
         $this->assertSame(['10' => 2], $evidence['scoremax']);
 
-        \cache::make('local_chronifycompliance', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
         $findings = $this->audit((int) $course->id);
         $this->assertSame('check:scormquiz:messageunreachable', $findings[0]->messagekey);
         $this->assertSame(\local_chronifycompliance\check\base_check::SEVERITY_CRITICAL, $findings[0]->severity);

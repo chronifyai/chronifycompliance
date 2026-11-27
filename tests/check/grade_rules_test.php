@@ -159,7 +159,7 @@ final class grade_rules_test extends \advanced_testcase {
         for ($i = 0; $i < 5; $i++) {
             $this->finish($course, $scorm);
         }
-        \cache::make('local_chronifycompliance', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
         $findings = $this->audit((int) $course->id, 'scormgradenoscore');
         $this->assertCount(1, $findings);
         $this->assertSame('check:scormgradenoscore:basis:evidence', $findings[0]->messageparams['basis']['str']);

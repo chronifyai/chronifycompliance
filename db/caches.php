@@ -38,12 +38,4 @@ $definitions = [
         'simpledata' => false,
         'ttl' => 600,
     ],
-    'evidence' => [
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => false,
-        'ttl' => DAYSECS,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 20,
-    ],
 ];

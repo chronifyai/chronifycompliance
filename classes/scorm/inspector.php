@@ -74,7 +74,13 @@ class inspector {
         // Revision 1 is the first package; each replacement with different content adds one.
         $replaced = (int) $scorm->revision >= 2 && $packagetime;
 
-        $evidence = runtime_evidence::get((int) $scorm->id, $replaced ? $packagetime : null, $refresh);
+        // Page views (MODE_READ) only read stored evidence; checks and background tasks collect it.
+        $evidence = runtime_evidence::get(
+            (int) $scorm->id,
+            $replaced ? $packagetime : null,
+            $refresh,
+            $mode !== self::MODE_READ
+        );
         $item = \grade_item::fetch(['itemtype' => 'mod', 'itemmodule' => 'scorm', 'iteminstance' => $scorm->id,
             'itemnumber' => 0, 'courseid' => $cm->course]);
         $gradepass = $item ? (float) $item->gradepass : null;

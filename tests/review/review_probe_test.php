@@ -100,7 +100,7 @@ final class review_probe_test extends \advanced_testcase {
                     'elementid' => $elementid, 'value' => (string) $value, 'timemodified' => time()]);
             }
         }
-        \cache::make('local_chronifycompliance', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
     }
 
     /**

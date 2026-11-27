@@ -29,7 +29,7 @@ use local_chronifycompliance\task\audit_course;
 #[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 /**
  * Tests of the production load safeguards: recorded criteria save time, package queue, scan pace,
- * pause switch and the SCORM evidence cache.
+ * pause switch and the stored SCORM evidence.
  *
  * @package    local_chronifycompliance
  * @category   test
@@ -145,15 +145,58 @@ final class load_control_test extends \advanced_testcase {
     }
 
     /**
-     * Evidence is cached until refreshed.
+     * Evidence is stored and reused for a day, collected again when refreshed or older.
      */
-    public function test_evidence_cache(): void {
+    public function test_evidence_stored(): void {
         global $DB;
         $course = $this->getDataGenerator()->create_course();
         $scorm = $this->getDataGenerator()->create_module('scorm', ['course' => $course->id]);
         $this->assertSame(0, runtime_evidence::get((int) $scorm->id)['attempts']);
         $DB->insert_record('scorm_attempt', ['userid' => 2, 'scormid' => $scorm->id, 'attempt' => 1]);
-        $this->assertSame(0, runtime_evidence::get((int) $scorm->id)['attempts'], 'Cached');
+        $this->assertSame(0, runtime_evidence::get((int) $scorm->id)['attempts'], 'Stored');
         $this->assertSame(1, runtime_evidence::get((int) $scorm->id, null, true)['attempts'], 'Refreshed');
+
+        $DB->insert_record('scorm_attempt', ['userid' => 2, 'scormid' => $scorm->id, 'attempt' => 2]);
+        $DB->set_field(runtime_evidence::TABLE, 'timecollected', time() - DAYSECS - 1, ['scormid' => $scorm->id]);
+        $readonly = runtime_evidence::get((int) $scorm->id, null, false, false);
+        $this->assertSame(1, $readonly['attempts'], 'Page views read old evidence');
+        $this->assertSame(2, runtime_evidence::get((int) $scorm->id)['attempts'], 'Checks collect old evidence again');
+    }
+
+    /**
+     * Page views never collect: without stored evidence for the current package they get a pending result.
+     */
+    public function test_evidence_page_views_do_not_collect(): void {
+        global $DB;
+        $course = $this->getDataGenerator()->create_course();
+        $scorm = $this->getDataGenerator()->create_module('scorm', ['course' => $course->id]);
+        $DB->insert_record('scorm_attempt', ['userid' => 2, 'scormid' => $scorm->id, 'attempt' => 1]);
+
+        $evidence = runtime_evidence::get((int) $scorm->id, null, false, false);
+        $this->assertTrue($evidence['pending']);
+        $this->assertSame(0, $evidence['attempts']);
+        $this->assertFalse($DB->record_exists(runtime_evidence::TABLE, ['scormid' => $scorm->id]));
+
+        $collected = runtime_evidence::get((int) $scorm->id);
+        $this->assertFalse($collected['pending']);
+        $this->assertSame(1, $collected['attempts']);
+        $this->assertGreaterThan(0, $collected['timecollected']);
+        $this->assertSame(1, runtime_evidence::get((int) $scorm->id, null, false, false)['attempts']);
+
+        // A new package: stored evidence counted stale attempts against the old one.
+        $this->assertTrue(runtime_evidence::get((int) $scorm->id, time(), false, false)['pending']);
+    }
+
+    /**
+     * The evidence of deleted activities is removed.
+     */
+    public function test_evidence_orphans(): void {
+        global $DB;
+        $course = $this->getDataGenerator()->create_course();
+        $scorm = $this->getDataGenerator()->create_module('scorm', ['course' => $course->id]);
+        runtime_evidence::get((int) $scorm->id);
+        $DB->insert_record(runtime_evidence::TABLE, ['scormid' => -5, 'evidence' => '{}', 'timecollected' => time()]);
+        $this->assertSame(1, runtime_evidence::delete_orphans());
+        $this->assertTrue($DB->record_exists(runtime_evidence::TABLE, ['scormid' => $scorm->id]));
     }
 }

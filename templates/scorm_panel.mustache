@@ -115,6 +115,8 @@
 
     <section class="mb-4">
         <h3 class="h5">{{#str}}panel:evidence, local_chronifycompliance, {{attempts}}{{/str}}</h3>
+        {{#evidencepending}}<p class="text-muted">{{#str}}panel:evidencepending, local_chronifycompliance{{/str}}</p>{{/evidencepending}}
+        {{#evidencecollected}}<p class="small text-muted">{{#str}}panel:evidencecollected, local_chronifycompliance, {{evidencecollected}}{{/str}}</p>{{/evidencecollected}}
         {{#hasstatuses}}
             <table class="table table-sm w-auto">
                 <thead><tr>

@@ -99,5 +99,21 @@ function xmldb_local_chronifycompliance_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026112702, 'local', 'chronifycompliance');
     }
 
+    if ($oldversion < 2026112703) {
+        // SCORM evidence is kept in a table so page views never collect it from learner tracking.
+        $table = new xmldb_table('local_chronifycompliance_scormev');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('scormid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('packagetime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('evidence', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecollected', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('scormid', XMLDB_INDEX_UNIQUE, ['scormid']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2026112703, 'local', 'chronifycompliance');
+    }
+
     return true;
 }

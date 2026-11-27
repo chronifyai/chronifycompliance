@@ -285,5 +285,20 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_chronifycompliance_scormev" COMMENT="What each SCORM activity reported over its latest attempts (aggregates only), collected by background checks.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="packagetime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Package time the evidence was collected for (stale attempts are counted against it), 0 when not used."/>
+        <FIELD NAME="evidence" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="JSON, see runtime_evidence::collect()."/>
+        <FIELD NAME="timecollected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="scormid" UNIQUE="true" FIELDS="scormid"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

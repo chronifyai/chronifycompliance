@@ -23,7 +23,10 @@ namespace local_chronifycompliance\scorm;
  * Cost (sized for production scale): one indexed query for the latest N attempt ids
  * (scorm_attempt.scormid), then ONE pass over the values of those attempts (index on
  * scorm_scoes_value.attemptid), reading the text value only for the few elements that matter.
- * Results are cached per activity for a day (application cache "evidence").
+ *
+ * Results are stored per activity (table local_chronifycompliance_scormev). Background checks collect
+ * them again when they are more than a day old; page views only read what is stored and never touch
+ * the learner tracking tables.
  *
  * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
@@ -42,31 +45,102 @@ class runtime_evidence {
     public const SCOREMAX_ELEMENTS = ['cmi.core.score.max', 'cmi.score.max'];
     /** @var string[] Elements holding the resume position. */
     public const RESUME_ELEMENTS = ['cmi.suspend_data', 'cmi.core.lesson_location', 'cmi.location'];
+    /** @var string Table holding the collected evidence. */
+    public const TABLE = 'local_chronifycompliance_scormev';
+    /** @var int Stored evidence older than this is collected again by background checks. */
+    public const MAX_AGE = DAYSECS;
     /** @var int SCORM 1.2 limit of cmi.suspend_data (CMIString4096). */
     public const SUSPEND_LIMIT_12 = 4096;
     /** @var int Size from which suspend data is considered close to the SCORM 1.2 limit. */
     public const SUSPEND_NEAR_12 = 3600;
 
     /**
-     * Evidence of a SCORM instance, from the cache when available.
+     * Evidence of a SCORM instance.
+     *
+     * With $collect (background checks, CLI), stored evidence less than a day old for the same package is
+     * used, otherwise it is collected and stored. Without $collect (page views), only stored evidence is
+     * returned, whatever its age; when there is none for the current package, an empty result with
+     * 'pending' set is returned and the learner tracking tables are not read.
      *
      * @param int $scormid
      * @param int|null $packagetime Time the current package file was stored (to count stale attempts).
-     * @param bool $refresh Ignore the cache.
-     * @return array See collect().
+     * @param bool $refresh Collect again even when the stored evidence is recent.
+     * @param bool $collect Whether this call may read the learner tracking tables.
+     * @return array See collect(), plus 'timecollected' and 'pending'.
      */
-    public static function get(int $scormid, ?int $packagetime = null, bool $refresh = false): array {
-        $cache = \cache::make('local_chronifycompliance', 'evidence');
-        $key = $scormid . '_' . (int) $packagetime;
-        if (!$refresh) {
-            $cached = $cache->get($key);
-            if ($cached !== false) {
-                return $cached;
+    public static function get(int $scormid, ?int $packagetime = null, bool $refresh = false, bool $collect = true): array {
+        global $DB;
+        $record = $DB->get_record(self::TABLE, ['scormid' => $scormid]);
+        $samepackage = $record && (int) $record->packagetime === (int) $packagetime;
+        if ($samepackage && !$refresh) {
+            $recent = (int) $record->timecollected > time() - self::MAX_AGE;
+            if ($recent || !$collect) {
+                return self::decode($record);
             }
         }
+        if (!$collect) {
+            return self::blank() + ['timecollected' => null, 'pending' => true];
+        }
+
         $evidence = self::collect($scormid, null, $packagetime);
-        $cache->set($key, $evidence);
-        return $evidence;
+        $row = (object) [
+            'scormid' => $scormid,
+            'packagetime' => (int) $packagetime,
+            'evidence' => json_encode($evidence),
+            'timecollected' => time(),
+        ];
+        if ($record) {
+            $row->id = $record->id;
+            $DB->update_record(self::TABLE, $row);
+        } else {
+            $DB->insert_record(self::TABLE, $row);
+        }
+        return $evidence + ['timecollected' => $row->timecollected, 'pending' => false];
+    }
+
+    /**
+     * Stored evidence as returned by get().
+     *
+     * @param \stdClass $record
+     * @return array
+     */
+    private static function decode(\stdClass $record): array {
+        $evidence = json_decode($record->evidence, true) ?: self::blank();
+        return $evidence + ['timecollected' => (int) $record->timecollected, 'pending' => false];
+    }
+
+    /**
+     * Evidence with nothing reported.
+     *
+     * @return array
+     */
+    private static function blank(): array {
+        return ['attempts' => 0, 'statuses' => [], 'values' => [], 'withstatus' => 0, 'nostatus' => 0,
+            'withscore' => 0, 'maxraw' => null, 'scoremax' => [], 'sufficient' => false,
+            'suspend' => ['withdata' => 0, 'maxlength' => 0, 'over' => 0, 'near' => 0], 'stale' => 0];
+    }
+
+    /**
+     * Forget all stored evidence (tests, and after changing how evidence is collected).
+     */
+    public static function purge(): void {
+        global $DB;
+        $DB->delete_records(self::TABLE);
+    }
+
+    /**
+     * Delete the evidence of SCORM activities that no longer exist.
+     *
+     * @return int Rows deleted.
+     */
+    public static function delete_orphans(): int {
+        global $DB;
+        $where = 'NOT EXISTS (SELECT 1 FROM {scorm} s WHERE s.id = scormid)';
+        $count = $DB->count_records_select(self::TABLE, $where);
+        if ($count) {
+            $DB->delete_records_select(self::TABLE, $where);
+        }
+        return $count;
     }
 
     /**
@@ -84,9 +158,7 @@ class runtime_evidence {
     public static function collect(int $scormid, ?int $sample = null, ?int $packagetime = null): array {
         global $DB;
         $sample = $sample ?? ((int) get_config('local_chronifycompliance', 'evidencesample') ?: self::DEFAULT_SAMPLE);
-        $evidence = ['attempts' => 0, 'statuses' => [], 'values' => [], 'withstatus' => 0, 'nostatus' => 0,
-            'withscore' => 0, 'maxraw' => null, 'scoremax' => [], 'sufficient' => false,
-            'suspend' => ['withdata' => 0, 'maxlength' => 0, 'over' => 0, 'near' => 0], 'stale' => 0];
+        $evidence = self::blank();
 
         $attemptids = array_keys($DB->get_records_sql(
             'SELECT id FROM {scorm_attempt} WHERE scormid = :scormid ORDER BY id DESC',

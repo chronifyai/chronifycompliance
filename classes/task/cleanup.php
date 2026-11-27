@@ -86,6 +86,9 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // SCORM evidence of deleted activities.
+        $counts['scormevidence'] = \local_chronifycompliance\scorm\runtime_evidence::delete_orphans();
+
         // Daily activity older than the retention period.
         $keep = (int) get_config('local_chronifycompliance', 'refreshkeep');
         $counts['activitydays'] = (new \local_chronifycompliance\data\datasets\activity())->delete_older_than(

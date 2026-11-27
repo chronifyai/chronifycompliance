@@ -125,6 +125,10 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'reportingmode' => $package['tool']['reportingmode'] ?? null,
             'masteryscore' => $package['manifest']['masteryscore'] ?? null,
             'attempts' => $evidence['attempts'],
+            'evidencepending' => !empty($evidence['pending']),
+            'evidencecollected' => !empty($evidence['timecollected'])
+                ? userdate((int) $evidence['timecollected'], get_string('strftimedatetimeshort', 'langconfig'))
+                : null,
             'statuses' => $statuses,
             'hasstatuses' => (bool) $statuses,
             'nostatus' => $evidence['nostatus'],

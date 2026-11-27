@@ -22,6 +22,10 @@
   The first load reads the last 90 days (setting); daily data is kept 730 days (setting). Privacy API covers the new
   tables; deleting a course removes its rows. Measured on 100,000 users and 7.5 million log rows in 90 days: first
   load 39 seconds of work, 13 minutes with the default pause between batches.
+- Step A5: SCORM evidence (what learners' latest attempts reported) is stored in `local_chronifycompliance_scormev`
+  instead of a one-day cache. Checks and background tasks collect it when it is more than a day old; the SCORM panel
+  and the analysis web service only read what is stored and show when it was collected, or that it is not collected
+  yet. Page views no longer read the SCORM tracking tables. The `evidence` cache definition is removed.
 
 ## 0.2.3 (unreleased): QA fixes
 
