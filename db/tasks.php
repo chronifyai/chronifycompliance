@@ -54,6 +54,15 @@ $tasks = [
         'month' => '*',
     ],
     [
+        'classname' => '\local_chronifycompliance\task\refresh_datasets',
+        'blocking' => 0,
+        'minute' => '*/15',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+    [
         'classname' => '\local_chronifycompliance\task\cleanup',
         'blocking' => 0,
         'minute' => 'R',

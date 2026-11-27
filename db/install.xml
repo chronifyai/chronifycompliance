@@ -214,5 +214,27 @@
         <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_chronifycompliance_refresh" COMMENT="State of each dataset of the data layer: how far it has read and how its last refresh went.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataset" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Dataset id."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="idle" SEQUENCE="false" COMMENT="idle, queued (more to read), running or failed."/>
+        <FIELD NAME="highwater" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Key of the last source row stored; the next refresh reads after it."/>
+        <FIELD NAME="rowsread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Rows read by the current or last refresh."/>
+        <FIELD NAME="batches" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Batches stored by the current or last refresh."/>
+        <FIELD NAME="runtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Seconds spent by the current or last refresh, pauses excluded."/>
+        <FIELD NAME="failures" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Failed refreshes in a row."/>
+        <FIELD NAME="lasterror" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Message of the last failure."/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Start of the current or last refresh."/>
+        <FIELD NAME="timefinished" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="End of the last refresh that read everything there was."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="dataset" UNIQUE="true" FIELDS="dataset"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

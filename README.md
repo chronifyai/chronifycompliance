@@ -93,6 +93,21 @@ On Moodle 5.1 and later the path is `public/local/chronifycompliance/cli/...`.
 
 For development, `tests/cli/seed_demo.php` creates demo courses that trigger each check (test sites with at most 100 users only).
 
+## Data layer
+
+Pages, reports and checks never read the large Moodle tables (logs, SCORM tracking, files) directly. Datasets
+(`classes/data/datasets/`) copy and summarise them into the plugin's own tables in the background:
+
+- **Incremental:** each refresh reads only source rows after the dataset's high water mark.
+- **Batched and safe:** each batch and the new mark are saved in one transaction, so an interrupted refresh
+  goes on from the last saved batch without duplicates.
+- **Scheduled:** the task "Refresh the Chronify.Compliance data" runs every 15 minutes but works only inside
+  the refresh window (default 1 to 5, server time) and for at most the minutes per run setting.
+- **On demand:** Refresh now queues an ad hoc task that runs at any hour.
+- **Paused** with Pause all scans, like scans.
+- **Replica:** reads run outside transactions, so sites with a read-only replica (`$CFG->dboptions['readonly']`)
+  read from it.
+
 ## Extending
 
 Other plugins can add checks by listening to the `\local_chronifycompliance\hook\register_checks` hook

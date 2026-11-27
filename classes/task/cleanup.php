@@ -86,6 +86,9 @@ class cleanup extends \core\task\scheduled_task {
         );
         $counts['packages'] += $this->delete_orphan_packages($now - self::KEEP_ORPHAN_DAYS * DAYSECS);
 
+        // State of datasets that no longer exist (removed in a newer plugin version).
+        $counts['refreshstates'] = $this->delete_unknown_dataset_states();
+
         // Rows of deleted courses (normally removed by the course_deleted observer).
         foreach (
             ['local_chronifycompliance_finding', 'local_chronifycompliance_fixlog', 'local_chronifycompliance_audit',
@@ -102,6 +105,21 @@ class cleanup extends \core\task\scheduled_task {
             \cache::make('local_chronifycompliance', 'coursesummary')->purge();
             mtrace('Chronify.Compliance cleanup: ' . json_encode($counts));
         }
+    }
+
+    /**
+     * Delete the refresh state of datasets that are no longer registered.
+     *
+     * @return int Rows deleted.
+     */
+    private function delete_unknown_dataset_states(): int {
+        global $DB;
+        $known = array_keys(\local_chronifycompliance\data\dataset_registry::get_datasets());
+        if (!$known) {
+            return $this->delete(\local_chronifycompliance\data\refresher::TABLE, '1 = 1', []);
+        }
+        [$notin, $params] = $DB->get_in_or_equal($known, SQL_PARAMS_NAMED, 'ds', false);
+        return $this->delete(\local_chronifycompliance\data\refresher::TABLE, "dataset {$notin}", $params);
     }
 
     /**

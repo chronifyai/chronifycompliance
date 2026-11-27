@@ -100,6 +100,41 @@ if ($hassiteconfig) {
             '/^(\s*\d{1,2}\s*-\s*\d{1,2}\s*)?$/'
         ));
 
+        // Data layer refresh.
+        $settings->add(new admin_setting_heading(
+            "{$component}/refreshheading",
+            new lang_string('settings:refresh', $component),
+            new lang_string('settings:refresh_desc', $component)
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshhours",
+            new lang_string('settings:refreshhours', $component),
+            new lang_string('settings:refreshhours_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_HOURS,
+            '/^(\s*\d{1,2}\s*-\s*\d{1,2}\s*)?$/'
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshbatch",
+            new lang_string('settings:refreshbatch', $component),
+            new lang_string('settings:refreshbatch_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_BATCH,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshpace",
+            new lang_string('settings:refreshpace', $component),
+            new lang_string('settings:refreshpace_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_PACE,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshbudget",
+            new lang_string('settings:refreshbudget', $component),
+            new lang_string('settings:refreshbudget_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_BUDGET,
+            PARAM_INT
+        ));
+
         $settings->add(new admin_setting_heading(
             "{$component}/siteheading",
             new lang_string('settings:sitechecks', $component),

@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_chronifycompliance';
-$plugin->version = 2026112700;
+$plugin->version = 2026112701;
 $plugin->requires = 2024100700;
 $plugin->supported = [405, 503];
 $plugin->maturity = MATURITY_ALPHA;

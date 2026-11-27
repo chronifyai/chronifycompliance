@@ -29,6 +29,31 @@
  * @return bool
  */
 function xmldb_local_chronifycompliance_upgrade($oldversion) {
-    // Chronify.Compliance starts from a fresh install (version 0.3.0), so there are no upgrade steps yet.
+    global $DB;
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2026112701) {
+        // Data layer: one row per dataset with its read position and the outcome of its last refresh.
+        $table = new xmldb_table('local_chronifycompliance_refresh');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('dataset', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('status', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, 'idle');
+        $table->add_field('highwater', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('rowsread', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('batches', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('runtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('failures', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('lasterror', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('timestarted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timefinished', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('dataset', XMLDB_INDEX_UNIQUE, ['dataset']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2026112701, 'local', 'chronifycompliance');
+    }
+
     return true;
 }
