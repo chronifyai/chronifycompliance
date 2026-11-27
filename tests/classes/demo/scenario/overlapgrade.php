@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo\scenario;
+namespace local_chronifycompliance\tests\demo\scenario;
 
-use local_completiondoctor\tests\demo\scenario;
+use local_chronifycompliance\tests\demo\scenario;
 
 /**
  * Demo course for the overlapgrade check: the required assignment completes on any grade, because its
  * grade to pass is ignored while the grade item is hidden.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

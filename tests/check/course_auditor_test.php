@@ -14,26 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\tests\check_testcase_trait;
-use local_completiondoctor\tests\failing_check;
-use local_completiondoctor\tests\fake_check;
-use local_completiondoctor\tests\fake_site_check;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\tests\check_testcase_trait;
+use local_chronifycompliance\tests\failing_check;
+use local_chronifycompliance\tests\fake_check;
+use local_chronifycompliance\tests\fake_site_check;
 
-/**
- * Tests for the auditors and finding persistence.
- *
- * @package    local_completiondoctor
- * @category   test
- * @copyright  2026 Sebale {@link https://sebale.net}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 #[\PHPUnit\Framework\Attributes\CoversClass(course_auditor::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(site_auditor::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(auditor::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(finding_store::class)]
+/**
+ * Tests for the auditors and finding persistence.
+ *
+ * @package    local_chronifycompliance
+ * @category   test
+ * @copyright  2026 Sebale {@link https://sebale.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\course_auditor
+ * @covers \local_chronifycompliance\check\site_auditor
+ * @covers \local_chronifycompliance\check\auditor
+ * @covers \local_chronifycompliance\local\finding_store
+ */
 final class course_auditor_test extends \advanced_testcase {
     use check_testcase_trait;
 
@@ -158,7 +162,7 @@ final class course_auditor_test extends \advanced_testcase {
         $this->keys = ['a'];
         course_auditor::audit($course->id, true, ['fakecheck']);
 
-        set_config('enabled_fakecheck', 0, 'local_completiondoctor');
+        set_config('enabled_fakecheck', 0, 'local_chronifycompliance');
         $this->keys = [];
         $result = course_auditor::audit($course->id, true, ['fakecheck']);
         $this->assertSame([], $result->checksrun);

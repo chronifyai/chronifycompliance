@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\persistent\linkcheck_record;
-use local_completiondoctor\task\check_links;
+use local_chronifycompliance\persistent\linkcheck_record;
+use local_chronifycompliance\task\check_links;
 use stdClass;
 
 /**
@@ -25,7 +25,7 @@ use stdClass;
  * courses by a scheduled task that compares the course's cache revision with the last check, so normal
  * Moodle requests never pay for it.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,7 +55,7 @@ class link_scan {
      * @return bool
      */
     public static function is_enabled(): bool {
-        $enabled = get_config('local_completiondoctor', 'linkcheck');
+        $enabled = get_config('local_chronifycompliance', 'linkcheck');
         return $enabled === false || (bool) $enabled;
     }
 
@@ -66,7 +66,7 @@ class link_scan {
      * @return bool
      */
     public static function is_auto_enabled(): bool {
-        return self::is_enabled() && (bool) get_config('local_completiondoctor', 'linkautonew');
+        return self::is_enabled() && (bool) get_config('local_chronifycompliance', 'linkautonew');
     }
 
     /**
@@ -75,7 +75,7 @@ class link_scan {
      * @return int
      */
     public static function get_auto_days(): int {
-        $days = get_config('local_completiondoctor', 'linkautodays');
+        $days = get_config('local_chronifycompliance', 'linkautodays');
         return $days === false || $days === '' ? self::AUTO_DAYS : (int) $days;
     }
 
@@ -209,7 +209,7 @@ class link_scan {
      * @param int $linkcheckid
      */
     private static function log_request(int $courseid, int $linkcheckid): void {
-        \local_completiondoctor\event\link_check_requested::create([
+        \local_chronifycompliance\event\link_check_requested::create([
             'context' => \context_course::instance($courseid),
             'objectid' => $linkcheckid,
         ])->trigger();

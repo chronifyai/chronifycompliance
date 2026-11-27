@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
 use stdClass;
 
@@ -24,7 +24,7 @@ use stdClass;
  * A finding is identified by its fingerprint, so the same problem detected again on a later
  * audit updates the existing row (and keeps an "ignored" status) instead of adding a new one.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ class finding {
     public const STATUS_IGNORED = 'ignored';
     /** @var string The finding was not detected by the last audit. */
     public const STATUS_RESOLVED = 'resolved';
-    /** @var string The finding was fixed through Completion Doctor. */
+    /** @var string The finding was fixed through Chronify.Compliance. */
     public const STATUS_FIXED = 'fixed';
 
     /** @var int|null Database id, null until stored. */
@@ -93,7 +93,7 @@ class finding {
         /** @var array Details that make the fingerprint unique. */
         public array $identity = [],
         /** @var string Component owning the check and its strings. */
-        public string $component = 'local_completiondoctor',
+        public string $component = 'local_chronifycompliance',
     ) {
         $this->baseseverity = $severity;
     }
@@ -149,7 +149,7 @@ class finding {
      * @param string $component Component of the language strings.
      * @return mixed
      */
-    public static function render_reference(mixed $value, string $component = 'local_completiondoctor'): mixed {
+    public static function render_reference(mixed $value, string $component = 'local_chronifycompliance'): mixed {
         global $DB;
         if (!is_array($value)) {
             return $value;
@@ -236,7 +236,7 @@ class finding {
     /**
      * Build a finding from a database record.
      *
-     * @param stdClass $record Row of local_completiondoctor_finding.
+     * @param stdClass $record Row of local_chronifycompliance_finding.
      * @return self
      */
     public static function from_record(stdClass $record): self {

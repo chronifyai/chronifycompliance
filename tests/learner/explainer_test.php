@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\learner;
+namespace local_chronifycompliance\learner;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(explainer::class)]
 /**
  * Tests of the learner completion explainer.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\learner\explainer
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(explainer::class)]
 final class explainer_test extends \advanced_testcase {
     /**
      * Unmet criteria block; all met but not aggregated is "pending"; nothing is written.
@@ -34,7 +35,7 @@ final class explainer_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
-        $course = (new \local_completiondoctor\tests\demo\scenario\healthy())->create(
+        $course = (new \local_chronifycompliance\tests\demo\scenario\healthy())->create(
             $generator,
             (int) $generator->create_category()->id
         );

@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Sends a popup notification to the people who can see the course report when a course gets new
  * Critical findings. Queued by finding_store::sync() only when the setting "notifyteachers" is on,
  * so checks themselves never send messages.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +39,7 @@ class notify_teachers extends \core\task\adhoc_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:notifyteachers', 'local_completiondoctor');
+        return get_string('task:notifyteachers', 'local_chronifycompliance');
     }
 
     /**
@@ -49,7 +49,7 @@ class notify_teachers extends \core\task\adhoc_task {
      * @param int[] $findingids
      */
     public static function queue(int $courseid, array $findingids): void {
-        if (!$findingids || !get_config('local_completiondoctor', 'notifyteachers')) {
+        if (!$findingids || !get_config('local_chronifycompliance', 'notifyteachers')) {
             return;
         }
         $task = new self();
@@ -62,7 +62,7 @@ class notify_teachers extends \core\task\adhoc_task {
      */
     public function execute(): void {
         global $DB;
-        if (!get_config('local_completiondoctor', 'notifyteachers')) {
+        if (!get_config('local_chronifycompliance', 'notifyteachers')) {
             return;
         }
         $data = $this->get_custom_data();
@@ -80,7 +80,7 @@ class notify_teachers extends \core\task\adhoc_task {
         $context = \context_course::instance($course->id);
         $recipients = get_enrolled_users(
             $context,
-            'local/completiondoctor:viewcoursereport',
+            'local/chronifycompliance:viewcoursereport',
             0,
             'u.*',
             null,
@@ -88,7 +88,7 @@ class notify_teachers extends \core\task\adhoc_task {
             self::MAX_RECIPIENTS,
             true
         );
-        $url = new \moodle_url('/local/completiondoctor/course.php', ['id' => $course->id]);
+        $url = new \moodle_url('/local/chronifycompliance/course.php', ['id' => $course->id]);
         $coursename = format_string($course->fullname, true, ['context' => $context]);
         $sent = 0;
         foreach ($recipients as $user) {
@@ -96,19 +96,19 @@ class notify_teachers extends \core\task\adhoc_task {
             $a = (object) ['course' => $coursename, 'count' => count($findings),
                 'problems' => implode('; ', array_map(fn(finding $f) => $f->get_message(), $findings))];
             $message = new \core\message\message();
-            $message->component = 'local_completiondoctor';
+            $message->component = 'local_chronifycompliance';
             $message->name = 'criticalfinding';
             $message->userfrom = \core_user::get_noreply_user();
             $message->userto = $user;
             $message->courseid = $course->id;
             $message->notification = 1;
-            $message->subject = get_string('notify:subject', 'local_completiondoctor', $a);
-            $message->fullmessage = get_string('notify:body', 'local_completiondoctor', $a);
+            $message->subject = get_string('notify:subject', 'local_chronifycompliance', $a);
+            $message->fullmessage = get_string('notify:body', 'local_chronifycompliance', $a);
             $message->fullmessageformat = FORMAT_PLAIN;
             $message->fullmessagehtml = '';
             $message->smallmessage = $message->subject;
             $message->contexturl = $url->out(false);
-            $message->contexturlname = get_string('report:title', 'local_completiondoctor');
+            $message->contexturlname = get_string('report:title', 'local_chronifycompliance');
             if (message_send($message)) {
                 $sent++;
             }
