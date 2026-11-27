@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * English language strings for Completion Doctor.
+ * English language strings for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   string
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -176,15 +176,15 @@ $string['check:weakcondition:messagemanual'] = '{$a->modname} "{$a->name}" is re
 $string['check:weakcondition:messagenorule'] = '{$a->modname} "{$a->name}" is required and uses automatic completion, but has no completion rule.';
 $string['check:weakcondition:messageview'] = '{$a->modname} "{$a->name}" is required, but learners complete it just by opening it.';
 $string['check:weakcondition:name'] = 'Weak completion condition';
-$string['checkdisabled'] = 'This check is disabled in the Completion Doctor settings.';
+$string['checkdisabled'] = 'This check is disabled in the Chronify.Compliance settings.';
 $string['checkok'] = 'No problems found.';
-$string['completiondoctor:applyfix'] = 'Apply and undo Completion Doctor fixes';
-$string['completiondoctor:checklinks'] = 'Check the links of a course with Completion Doctor';
-$string['completiondoctor:ignorefinding'] = 'Ignore Completion Doctor findings';
-$string['completiondoctor:runscan'] = 'Run Completion Doctor site scans';
-$string['completiondoctor:viewcoursereport'] = 'View the Completion Doctor course report';
-$string['completiondoctor:viewlearnerdiagnostic'] = 'View the Completion Doctor learner diagnostic';
-$string['completiondoctor:viewsitereport'] = 'View the Completion Doctor site dashboard';
+$string['chronifycompliance:applyfix'] = 'Apply and undo Chronify.Compliance fixes';
+$string['chronifycompliance:checklinks'] = 'Check the links of a course with Chronify.Compliance';
+$string['chronifycompliance:ignorefinding'] = 'Ignore Chronify.Compliance findings';
+$string['chronifycompliance:runscan'] = 'Run Chronify.Compliance site scans';
+$string['chronifycompliance:viewcoursereport'] = 'View the Chronify.Compliance course report';
+$string['chronifycompliance:viewlearnerdiagnostic'] = 'View the Chronify.Compliance learner diagnostic';
+$string['chronifycompliance:viewsitereport'] = 'View the Chronify.Compliance site dashboard';
 $string['dashboard:ago:days'] = '{$a} d ago';
 $string['dashboard:ago:hours'] = '{$a} h ago';
 $string['dashboard:ago:minutes'] = '{$a} min ago';
@@ -210,7 +210,7 @@ $string['dashboard:healthy'] = 'No problems';
 $string['dashboard:noproblems'] = 'No open problems in any course.';
 $string['dashboard:packages'] = '{$a->total} SCORM packages, {$a->analyzed} analyzed';
 $string['dashboard:packagesqueued'] = '{$a} SCORM packages waiting for analysis';
-$string['dashboard:paused'] = 'Scans and package analysis are paused (Completion Doctor settings).';
+$string['dashboard:paused'] = 'Scans and package analysis are paused (Chronify.Compliance settings).';
 $string['dashboard:problems'] = 'Problems';
 $string['dashboard:scanall'] = 'Scan all courses';
 $string['dashboard:scancancelled'] = 'The scan was cancelled. Courses already checked keep their results.';
@@ -232,14 +232,14 @@ $string['dashboard:tile:info:detail'] = 'Suggestions: {$a}';
 $string['dashboard:tile:warning'] = 'Courses with warnings';
 $string['dashboard:tile:warning:detail'] = 'Warnings: {$a}';
 $string['dashboard:timeaudited'] = 'Checked';
-$string['dashboard:title'] = 'Completion Doctor';
+$string['dashboard:title'] = 'Chronify.Compliance';
 $string['dashboard:topcheck'] = 'Main problem';
 $string['dashboard:topproblems'] = 'Top problems';
 $string['dashboard:topproblems:help'] = 'Select a problem to list the courses it affects.';
-$string['demo:category'] = 'Completion Doctor demo';
+$string['demo:category'] = 'Chronify.Compliance demo';
 $string['demo:course'] = 'Demo: {$a}';
 $string['demo:course:healthy'] = 'Demo: healthy course';
-$string['demo:course:healthy:summary'] = 'A correctly configured course. Completion Doctor should report no findings here.';
+$string['demo:course:healthy:summary'] = 'A correctly configured course. Chronify.Compliance should report no findings here.';
 $string['demo:course:prerequisite'] = 'Demo: prerequisite course without completion tracking';
 $string['demo:role'] = 'Demo completion marker';
 $string['error:auditlocked'] = 'Another audit of {$a} is already running. Try again in a moment.';
@@ -250,18 +250,18 @@ $string['error:notfixable'] = 'This finding cannot be fixed automatically.';
 $string['error:packagetoolarge'] = 'This package is too large to analyze here (limit {$a}). Upload it to a SCORM activity instead: big packages are analyzed in the background.';
 $string['error:toomanyusers'] = 'This site has {$a} users. The demo seeder only runs on test sites with at most 100 users.';
 $string['error:undochanged'] = 'This setting was changed after the fix, so the fix cannot be undone automatically. Check the setting in the course.';
-$string['event:coursecheckrequested'] = 'Completion Doctor course check requested';
+$string['event:coursecheckrequested'] = 'Chronify.Compliance course check requested';
 $string['event:coursereportviewed'] = 'Completion health report viewed';
-$string['event:dashboardviewed'] = 'Completion Doctor dashboard viewed';
-$string['event:findingignored'] = 'Completion Doctor finding ignored';
-$string['event:findingreopened'] = 'Completion Doctor finding reopened';
-$string['event:fixapplied'] = 'Completion Doctor fix applied';
-$string['event:fixundone'] = 'Completion Doctor fix undone';
+$string['event:dashboardviewed'] = 'Chronify.Compliance dashboard viewed';
+$string['event:findingignored'] = 'Chronify.Compliance finding ignored';
+$string['event:findingreopened'] = 'Chronify.Compliance finding reopened';
+$string['event:fixapplied'] = 'Chronify.Compliance fix applied';
+$string['event:fixundone'] = 'Chronify.Compliance fix undone';
 $string['event:learnerdiagnosticviewed'] = 'Learner completion diagnostic viewed';
-$string['event:linkcheckrequested'] = 'Completion Doctor link check requested';
-$string['event:packageanalyzed'] = 'Completion Doctor SCORM package analyzed';
-$string['event:scancancelled'] = 'Completion Doctor scan cancelled';
-$string['event:scanstarted'] = 'Completion Doctor scan started';
+$string['event:linkcheckrequested'] = 'Chronify.Compliance link check requested';
+$string['event:packageanalyzed'] = 'Chronify.Compliance SCORM package analyzed';
+$string['event:scancancelled'] = 'Chronify.Compliance scan cancelled';
+$string['event:scanstarted'] = 'Chronify.Compliance scan started';
 $string['event:scormanalysisviewed'] = 'SCORM analysis viewed';
 $string['fix:criterion'] = '{$a->modname} activity (id {$a->cmid}) in course completion';
 $string['fix:error:gradepass'] = 'Enter a pass grade greater than 0 and not higher than the maximum grade ({$a}).';
@@ -357,7 +357,7 @@ $string['links:unverified'] = 'Could not verify';
 $string['links:unverified_help'] = 'The site refused the check, timed out or returned an error. Open the link to check it yourself.';
 $string['links:where'] = 'Where: {$a}';
 $string['messageprovider:criticalfinding'] = 'New critical completion problems in a course';
-$string['notify:body'] = 'Completion Doctor found new critical problems in the course "{$a->course}" (new: {$a->count}). Learners may be unable to complete it.
+$string['notify:body'] = 'Chronify.Compliance found new critical problems in the course "{$a->course}" (new: {$a->count}). Learners may be unable to complete it.
 
 {$a->problems}';
 $string['notify:subject'] = 'New critical completion problems in {$a->course}: {$a->count}';
@@ -407,14 +407,14 @@ $string['panel:toolconfidence'] = '{$a}% match';
 $string['panel:unknowntool'] = 'Unknown';
 $string['panel:variables'] = 'Variables';
 $string['panel:version'] = 'SCORM version';
-$string['pluginname'] = 'Completion Doctor';
+$string['pluginname'] = 'Chronify.Compliance';
 $string['privacy:metadata:audit'] = 'The last check of each course.';
 $string['privacy:metadata:core_message'] = 'Popup notifications about new critical problems are sent to teachers when the site enables them.';
 $string['privacy:metadata:finding'] = 'Findings that a user chose to ignore.';
 $string['privacy:metadata:finding:ignoredby'] = 'The user who ignored the finding.';
 $string['privacy:metadata:finding:ignorereason'] = 'The reason given for ignoring the finding.';
 $string['privacy:metadata:finding:timeignored'] = 'When the finding was ignored.';
-$string['privacy:metadata:fixlog'] = 'Changes made to course settings by Completion Doctor fixes.';
+$string['privacy:metadata:fixlog'] = 'Changes made to course settings by Chronify.Compliance fixes.';
 $string['privacy:metadata:fixlog:timecreated'] = 'When the fix was applied.';
 $string['privacy:metadata:fixlog:timeundone'] = 'When the fix was undone.';
 $string['privacy:metadata:fixlog:undoneby'] = 'The user who undid the fix.';
@@ -517,7 +517,7 @@ $string['settings:general'] = 'General settings';
 $string['settings:heavythreshold'] = 'Heavy package threshold (estimated Mbps)';
 $string['settings:heavythreshold_desc'] = 'SCORM packages whose size estimate needs more than this connection speed are reported as heavy. The estimate comes from file sizes and the target times above; it cannot know learners\' real connections.';
 $string['settings:inlineanalysismb'] = 'Analyze packages up to this size during checks (MB)';
-$string['settings:inlineanalysismb_desc'] = 'Bigger SCORM packages are put in a queue and analyzed a few at a time by the scheduled task "Completion Doctor: analyze queued SCORM packages".';
+$string['settings:inlineanalysismb_desc'] = 'Bigger SCORM packages are put in a queue and analyzed a few at a time by the scheduled task "Chronify.Compliance: analyze queued SCORM packages".';
 $string['settings:linkautodays'] = 'New course period (days)';
 $string['settings:linkautodays_desc'] = 'A course counts as new for this many days after it was created.';
 $string['settings:linkautonew'] = 'Check new courses automatically';
@@ -571,11 +571,11 @@ $string['severity:warning'] = 'Warning';
 $string['stage:frameshort'] = 'the {$a->stage} stage is taller than the {$a->frame} frame';
 $string['stage:popupsmall'] = 'the {$a->stage} stage is larger than the {$a->frame} pop-up window';
 $string['stage:sidetoc'] = 'the side table of contents takes about {$a->toc} px from the {$a->stage} stage';
-$string['task:analyzequeue'] = 'Completion Doctor: analyze queued SCORM packages';
-$string['task:auditcourse'] = 'Completion Doctor: audit courses';
-$string['task:checkcourse'] = 'Completion Doctor: check one course';
-$string['task:checklinks'] = 'Completion Doctor: check the links of a course';
-$string['task:cleanup'] = 'Completion Doctor: clean up old data';
-$string['task:notifyteachers'] = 'Completion Doctor: notify teachers about critical problems';
-$string['task:scansite'] = 'Completion Doctor: scan all courses';
-$string['task:schedulelinkchecks'] = 'Completion Doctor: check links of new courses';
+$string['task:analyzequeue'] = 'Chronify.Compliance: analyze queued SCORM packages';
+$string['task:auditcourse'] = 'Chronify.Compliance: audit courses';
+$string['task:checkcourse'] = 'Chronify.Compliance: check one course';
+$string['task:checklinks'] = 'Chronify.Compliance: check the links of a course';
+$string['task:cleanup'] = 'Chronify.Compliance: clean up old data';
+$string['task:notifyteachers'] = 'Chronify.Compliance: notify teachers about critical problems';
+$string['task:scansite'] = 'Chronify.Compliance: scan all courses';
+$string['task:schedulelinkchecks'] = 'Chronify.Compliance: check links of new courses';

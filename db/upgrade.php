@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Upgrade steps for Completion Doctor.
+ * Upgrade steps for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,26 +28,7 @@
  * @param int $oldversion Version being upgraded from.
  * @return bool
  */
-function xmldb_local_completiondoctor_upgrade($oldversion) {
-    global $DB;
-
-    if ($oldversion < 2026110500) {
-        // The capabilities no longer have archetypes: take them away from every role, defaults and
-        // overrides alike, so no role keeps the access the earlier install granted.
-        $rs = $DB->get_recordset_sql(
-            "SELECT DISTINCT roleid, capability
-               FROM {role_capabilities}
-              WHERE " . $DB->sql_like('capability', ':capability'),
-            ['capability' => 'local/completiondoctor:%']
-        );
-        $grants = iterator_to_array($rs, false);
-        $rs->close();
-        foreach ($grants as $grant) {
-            unassign_capability($grant->capability, $grant->roleid, null, false);
-        }
-
-        upgrade_plugin_savepoint(true, 2026110500, 'local', 'completiondoctor');
-    }
-
+function xmldb_local_chronifycompliance_upgrade($oldversion) {
+    // Chronify.Compliance starts from a fresh install (version 0.3.0), so there are no upgrade steps yet.
     return true;
 }

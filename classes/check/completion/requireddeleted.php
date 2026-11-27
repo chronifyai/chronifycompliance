@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\criteria_editor;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\criteria_editor;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * A completion criterion refers to an activity that no longer exists, belongs to another course, or
  * is being deleted. With "all activities" aggregation nobody can complete the course.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -109,16 +109,16 @@ class requireddeleted extends course_check {
             'module' => $criterion->module, 'moduleinstance' => (int) $criterion->moduleinstance];
         $preview = new fix_preview('removecriterion', ['criterion' => $row], ['criterion' => null]);
         $preview->add_row(
-            get_string('fix:criterion', 'local_completiondoctor', $finding->messageparams),
-            get_string('fix:required', 'local_completiondoctor'),
-            get_string('fix:removed', 'local_completiondoctor')
+            get_string('fix:criterion', 'local_chronifycompliance', $finding->messageparams),
+            get_string('fix:required', 'local_chronifycompliance'),
+            get_string('fix:removed', 'local_chronifycompliance')
         );
         $others = $DB->count_records('course_completion_criteria', ['course' => $finding->courseid]) - 1;
         if ($others === 0) {
-            $preview->add_warning(get_string('fix:warning:lastcriterion', 'local_completiondoctor'));
+            $preview->add_warning(get_string('fix:warning:lastcriterion', 'local_chronifycompliance'));
         } else {
             $ready = criteria_editor::count_ready_without($finding->courseid, (int) $criterion->id, $others);
-            $preview->add_warning(get_string('fix:impact:ready', 'local_completiondoctor', $ready));
+            $preview->add_warning(get_string('fix:impact:ready', 'local_chronifycompliance', $ready));
         }
         return $preview;
     }
@@ -134,7 +134,7 @@ class requireddeleted extends course_check {
     public function apply_fix(finding $finding, fix_preview $preview, int $userid): fix_result {
         $row = $preview->before['criterion'];
         if (!criteria_editor::remove_activity_criterion((int) $row['course'], (int) $row['moduleinstance'])) {
-            throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+            throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
         }
         return new fix_result(true, $preview->after);
     }
@@ -150,7 +150,7 @@ class requireddeleted extends course_check {
      */
     public function undo_fix(string $fixtype, array $before, array $after, \stdClass $fixlog): fix_result {
         if (!criteria_editor::restore_activity_criterion($before['criterion'])) {
-            throw new \moodle_exception('error:undochanged', 'local_completiondoctor');
+            throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
         }
         return new fix_result(true, $before);
     }

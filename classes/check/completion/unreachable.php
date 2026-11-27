@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\course;
+namespace local_chronifycompliance\check\completion;
 
-use local_completiondoctor\availability\tree_validator;
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_check;
-use local_completiondoctor\check\finding;
+use local_chronifycompliance\availability\tree_validator;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_check;
+use local_chronifycompliance\check\finding;
 
 /**
  * A required activity cannot be reached by a normal learner: it or its section is hidden, or its
  * restrictions can never be met (deleted activity, grade item, group or grouping, empty group,
  * activity without completion, "until" date in the past).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

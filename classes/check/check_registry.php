@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\hook\register_checks;
+use local_chronifycompliance\hook\register_checks;
 
 /**
  * Registry of all available checks: built-in checks plus checks added through the register_checks hook.
  *
- * Built-in checks are discovered from the check\course, check\site and check\scorm namespaces.
+ * Built-in checks are discovered from the check\completion, check\site and check\scorm namespaces.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class check_registry {
     /** @var string[] Namespaces (relative to the plugin) holding built-in checks. */
-    private const BUILTIN_NAMESPACES = ['check\\site', 'check\\course', 'check\\scorm'];
+    private const BUILTIN_NAMESPACES = ['check\\site', 'check\\completion', 'check\\scorm'];
 
     /** @var base_check[]|null Checks keyed by id. */
     private static ?array $checks = null;
@@ -80,7 +80,7 @@ class check_registry {
 
         $candidates = [];
         foreach (self::BUILTIN_NAMESPACES as $namespace) {
-            $classes = \core_component::get_component_classes_in_namespace('local_completiondoctor', $namespace);
+            $classes = \core_component::get_component_classes_in_namespace('local_chronifycompliance', $namespace);
             foreach (array_keys($classes) as $classname) {
                 $reflection = new \ReflectionClass($classname);
                 if ($reflection->isAbstract() || !$reflection->isSubclassOf(base_check::class)) {
@@ -98,12 +98,12 @@ class check_registry {
         foreach ($candidates as $check) {
             $id = $check->get_id();
             if (!preg_match('/^[a-z][a-z0-9]{1,62}$/', $id)) {
-                debugging("Completion Doctor check id '{$id}' is invalid and was skipped", DEBUG_DEVELOPER);
+                debugging("Chronify.Compliance check id '{$id}' is invalid and was skipped", DEBUG_DEVELOPER);
                 continue;
             }
             if (isset($checks[$id])) {
                 debugging(
-                    "Completion Doctor check id '{$id}' is registered twice; the second one was skipped",
+                    "Chronify.Compliance check id '{$id}' is registered twice; the second one was skipped",
                     DEBUG_DEVELOPER
                 );
                 continue;
@@ -112,7 +112,7 @@ class check_registry {
                 !in_array($check->get_scope(), [base_check::SCOPE_SITE, base_check::SCOPE_COURSE,
                     base_check::SCOPE_ACTIVITY], true)
             ) {
-                debugging("Completion Doctor check '{$id}' has an invalid scope and was skipped", DEBUG_DEVELOPER);
+                debugging("Chronify.Compliance check '{$id}' has an invalid scope and was skipped", DEBUG_DEVELOPER);
                 continue;
             }
             $checks[$id] = $check;

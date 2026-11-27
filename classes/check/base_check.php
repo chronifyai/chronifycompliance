@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 use stdClass;
 
 /**
- * Base class of every Completion Doctor check.
+ * Base class of every Chronify.Compliance check.
  *
  * Checks are read-only: run() must never write to the database, trigger events or send messages.
  * Fixable checks implement preview_fix(), apply_fix() and undo_fix(). Those are only ever called by
- * {@see \local_completiondoctor\fix\fixer}, which wraps them in a transaction and writes the fix log.
+ * {@see \local_chronifycompliance\fix\fixer}, which wraps them in a transaction and writes the fix log.
  *
  * Language strings are read from get_component() with the keys "check:<id>:name" and "check:<id>:desc".
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -83,7 +83,7 @@ abstract class base_check {
      * @return string
      */
     public function get_component(): string {
-        return 'local_completiondoctor';
+        return 'local_chronifycompliance';
     }
 
     /**
@@ -119,7 +119,7 @@ abstract class base_check {
      * @return int|null
      */
     public function get_severity_override(): ?int {
-        $override = (int) get_config('local_completiondoctor', 'severity_' . $this->get_id());
+        $override = (int) get_config('local_chronifycompliance', 'severity_' . $this->get_id());
         return in_array($override, [self::SEVERITY_INFO, self::SEVERITY_WARNING, self::SEVERITY_CRITICAL], true)
             ? $override : null;
     }
@@ -130,7 +130,7 @@ abstract class base_check {
      * @return bool
      */
     public function is_enabled(): bool {
-        return get_config('local_completiondoctor', 'enabled_' . $this->get_id()) !== '0';
+        return get_config('local_chronifycompliance', 'enabled_' . $this->get_id()) !== '0';
     }
 
     /**
@@ -253,7 +253,7 @@ abstract class base_check {
             $now = $current[$key] ?? null;
             $same = ($now === null || $value === null) ? $now === $value : abs((float) $now - (float) $value) < 0.00001;
             if (!$same) {
-                throw new \moodle_exception('error:undochanged', 'local_completiondoctor');
+                throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
             }
         }
     }

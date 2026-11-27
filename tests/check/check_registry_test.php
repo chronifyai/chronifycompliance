@@ -14,22 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\tests\check_testcase_trait;
-use local_completiondoctor\tests\fake_check;
-use local_completiondoctor\tests\fake_site_check;
+use local_chronifycompliance\tests\check_testcase_trait;
+use local_chronifycompliance\tests\fake_check;
+use local_chronifycompliance\tests\fake_site_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(check_registry::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\hook\register_checks::class)]
 /**
  * Tests for the check registry and the register_checks hook.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\check_registry
+ * @covers \local_chronifycompliance\hook\register_checks
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(check_registry::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\hook\register_checks::class)]
 final class check_registry_test extends \advanced_testcase {
     use check_testcase_trait;
 
@@ -53,7 +55,7 @@ final class check_registry_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('fakesitecheck', check_registry::get_checks([base_check::SCOPE_COURSE]));
         $this->assertArrayHasKey('fakesitecheck', check_registry::get_checks([base_check::SCOPE_SITE]));
 
-        set_config('enabled_fakecheck', 0, 'local_completiondoctor');
+        set_config('enabled_fakecheck', 0, 'local_chronifycompliance');
         $this->assertArrayNotHasKey('fakecheck', check_registry::get_checks(null, true));
         $this->assertArrayHasKey('fakecheck', check_registry::get_checks(null, false));
     }
@@ -94,9 +96,9 @@ final class check_registry_test extends \advanced_testcase {
         $this->resetAfterTest();
         $check = new fake_check();
         $this->assertSame(base_check::SEVERITY_WARNING, $check->get_severity());
-        set_config('severity_fakecheck', base_check::SEVERITY_CRITICAL, 'local_completiondoctor');
+        set_config('severity_fakecheck', base_check::SEVERITY_CRITICAL, 'local_chronifycompliance');
         $this->assertSame(base_check::SEVERITY_CRITICAL, $check->get_severity());
-        set_config('severity_fakecheck', 99, 'local_completiondoctor');
+        set_config('severity_fakecheck', 99, 'local_chronifycompliance');
         $this->assertSame(base_check::SEVERITY_WARNING, $check->get_severity());
     }
 }

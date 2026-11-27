@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\persistent;
+namespace local_chronifycompliance\persistent;
 
 use core\persistent;
 
 /**
  * A finding of a check, one row per fingerprint.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class finding_record extends persistent {
     /** @var string Table. */
-    public const TABLE = 'local_completiondoctor_finding';
+    public const TABLE = 'local_chronifycompliance_finding';
 
     /**
      * Properties of the record.

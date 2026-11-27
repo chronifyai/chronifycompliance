@@ -14,24 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scormquiz::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\scorm\runtime_evidence::class)]
 /**
  * Tests of the SCORM quiz and completion check.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\scorm\scormquiz
+ * @covers \local_chronifycompliance\scorm\runtime_evidence
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scormquiz::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\scorm\runtime_evidence::class)]
 final class scormquiz_test extends \advanced_testcase {
     /**
      * Prepare.
@@ -53,7 +55,7 @@ final class scormquiz_test extends \advanced_testcase {
     private function course(string $fixture, array $settings): array {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
-        $path = \core_component::get_component_directory('local_completiondoctor') . "/tests/fixtures/packages/{$fixture}.zip";
+        $path = \core_component::get_component_directory('local_chronifycompliance') . "/tests/fixtures/packages/{$fixture}.zip";
         $scorm = $generator->create_module('scorm', $settings + ['course' => $course->id, 'packagefilepath' => $path,
             'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionstatusrequired' => 4]);
         return [$course, $scorm];
@@ -80,7 +82,7 @@ final class scormquiz_test extends \advanced_testcase {
         $findings = $this->audit((int) $course->id);
         $this->assertCount(1, $findings);
         $this->assertSame('check:scormquiz:messagenotrequired', $findings[0]->messagekey);
-        $this->assertSame(\local_completiondoctor\check\base_check::SEVERITY_INFO, $findings[0]->severity);
+        $this->assertSame(\local_chronifycompliance\check\base_check::SEVERITY_INFO, $findings[0]->severity);
 
         $result = fixer::apply($findings[0]->id, [], 2);
         $this->assertEquals(80, $DB->get_field('scorm', 'completionscorerequired', ['id' => $scorm->id]));
@@ -96,7 +98,7 @@ final class scormquiz_test extends \advanced_testcase {
         [$course] = $this->course('storyline_fake', ['completionscorerequired' => 90]);
         $findings = $this->audit((int) $course->id);
         $this->assertSame('check:scormquiz:messagehigher', $findings[0]->messagekey);
-        $this->assertSame(\local_completiondoctor\check\base_check::SEVERITY_WARNING, $findings[0]->severity);
+        $this->assertSame(\local_chronifycompliance\check\base_check::SEVERITY_WARNING, $findings[0]->severity);
 
         [$course] = $this->course('storyline_fake', ['completionscorerequired' => 60]);
         $this->assertSame('check:scormquiz:messagelower', $this->audit((int) $course->id)[0]->messagekey);
@@ -114,9 +116,9 @@ final class scormquiz_test extends \advanced_testcase {
         [$course, $scorm] = $this->course('storyline_fake', []);
         // The package profile says "completed"; make it report "passed" like a Storyline quiz with pass/incomplete.
         $DB->set_field('scorm', 'completionstatusrequired', 2, ['id' => $scorm->id]);
-        $DB->execute("UPDATE {local_completiondoctor_pkg} SET analysis = REPLACE(analysis, 'completed-incomplete',
+        $DB->execute("UPDATE {local_chronifycompliance_pkg} SET analysis = REPLACE(analysis, 'completed-incomplete',
             'passed-incomplete')");
-        \cache::make('local_completiondoctor', 'evidence')->purge();
+        \cache::make('local_chronifycompliance', 'evidence')->purge();
         $this->assertSame([], $this->audit((int) $course->id), 'Package needs the quiz to report passed');
 
         [$course] = $this->course('scorm12_single', []);
@@ -140,14 +142,14 @@ final class scormquiz_test extends \advanced_testcase {
                     'elementid' => $element($name), 'value' => (string) $value, 'timemodified' => time()]);
             }
         }
-        $evidence = \local_completiondoctor\scorm\runtime_evidence::collect((int) $scorm->id);
+        $evidence = \local_chronifycompliance\scorm\runtime_evidence::collect((int) $scorm->id);
         $this->assertSame(10.0, $evidence['maxraw']);
         $this->assertSame(['10' => 2], $evidence['scoremax']);
 
-        \cache::make('local_completiondoctor', 'evidence')->purge();
+        \cache::make('local_chronifycompliance', 'evidence')->purge();
         $findings = $this->audit((int) $course->id);
         $this->assertSame('check:scormquiz:messageunreachable', $findings[0]->messagekey);
-        $this->assertSame(\local_completiondoctor\check\base_check::SEVERITY_CRITICAL, $findings[0]->severity);
+        $this->assertSame(\local_chronifycompliance\check\base_check::SEVERITY_CRITICAL, $findings[0]->severity);
         $this->assertSame(['completionscorerequired' => 8], $findings[0]->details['recommended']);
     }
 }
