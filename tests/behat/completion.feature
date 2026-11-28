@@ -68,7 +68,6 @@ Feature: Managers scan all courses and filter the Completion workspace
 
   Scenario: Security problems of the site are listed with a link to the setting
     Given the Chronify.Compliance demo site problem "adminmfa" exists
-    And the Chronify.Compliance demo course "healthy" exists
     When I am on the "local_chronifycompliance > Completion" page logged in as "admin"
     Then I should see "Multi-factor authentication is off" in the "[data-region='site-checks']" "css_element"
     And I am on the "local_chronifycompliance > Dashboard" page
