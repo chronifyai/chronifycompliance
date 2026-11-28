@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo\scenario;
+namespace local_chronifycompliance\tests\demo\scenario;
 
-use local_completiondoctor\tests\demo\scenario;
+use local_chronifycompliance\tests\demo\scenario;
 
 /**
  * Demo course for the nocriteria check: Completion is enabled and an activity tracks completion, but no criteria are set.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

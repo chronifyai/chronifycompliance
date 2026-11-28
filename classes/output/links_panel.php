@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\links\link_checker;
-use local_completiondoctor\links\link_scan;
-use local_completiondoctor\links\link_store;
+use local_chronifycompliance\links\link_checker;
+use local_chronifycompliance\links\link_scan;
+use local_chronifycompliance\links\link_store;
 use moodle_url;
 use renderer_base;
 
 /**
  * Links panel of the course report: state of the last link check and the broken links.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,7 +55,7 @@ class links_panel implements \core\output\named_templatable, \renderable {
      * @return string
      */
     public function get_template_name(renderer_base $renderer): string {
-        return 'local_completiondoctor/links_panel';
+        return 'local_chronifycompliance/links_panel';
     }
 
     /**
@@ -68,16 +68,19 @@ class links_panel implements \core\output\named_templatable, \renderable {
         if (!link_scan::is_enabled()) {
             return [];
         }
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $courseid = (int) $this->course->id;
         $state = link_scan::get_state($courseid);
         $status = $state->status ?? '';
         $runat = $status === 'queued' && !(int) $state->requestedby ? (int) $state->runat : 0;
         $runat = $runat > time() ? $runat : 0;
         $data = [
-            'cancheck' => has_capability('local/completiondoctor:checklinks', \context_course::instance($courseid)),
-            'checkurl' => (new moodle_url('/local/completiondoctor/course.php', ['id' => $courseid]))->out(false),
-            'refreshurl' => (new moodle_url('/local/completiondoctor/course.php', ['id' => $courseid], 'cd-links'))->out(false),
+            'cancheck' => has_capability('local/chronifycompliance:checklinks', \context_course::instance($courseid)),
+            'checkurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $courseid]))->out(false),
+            'refreshurl' => (new moodle_url(
+                '/local/chronifycompliance/course.php',
+                ['id' => $courseid, 'tab' => 'links']
+            ))->out(false),
             'sesskey' => sesskey(),
             'never' => !$state,
             'starting' => $status === 'queued' && !$runat,
@@ -138,7 +141,7 @@ class links_panel implements \core\output\named_templatable, \renderable {
     private function export_link_locations(array $links): array {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $cms = $this->modinfo->get_cms();
         $cmorder = array_flip(array_keys($cms));
         $sections = [];
@@ -206,7 +209,7 @@ class links_panel implements \core\output\named_templatable, \renderable {
      * @return array
      */
     private function export_link(\stdClass $link): array {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $url = (string) $link->url;
         $href = null;
         if (str_starts_with($url, '@@PLUGINFILE@@/')) {

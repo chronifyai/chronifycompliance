@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\check\site_auditor;
-use local_completiondoctor\local\scan_manager;
+use local_chronifycompliance\check\site_auditor;
+use local_chronifycompliance\local\scan_manager;
 
 /**
  * Scheduled task running the site checks and queueing an audit of every course.
  *
  * Disabled by default; administrators enable it.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ class scan_site extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:scansite', 'local_completiondoctor');
+        return get_string('task:scansite', 'local_chronifycompliance');
     }
 
     /**
@@ -43,7 +43,7 @@ class scan_site extends \core\task\scheduled_task {
      */
     public function execute(): void {
         if (scan_manager::is_paused()) {
-            mtrace('Completion Doctor scans are paused.');
+            mtrace('Chronify.Compliance scans are paused.');
             return;
         }
         $active = scan_manager::get_active_scan();

@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
 /**
- * Renderer of the Completion Doctor pages. Each page is a renderable in this namespace with its own
+ * Renderer of the Chronify.Compliance pages. Each page is a renderable in this namespace with its own
  * template; this class only keeps the entry points the pages call.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,10 +29,11 @@ class renderer extends \plugin_renderer_base {
      * Course report.
      *
      * @param \stdClass $course
+     * @param string $tab Open tab, see course_report::TABS.
      * @return string
      */
-    public function course_report(\stdClass $course): string {
-        return $this->render(new course_report($course));
+    public function course_report(\stdClass $course, string $tab = 'problems'): string {
+        return $this->render(new course_report($course, $tab));
     }
 
     /**

@@ -14,28 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\review;
+namespace local_chronifycompliance\review;
 
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\external\explain_user_completion;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\hook_callbacks;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\privacy\provider;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\external\explain_user_completion;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\hook_callbacks;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\privacy\provider;
 
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 /**
  * Probes from the senior review (2026-10-28): each test asserts the behavior the plugin should have;
  * a failure reproduces a review finding. test_requireddeleted_fix_unblocks_learner follows decision D15:
  * fixes never recalculate completion, as Moodle's own completion settings page does not either.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class review_probe_test extends \advanced_testcase {
     /**
      * Prepare.
@@ -57,7 +58,7 @@ final class review_probe_test extends \advanced_testcase {
     private function scorm(array $settings, string $fixture = 'storyline_fake'): array {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
-        $path = \core_component::get_component_directory('local_completiondoctor') . "/tests/fixtures/packages/{$fixture}.zip";
+        $path = \core_component::get_component_directory('local_chronifycompliance') . "/tests/fixtures/packages/{$fixture}.zip";
         $scorm = $generator->create_module('scorm', $settings + ['course' => $course->id, 'packagefilepath' => $path,
             'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionstatusrequired' => 4]);
         return [$course, $scorm];
@@ -99,7 +100,7 @@ final class review_probe_test extends \advanced_testcase {
                     'elementid' => $elementid, 'value' => (string) $value, 'timemodified' => time()]);
             }
         }
-        \cache::make('local_completiondoctor', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
     }
 
     /**
@@ -160,10 +161,10 @@ final class review_probe_test extends \advanced_testcase {
      */
     public function test_banner_shows_on_course_page(): void {
         global $PAGE, $DB;
-        set_config('showbanner', 1, 'local_completiondoctor');
+        set_config('showbanner', 1, 'local_chronifycompliance');
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
-        $DB->insert_record('local_completiondoctor_finding', ['courseid' => $course->id, 'checkid' => 'requireddeleted',
-            'component' => 'local_completiondoctor', 'severity' => 3, 'fingerprint' => sha1('probe'), 'status' => 'open',
+        $DB->insert_record('local_chronifycompliance_finding', ['courseid' => $course->id, 'checkid' => 'requireddeleted',
+            'component' => 'local_chronifycompliance', 'severity' => 3, 'fingerprint' => sha1('probe'), 'status' => 'open',
             'messagekey' => 'check:requireddeleted:message', 'fixable' => 0, 'timecreated' => time(),
             'timemodified' => time(), 'lastseen' => time()]);
         finding_store::invalidate_summary((int) $course->id);
@@ -271,9 +272,9 @@ final class review_probe_test extends \advanced_testcase {
     public function test_dry_run_writes_nothing(): void {
         global $DB;
         [$course] = $this->scorm([], 'scorm12_single');
-        $this->assertSame(0, $DB->count_records('local_completiondoctor_pkg'));
+        $this->assertSame(0, $DB->count_records('local_chronifycompliance_pkg'));
         course_auditor::audit((int) $course->id, false);
-        $this->assertSame(0, $DB->count_records('local_completiondoctor_pkg'), 'Package analysis stored by a dry run');
+        $this->assertSame(0, $DB->count_records('local_chronifycompliance_pkg'), 'Package analysis stored by a dry run');
     }
 
     /**
@@ -288,7 +289,7 @@ final class review_probe_test extends \advanced_testcase {
         course_auditor::audit((int) $course->id, true);
         $this->assertSame(1, finding_store::get_summary((int) $course->id)['total']);
 
-        set_config('enabled_trackingoff', 0, 'local_completiondoctor');
+        set_config('enabled_trackingoff', 0, 'local_chronifycompliance');
         check_registry::reset();
         course_auditor::audit((int) $course->id, true);
         $this->assertSame(0, finding_store::get_summary((int) $course->id)['total'], 'Open findings of a check turned off');
@@ -312,7 +313,7 @@ final class review_probe_test extends \advanced_testcase {
         ob_start();
         delete_course($course, false);
         ob_end_clean();
-        $remaining = $DB->count_records('local_completiondoctor_fixlog', ['userid' => $manager->id]);
+        $remaining = $DB->count_records('local_chronifycompliance_fixlog', ['userid' => $manager->id]);
         $contexts = provider::get_contexts_for_userid((int) $manager->id)->get_contextids();
         $this->assertTrue(
             $remaining === 0 || $contexts !== [],
@@ -324,7 +325,7 @@ final class review_probe_test extends \advanced_testcase {
      * The admin severity override applies to every finding of the check.
      */
     public function test_severity_override(): void {
-        set_config('severity_scormquiz', 3, 'local_completiondoctor');
+        set_config('severity_scormquiz', 3, 'local_chronifycompliance');
         [$course] = $this->scorm([]);
         $findings = $this->findings((int) $course->id, 'scormquiz');
         $this->assertCount(1, $findings);
@@ -427,7 +428,7 @@ final class review_probe_test extends \advanced_testcase {
         $this->getDataGenerator()->create_course();
         $this->assertSame(
             0,
-            $DB->count_records('task_adhoc', ['classname' => '\\local_completiondoctor\\task\\check_links']),
+            $DB->count_records('task_adhoc', ['classname' => '\\local_chronifycompliance\\task\\check_links']),
             'Link check tasks queued by creating one course'
         );
     }
@@ -438,12 +439,27 @@ final class review_probe_test extends \advanced_testcase {
     public function test_site_checks_in_status_report(): void {
         $ids = [];
         foreach (\core\check\manager::get_checks('status') as $check) {
-            if ($check->get_component() === 'local_completiondoctor') {
+            if ($check->get_component() === 'local_chronifycompliance') {
                 $ids[] = $check->get_id();
                 $check->get_result();
             }
         }
         sort($ids);
-        $this->assertSame(['completiondisabled', 'completiontasks', 'cronstale'], $ids);
+        $this->assertSame(['backupstatus', 'caching', 'completiondisabled', 'completiontasks', 'cronstale', 'failingtasks',
+            'logretention', 'phpdbsupport', 'upgradeready'], $ids);
+
+        $ids = [];
+        foreach (\core\check\manager::get_checks('security') as $check) {
+            if ($check->get_component() === 'local_chronifycompliance') {
+                $ids[] = $check->get_id();
+            }
+        }
+        sort($ids);
+        $this->assertSame(
+            ['adminmfa', 'availableupdates', 'corevulnerabilities', 'debugdisplay', 'exposedfiles', 'guestaccess',
+                'inactiveadmins', 'passwordstrength', 'riskyroles', 'selfregistration', 'sessioncookies', 'webservices',
+                'wstokens'],
+            $ids
+        );
     }
 }

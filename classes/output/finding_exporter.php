@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\fix\fix_log;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\fix\fix_log;
 use moodle_url;
 
 /**
  * Exports findings, for templates and for web services.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +60,7 @@ class finding_exporter {
             'checkname' => $check ? $check->get_name() : $finding->checkid,
             'checkdesc' => $check ? $check->get_description() : '',
             'message' => $finding->get_message(),
-            'severitylabel' => get_string('severity:' . $severity, 'local_completiondoctor'),
+            'severitylabel' => get_string('severity:' . $severity, 'local_chronifycompliance'),
             'badgeclass' => self::BADGES[$severity],
             'canfix' => $caps['canfix'] && $finding->fixable && $finding->is_open(),
             'canignore' => $caps['canignore'] && $finding->is_open(),
@@ -72,6 +72,8 @@ class finding_exporter {
             'editurl' => null,
             'scormurl' => null,
             'fixlogid' => null,
+            'coreref' => $check instanceof \local_chronifycompliance\check\core_import_check
+                ? (string) ($finding->details['ref'] ?? '') : null,
         ];
         if ($finding->cmid && $modinfo) {
             $cms = $modinfo->get_cms();
@@ -81,14 +83,46 @@ class finding_exporter {
                 $item['cmurl'] = $cm->url ? $cm->url->out(false) : null;
                 $item['editurl'] = (new moodle_url('/course/modedit.php', ['update' => $cm->id]))->out(false);
                 if ($cm->modname === 'scorm') {
-                    $item['scormurl'] = (new moodle_url('/local/completiondoctor/scorm.php', ['cmid' => $cm->id]))->out(false);
+                    $item['scormurl'] = (new moodle_url('/local/chronifycompliance/scorm.php', ['cmid' => $cm->id]))->out(false);
                 }
             }
+        }
+        // Site findings can point at the Moodle setting that fixes them.
+        if (!$item['editurl'] && !empty($finding->details['url'])) {
+            $item['editurl'] = (string) $finding->details['url'];
         }
         if ($finding->status === finding::STATUS_FIXED && $caps['canfix']) {
             $log = fix_log::get_latest_active((int) $finding->id);
             $item['fixlogid'] = $log ? (int) $log->id : null;
         }
+        return self::add_main_action($item);
+    }
+
+    /**
+     * One main action per card, by fix level: Preview fix, Undo, Reopen, Set up (activity settings) or the
+     * SCORM analysis. The other actions go in the card's menu.
+     *
+     * @param array $item
+     * @return array
+     */
+    public static function add_main_action(array $item): array {
+        $main = null;
+        if ($item['canfix']) {
+            $main = 'fix';
+        } else if ($item['fixlogid']) {
+            $main = 'undo';
+        } else if ($item['canreopen']) {
+            $main = 'reopen';
+        } else if ($item['scormurl']) {
+            $main = 'scorm';
+        } else if ($item['editurl']) {
+            $main = 'setup';
+        }
+        foreach (['fix', 'undo', 'reopen', 'scorm', 'setup'] as $action) {
+            $item['main' . $action] = $main === $action;
+        }
+        $item['menuedit'] = $item['editurl'] && $main !== 'setup';
+        $item['menuscorm'] = $item['scormurl'] && $main !== 'scorm';
         return $item;
     }
 

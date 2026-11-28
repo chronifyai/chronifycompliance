@@ -14,22 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\reportbuilder;
+namespace local_chronifycompliance\reportbuilder;
 
 use core_reportbuilder\system_report_factory;
-use local_completiondoctor\local\dashboard_data;
-use local_completiondoctor\reportbuilder\local\systemreports\dashboard;
+use local_chronifycompliance\local\dashboard_data;
+use local_chronifycompliance\reportbuilder\local\systemreports\dashboard;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(dashboard::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(dashboard_data::class)]
 /**
  * Tests for the site dashboard system report.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\reportbuilder\local\systemreports\dashboard
+ * @covers \local_chronifycompliance\local\dashboard_data
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(dashboard::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(dashboard_data::class)]
 final class dashboard_test extends \advanced_testcase {
     /**
      * Downloads have no row actions: core builds them after the session is closed.
@@ -64,7 +66,7 @@ final class dashboard_test extends \advanced_testcase {
         global $DB, $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $PAGE->set_url('/local/completiondoctor/index.php');
+        $PAGE->set_url('/local/chronifycompliance/index.php');
         $generator = $this->getDataGenerator();
         $audits = [
             'Mixed course' => [1, 1, 1],
@@ -74,7 +76,7 @@ final class dashboard_test extends \advanced_testcase {
         ];
         foreach ($audits as $name => [$critical, $warning, $info]) {
             $course = $generator->create_course(['fullname' => $name, 'enablecompletion' => 1]);
-            $DB->insert_record('local_completiondoctor_audit', ['courseid' => $course->id, 'timeaudited' => time(),
+            $DB->insert_record('local_chronifycompliance_audit', ['courseid' => $course->id, 'timeaudited' => time(),
                 'critical' => $critical, 'warning' => $warning, 'info' => $info]);
         }
 
@@ -110,5 +112,49 @@ final class dashboard_test extends \advanced_testcase {
                 }
             }
         }
+    }
+
+    /**
+     * The SCORM view lists courses with open SCORM problems, and the critical column sorts worst first.
+     */
+    public function test_scorm_view_and_sort(): void {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/local/chronifycompliance/completion.php');
+        $generator = $this->getDataGenerator();
+        $scorm = $generator->create_course(['fullname' => 'Scorm course']);
+        $other = $generator->create_course(['fullname' => 'Other course']);
+        $worse = $generator->create_course(['fullname' => 'Worse course']);
+        foreach ([[$scorm, 1, 0], [$other, 1, 1], [$worse, 1, 5]] as [$course, $critical, $warning]) {
+            $DB->insert_record('local_chronifycompliance_audit', ['courseid' => $course->id, 'timeaudited' => time(),
+                'critical' => $critical, 'warning' => $warning, 'info' => 0]);
+        }
+        $DB->insert_record('local_chronifycompliance_finding', ['courseid' => $scorm->id, 'checkid' => 'scormnostatus',
+            'component' => 'local_chronifycompliance', 'severity' => 3, 'baseseverity' => 3, 'fingerprint' => sha1('s'),
+            'status' => 'open', 'messagekey' => 'x', 'timecreated' => time(), 'timemodified' => time()]);
+
+        $html = system_report_factory::create(
+            dashboard::class,
+            \context_system::instance(),
+            '',
+            '',
+            0,
+            ['view' => 'scorm', 'checkid' => '']
+        )->output();
+        $this->assertStringContainsString('Scorm course', $html);
+        $this->assertStringNotContainsString('Other course', $html);
+
+        \core_reportbuilder\manager::reset_caches();
+        $html = system_report_factory::create(
+            dashboard::class,
+            \context_system::instance(),
+            '',
+            '',
+            0,
+            ['view' => '', 'checkid' => '']
+        )->output();
+        $this->assertLessThan(strpos($html, 'Other course'), strpos($html, 'Worse course'));
+        $this->assertLessThan(strpos($html, 'Scorm course'), strpos($html, 'Other course'));
     }
 }

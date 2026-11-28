@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\fix\criteria_editor;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\fix\criteria_editor;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * Fix that adds the activity of a finding to the course completion criteria.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +46,7 @@ trait add_criterion_fix {
      * @return fix_preview
      */
     public function preview_fix(finding $finding, array $params = []): fix_preview {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $preview = new fix_preview(
             'addactivitycriterion',
             ['cmid' => $finding->cmid, 'courseid' => $finding->courseid, 'required' => 0],
@@ -92,7 +92,7 @@ trait add_criterion_fix {
             return new fix_result(true, $before);
         }
         if (!criteria_editor::remove_activity_criterion((int) $after['courseid'], (int) $after['cmid'])) {
-            throw new \moodle_exception('error:undochanged', 'local_completiondoctor');
+            throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
         }
         return new fix_result(true, $before);
     }

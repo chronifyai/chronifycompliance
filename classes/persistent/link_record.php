@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\persistent;
+namespace local_chronifycompliance\persistent;
 
 use core\persistent;
 
 /**
  * A link found in a course by a link check.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class link_record extends persistent {
     /** @var string Table. */
-    public const TABLE = 'local_completiondoctor_link';
+    public const TABLE = 'local_chronifycompliance_link';
 
     /**
      * Properties of the record.

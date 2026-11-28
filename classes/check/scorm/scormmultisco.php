@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
 
 /**
  * A package with several SCOs completes as soon as one of them reports the status, because
  * "all SCOs must return a status" is off.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

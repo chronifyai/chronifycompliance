@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
 /**
  * Changes to course completion criteria used by fixes, through core's completion criteria objects,
@@ -26,7 +26,7 @@ namespace local_completiondoctor\fix;
  * changes (an activity completion, a grade). Undo works on the course and activity, not on row ids,
  * because saving the completion settings page recreates every criterion with a new id.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -144,7 +144,7 @@ class criteria_editor {
         self::load();
         $criterion = \completion_criteria_grade::fetch(['course' => $courseid]);
         if (!$criterion) {
-            throw new \moodle_exception('error:undochanged', 'local_completiondoctor');
+            throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
         }
         $criterion->gradepass = $gradepass;
         $criterion->update();

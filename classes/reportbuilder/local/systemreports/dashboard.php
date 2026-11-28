@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\reportbuilder\local\systemreports;
+namespace local_chronifycompliance\reportbuilder\local\systemreports;
 
 use core_course\reportbuilder\local\entities\course_category;
 use core_reportbuilder\local\entities\course;
@@ -22,7 +22,7 @@ use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\system_report;
 use lang_string;
-use local_completiondoctor\reportbuilder\local\entities\audit;
+use local_chronifycompliance\reportbuilder\local\entities\audit;
 use moodle_url;
 use pix_icon;
 
@@ -32,7 +32,7 @@ use pix_icon;
  * Report parameters: "view" (critical, warning, info or healthy) and "checkid" restrict the rows,
  * for the tiles and "Top problems" of the dashboard.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,8 +42,8 @@ class dashboard extends system_report {
      */
     protected function initialise(): void {
         $audit = new audit();
-        $alias = $audit->get_table_alias('local_completiondoctor_audit');
-        $this->set_main_table('local_completiondoctor_audit', $alias);
+        $alias = $audit->get_table_alias('local_chronifycompliance_audit');
+        $this->set_main_table('local_chronifycompliance_audit', $alias);
         $this->add_entity($audit);
 
         $siteparam = database::generate_param_name();
@@ -68,14 +68,30 @@ class dashboard extends system_report {
         $this->add_columns_from_entities([
             'course:coursefullnamewithlink',
             'course_category:name',
-            'audit:problems',
+            'audit:critical',
+            'audit:warning',
             'audit:topcheck',
             'audit:timeaudited',
         ]);
+        // Worst courses first: by critical, then warnings, then info.
+        // Sort fields must be fields of the column, so the column also selects the warning and info counts.
+        $this->get_column('audit:critical')
+            ->add_fields("{$alias}.warning, {$alias}.info")
+            ->set_is_sortable(true, ["{$alias}.critical", "{$alias}.warning", "{$alias}.info"]);
+        $this->get_column('audit:warning')->set_title(new lang_string('dashboard:warnings', 'local_chronifycompliance'));
+        if (
+            optional_param('download', '', PARAM_ALPHA) === ''
+                && has_capability('local/chronifycompliance:applyfix', \context_system::instance())
+        ) {
+            $this->set_checkbox_toggleall(static fn(\stdClass $row): array => [
+                $row->courseid,
+                get_string('bulk:select', 'local_chronifycompliance', $row->courseid),
+            ]);
+        }
         $this->get_column('course:coursefullnamewithlink')
-            ->set_title(new lang_string('dashboard:course', 'local_completiondoctor'));
+            ->set_title(new lang_string('dashboard:course', 'local_chronifycompliance'));
         $this->get_column('course_category:name')
-            ->set_title(new lang_string('dashboard:category', 'local_completiondoctor'));
+            ->set_title(new lang_string('dashboard:category', 'local_chronifycompliance'));
 
         $this->add_filters_from_entities([
             'course:fullname',
@@ -84,20 +100,20 @@ class dashboard extends system_report {
             'audit:check',
             'audit:critical',
         ]);
-        $this->set_initial_sort_column('audit:problems', SORT_DESC);
+        $this->set_initial_sort_column('audit:critical', SORT_DESC);
 
         // Core builds the actions menu of every row even in a download, after the session is closed, and
         // rendering its icon builds the navigation, which writes to the session. Downloads have no actions column.
         if (optional_param('download', '', PARAM_ALPHA) === '') {
             $this->add_action(new action(
-                new moodle_url('/local/completiondoctor/course.php', ['id' => ':courseid']),
+                new moodle_url('/local/chronifycompliance/course.php', ['id' => ':courseid']),
                 new pix_icon('i/report', ''),
                 [],
                 false,
-                new lang_string('report:title', 'local_completiondoctor')
+                new lang_string('report:title', 'local_chronifycompliance')
             ));
         }
-        $this->set_downloadable(true, get_string('dashboard:filename', 'local_completiondoctor'));
+        $this->set_downloadable(true, get_string('dashboard:filename', 'local_chronifycompliance'));
     }
 
     /**
@@ -106,17 +122,23 @@ class dashboard extends system_report {
      * @param string $alias Alias of the audit table.
      */
     private function add_view_conditions(string $alias): void {
-        $conditions = \local_completiondoctor\local\dashboard_data::group_conditions($alias);
+        $conditions = \local_chronifycompliance\local\dashboard_data::group_conditions($alias);
         $view = $this->get_parameter('view', '', PARAM_ALPHA);
         if (isset($conditions[$view])) {
             $this->add_base_condition_sql($conditions[$view]);
+        } else if ($view === 'scorm') {
+            [$sql, $params] = \local_chronifycompliance\local\dashboard_data::scorm_condition(
+                $alias,
+                fn() => database::generate_param_name()
+            );
+            $this->add_base_condition_sql($sql, $params);
         }
         $checkid = $this->get_parameter('checkid', '', PARAM_ALPHANUMEXT);
         if ($checkid !== '') {
             $checkparam = database::generate_param_name();
             $statusparam = database::generate_param_name();
             $this->add_base_condition_sql(
-                "EXISTS (SELECT 1 FROM {local_completiondoctor_finding} cdv
+                "EXISTS (SELECT 1 FROM {local_chronifycompliance_finding} cdv
                 WHERE cdv.courseid = {$alias}.courseid AND cdv.status = :{$statusparam} AND cdv.checkid = :{$checkparam})",
                 [$checkparam => $checkid, $statusparam => 'open']
             );
@@ -129,6 +151,6 @@ class dashboard extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        return has_capability('local/completiondoctor:viewsitereport', \context_system::instance());
+        return has_capability('local/chronifycompliance:viewsitereport', \context_system::instance());
     }
 }

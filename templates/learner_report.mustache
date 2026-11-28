@@ -15,30 +15,35 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/learner_report
+    @template local_chronifycompliance/learner_report
 
     Learner completion diagnostic: learner search and per-criterion explanation.
 
     Example context (json):
     {
-        "courseid": 2, "actionurl": "https://example.com/local/completiondoctor/learner.php", "search": "",
+        "courseid": 2, "actionurl": "https://example.com/local/chronifycompliance/learner.php", "search": "",
         "matches": [], "hasmatches": false, "searched": false,
         "user": {"id": 5, "fullname": "Sam Learner"},
         "explanation": {
             "enabled": true, "enrolled": true, "completed": false, "timecompleted": null, "pendingaggregation": false,
             "blocking": 1, "aggregation": "All criteria must be met", "hascriteria": true,
-            "criteria": [{"id": 1, "typetitle": "Activity completion", "title": "Quiz - Final test", "met": false,
-                "timemet": null, "blocking": true, "activity": {"name": "Final test", "modname": "Quiz",
+            "status": "1 condition blocks completion",
+            "criteria": [{"id": 1, "typetitle": "Activity completion", "title": "Quiz: Final test", "met": false,
+                "timemet": null, "blocking": true, "state": "blocks", "statelabel": "Blocking", "ismet": false,
+                "isblocking": true, "activity": {"name": "Final test", "modname": "Quiz",
                 "url": "https://example.com/mod/quiz/view.php?id=4", "visible": true, "available": true,
                 "availableinfo": "", "statelabel": "Not complete", "hasrules": true,
                 "rules": [{"description": "Receive a pass grade", "complete": false, "failed": true}], "scorm": null} }]
-        }
+        },
+        "verdict": {"kind": "setup", "issetup": true, "islearner": false,
+            "text": "This is a course setting problem, not the learner's.", "fixid": 7, "reporturl": null,
+            "summary": "Learner: Sam Learner"}
     }
 }}
-<div class="local-completiondoctor-learner" data-region="learner-diagnostic">
+<div class="local-chronifycompliance-learner" data-region="learner-diagnostic">
     <form method="get" action="{{actionurl}}" class="mb-3" role="search">
         <input type="hidden" name="courseid" value="{{courseid}}">
-        <label class="form-label" for="cd-learner-search">{{#str}}learner:search, local_completiondoctor{{/str}}</label>
+        <label class="form-label" for="cd-learner-search">{{#str}}learner:search, local_chronifycompliance{{/str}}</label>
         <div class="d-flex">
             <input type="search" class="form-control me-2" id="cd-learner-search" name="search" value="{{search}}">
             <button type="submit" class="btn btn-secondary">{{#str}}search{{/str}}</button>
@@ -47,45 +52,74 @@
     {{#hasmatches}}
         <ul class="list-unstyled mb-4">{{#matches}}<li><a href="{{url}}">{{fullname}}</a>{{#identity}} <span class="text-muted small">{{identity}}</span>{{/identity}}</li>{{/matches}}</ul>
     {{/hasmatches}}
-    {{#searched}}{{^hasmatches}}<p class="text-muted">{{#str}}learner:nomatches, local_completiondoctor{{/str}}</p>{{/hasmatches}}{{/searched}}
+    {{#searched}}{{^hasmatches}}<p class="text-muted">{{#str}}learner:nomatches, local_chronifycompliance{{/str}}</p>{{/hasmatches}}{{/searched}}
 
     {{#user}}<h3 class="h5">{{fullname}}</h3>{{/user}}
     {{#explanation}}
-        {{^enabled}}<div class="alert alert-warning">{{#str}}learner:completionoff, local_completiondoctor{{/str}}</div>{{/enabled}}
-        {{^enrolled}}<div class="alert alert-warning">{{#str}}learner:notenrolled, local_completiondoctor{{/str}}</div>{{/enrolled}}
-        {{#completed}}<div class="alert alert-success">{{#str}}learner:completed, local_completiondoctor, {{timecompleted}}{{/str}}</div>{{/completed}}
-        {{#pendingaggregation}}<div class="alert alert-info">{{#str}}learner:pending, local_completiondoctor{{/str}}</div>{{/pendingaggregation}}
-        {{^completed}}{{#blocking}}<div class="alert alert-danger">{{#str}}learner:blocking, local_completiondoctor, {{blocking}}{{/str}}</div>{{/blocking}}{{/completed}}
+        {{^enabled}}<div class="alert alert-warning">{{#str}}learner:completionoff, local_chronifycompliance{{/str}}</div>{{/enabled}}
+        {{^enrolled}}<div class="alert alert-warning">{{#str}}learner:notenrolled, local_chronifycompliance{{/str}}</div>{{/enrolled}}
+        {{#completed}}<div class="alert alert-success">{{#str}}learner:completed, local_chronifycompliance, {{timecompleted}}{{/str}}</div>{{/completed}}
+        {{#pendingaggregation}}<div class="alert alert-info">{{#str}}learner:pending, local_chronifycompliance{{/str}}</div>{{/pendingaggregation}}
+        {{^completed}}
+            <p class="d-flex align-items-center mb-2" data-region="learner-status">
+                <span class="lcd-pill lcd-pill-critical me-2">{{#str}}learner:status:notcompletepill, local_chronifycompliance{{/str}}</span>
+                <span>{{status}}</span>
+            </p>
+        {{/completed}}
         {{#hascriteria}}
-            <p class="small text-muted">{{aggregation}}</p>
-            {{#criteria}}
-                <div class="card mb-2{{#blocking}} border-danger{{/blocking}}">
-                    <div class="card-body p-3">
-                        <h4 class="h6 mb-1">
-                            {{#met}}<span class="badge bg-success text-white me-2">{{#str}}learner:met, local_completiondoctor{{/str}}</span>{{/met}}
-                            {{^met}}<span class="badge bg-secondary text-white me-2">{{#str}}learner:notmet, local_completiondoctor{{/str}}</span>{{/met}}
-                            {{#blocking}}<span class="badge bg-danger text-white me-2">{{#str}}learner:blocks, local_completiondoctor{{/str}}</span>{{/blocking}}
-                            {{typetitle}}: {{title}}
-                        </h4>
-                        {{#timemet}}<p class="small text-muted mb-1">{{#str}}learner:metat, local_completiondoctor, {{timemet}}{{/str}}</p>{{/timemet}}
-                        {{#activity}}
-                            <p class="mb-1">{{#url}}<a href="{{url}}">{{name}}</a>{{/url}}{{^url}}{{name}}{{/url}} ({{modname}}): {{statelabel}}</p>
-                            {{^visible}}<p class="small text-danger mb-1">{{#str}}learner:hidden, local_completiondoctor{{/str}}</p>{{/visible}}
-                            {{^available}}<div class="small text-danger mb-1">{{#str}}learner:locked, local_completiondoctor{{/str}} {{{availableinfo}}}</div>{{/available}}
-                            {{#hasrules}}
-                                <ul class="small mb-1">
-                                    {{#rules}}<li>{{description}}: {{#complete}}{{#str}}learner:done, local_completiondoctor{{/str}}{{/complete}}{{#failed}}{{#str}}learner:failed, local_completiondoctor{{/str}}{{/failed}}{{^complete}}{{^failed}}{{#str}}learner:todo, local_completiondoctor{{/str}}{{/failed}}{{/complete}}</li>{{/rules}}
-                                </ul>
-                            {{/hasrules}}
-                            {{#scorm}}
-                                <p class="small mb-1">{{#str}}learner:scormrequired, local_completiondoctor, {{required}}{{/str}} {{#str}}learner:scormattempts, local_completiondoctor, {{attempts}}{{/str}}</p>
-                                {{#hasvalues}}<ul class="small mb-0">{{#values}}<li>{{element}}: {{value}}</li>{{/values}}</ul>{{/hasvalues}}
-                            {{/scorm}}
-                        {{/activity}}
-                    </div>
-                </div>
-            {{/criteria}}
+            <p class="small text-muted mb-2">{{aggregation}}</p>
+            <ul class="list-unstyled mb-3" data-region="conditions">
+                {{#criteria}}
+                    <li class="lcc-condition p-2 mb-1 rounded{{#isblocking}} lcc-condition-blocking{{/isblocking}}" data-state="{{state}}">
+                        <div class="d-flex align-items-start">
+                            <span class="lcd-pill lcc-state-{{state}} me-2 text-nowrap">{{statelabel}}</span>
+                            <div>
+                                <div{{#isblocking}} class="fw-bold"{{/isblocking}}>{{typetitle}}: {{title}}</div>
+                                {{#timemet}}<div class="small text-muted">{{#str}}learner:metat, local_chronifycompliance, {{timemet}}{{/str}}</div>{{/timemet}}
+                                {{#activity}}
+                                    <div class="small">{{#url}}<a href="{{url}}">{{name}}</a>{{/url}}{{^url}}{{name}}{{/url}} ({{modname}}): {{statelabel}}</div>
+                                    {{^visible}}<div class="small text-danger">{{#str}}learner:hidden, local_chronifycompliance{{/str}}</div>{{/visible}}
+                                    {{^available}}<div class="small text-danger">{{#str}}learner:locked, local_chronifycompliance{{/str}} {{{availableinfo}}}</div>{{/available}}
+                                    {{#hasrules}}
+                                        <ul class="small mb-0">
+                                            {{#rules}}<li>{{description}}: {{#complete}}{{#str}}learner:done, local_chronifycompliance{{/str}}{{/complete}}{{#failed}}{{#str}}learner:failed, local_chronifycompliance{{/str}}{{/failed}}{{^complete}}{{^failed}}{{#str}}learner:todo, local_chronifycompliance{{/str}}{{/failed}}{{/complete}}</li>{{/rules}}
+                                        </ul>
+                                    {{/hasrules}}
+                                    {{#scorm}}
+                                        <div class="small">{{#str}}learner:scormrequired, local_chronifycompliance, {{required}}{{/str}} {{#str}}learner:scormattempts, local_chronifycompliance, {{attempts}}{{/str}}</div>
+                                        {{#hasvalues}}<ul class="small mb-0">{{#values}}<li>{{element}}: {{value}}</li>{{/values}}</ul>{{/hasvalues}}
+                                    {{/scorm}}
+                                {{/activity}}
+                            </div>
+                        </div>
+                    </li>
+                {{/criteria}}
+            </ul>
         {{/hascriteria}}
-        {{^hascriteria}}<p class="text-muted">{{#str}}learner:nocriteria, local_completiondoctor{{/str}}</p>{{/hascriteria}}
+        {{^hascriteria}}<p class="text-muted">{{#str}}learner:nocriteria, local_chronifycompliance{{/str}}</p>{{/hascriteria}}
     {{/explanation}}
+    {{#verdict}}
+        <div class="lcc-verdict d-flex flex-wrap justify-content-between align-items-center p-3 mb-3 rounded" data-region="verdict" data-kind="{{kind}}">
+            <span class="me-3 mb-1">{{text}}</span>
+            <div class="d-flex flex-wrap">
+                {{#fixid}}
+                    <button type="button" class="btn btn-primary btn-sm me-2 mb-1" data-action="cd-preview-fix" data-findingid="{{fixid}}">
+                        {{#str}}report:previewfix, local_chronifycompliance{{/str}}
+                    </button>
+                {{/fixid}}
+                {{#reporturl}}<a class="btn btn-outline-primary btn-sm me-2 mb-1" href="{{reporturl}}">{{#str}}dashboard:action:opencourse, local_chronifycompliance{{/str}}</a>{{/reporturl}}
+                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" data-action="copytoclipboard"
+                    data-clipboard-target="#cd-learner-summary" data-clipboard-success-message="{{#str}}learner:copied, local_chronifycompliance{{/str}}">
+                    {{#str}}learner:copysummary, local_chronifycompliance{{/str}}
+                </button>
+            </div>
+        </div>
+        <details class="small mb-3">
+            <summary>{{#str}}learner:showsummary, local_chronifycompliance{{/str}}</summary>
+            <textarea class="form-control mt-2" id="cd-learner-summary" rows="8" readonly>{{summary}}</textarea>
+        </details>
+    {{/verdict}}
 </div>
+{{#js}}
+    require(['core/copy_to_clipboard']);
+{{/js}}

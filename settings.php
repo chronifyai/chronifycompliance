@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Admin settings for Completion Doctor.
+ * Admin settings for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,21 +25,49 @@
 defined('MOODLE_INTERNAL') || die();
 
 $ADMIN->add('reports', new admin_externalpage(
-    'local_completiondoctor_dashboard',
-    new lang_string('dashboard:title', 'local_completiondoctor'),
-    new moodle_url('/local/completiondoctor/index.php'),
-    'local/completiondoctor:viewsitereport'
+    'local_chronifycompliance_dashboard',
+    new lang_string('dashboard:title', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/index.php'),
+    'local/chronifycompliance:viewsitereport'
+));
+$ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_completion',
+    new lang_string('nav:completion', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/completion.php'),
+    'local/chronifycompliance:viewsitereport',
+    true
+));
+$ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_security',
+    new lang_string('nav:security', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/security.php'),
+    'local/chronifycompliance:viewsitereport',
+    true
+));
+$ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_setup',
+    new lang_string('setup', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/setup.php'),
+    'local/chronifycompliance:runscan',
+    true
+));
+$ADMIN->add('reports', new admin_externalpage(
+    'local_chronifycompliance_components',
+    new lang_string('components', 'local_chronifycompliance'),
+    new moodle_url('/local/chronifycompliance/components.php'),
+    'moodle/site:config',
+    true
 ));
 
 if ($hassiteconfig) {
-    $component = 'local_completiondoctor';
+    $component = 'local_chronifycompliance';
     $ADMIN->add('localplugins', new admin_category(
-        'local_completiondoctor_category',
+        'local_chronifycompliance_category',
         new lang_string('pluginname', $component)
     ));
 
     // General settings.
-    $settings = new admin_settingpage('local_completiondoctor', new lang_string('settings:general', $component));
+    $settings = new admin_settingpage('local_chronifycompliance', new lang_string('settings:general', $component));
     if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading(
             "{$component}/scanheading",
@@ -98,6 +126,55 @@ if ($hassiteconfig) {
             new lang_string('settings:packagehours_desc', $component),
             '',
             '/^(\s*\d{1,2}\s*-\s*\d{1,2}\s*)?$/'
+        ));
+
+        // Data layer refresh.
+        $settings->add(new admin_setting_heading(
+            "{$component}/refreshheading",
+            new lang_string('settings:refresh', $component),
+            new lang_string('settings:refresh_desc', $component)
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshhours",
+            new lang_string('settings:refreshhours', $component),
+            new lang_string('settings:refreshhours_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_HOURS,
+            '/^(\s*\d{1,2}\s*-\s*\d{1,2}\s*)?$/'
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshbatch",
+            new lang_string('settings:refreshbatch', $component),
+            new lang_string('settings:refreshbatch_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_BATCH,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshpace",
+            new lang_string('settings:refreshpace', $component),
+            new lang_string('settings:refreshpace_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_PACE,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshfirstload",
+            new lang_string('settings:refreshfirstload', $component),
+            new lang_string('settings:refreshfirstload_desc', $component),
+            \local_chronifycompliance\data\datasets\activity::DEFAULT_FIRSTLOAD,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshkeep",
+            new lang_string('settings:refreshkeep', $component),
+            new lang_string('settings:refreshkeep_desc', $component),
+            \local_chronifycompliance\data\datasets\activity::DEFAULT_KEEP,
+            PARAM_INT
+        ));
+        $settings->add(new admin_setting_configtext(
+            "{$component}/refreshbudget",
+            new lang_string('settings:refreshbudget', $component),
+            new lang_string('settings:refreshbudget_desc', $component),
+            \local_chronifycompliance\data\refresher::DEFAULT_BUDGET,
+            PARAM_INT
         ));
 
         $settings->add(new admin_setting_heading(
@@ -244,13 +321,20 @@ if ($hassiteconfig) {
             new lang_string('settings:notifyteachers_desc', $component),
             0
         ));
+        $settings->add(new admin_setting_configcheckbox(
+            "{$component}/invitations",
+            new lang_string('settings:invitations', $component),
+            new lang_string('settings:invitations_desc', $component),
+            1
+        ));
     }
-    $ADMIN->add('local_completiondoctor_category', $settings);
+    $ADMIN->add('local_chronifycompliance_category', $settings);
 
     // Per-check settings.
-    $checkspage = new admin_settingpage('local_completiondoctor_checks', new lang_string('settings:checks', $component));
+    $checkspage = new admin_settingpage('local_chronifycompliance_checks', new lang_string('settings:checks', $component));
     if ($ADMIN->fulltree) {
-        $checks = \local_completiondoctor\check\check_registry::get_checks();
+        $checksbypack = \local_chronifycompliance\check\check_registry::get_checks_by_pack();
+        $checks = array_merge(...array_values($checksbypack));
         if (!$checks) {
             $checkspage->add(new admin_setting_heading(
                 "{$component}/nochecks",
@@ -260,35 +344,49 @@ if ($hassiteconfig) {
         }
         $severities = [
             0 => new lang_string('settings:severitydefault', $component),
-            \local_completiondoctor\check\base_check::SEVERITY_INFO => new lang_string('severity:info', $component),
-            \local_completiondoctor\check\base_check::SEVERITY_WARNING => new lang_string('severity:warning', $component),
-            \local_completiondoctor\check\base_check::SEVERITY_CRITICAL => new lang_string('severity:critical', $component),
+            \local_chronifycompliance\check\base_check::SEVERITY_INFO => new lang_string('severity:info', $component),
+            \local_chronifycompliance\check\base_check::SEVERITY_WARNING => new lang_string('severity:warning', $component),
+            \local_chronifycompliance\check\base_check::SEVERITY_CRITICAL => new lang_string('severity:critical', $component),
         ];
-        foreach ($checks as $id => $check) {
+        foreach ($checksbypack as $pack => $packchecks) {
+            if (!$packchecks) {
+                continue;
+            }
             $checkspage->add(new admin_setting_heading(
-                "{$component}/checkheading_{$id}",
-                $check->get_name(),
-                $check->get_description()
+                "{$component}/packheading_{$pack}",
+                \local_chronifycompliance\check\base_check::get_pack_name($pack),
+                new lang_string('settings:packchecks', $component, count($packchecks))
             ));
-            // Changes apply to the stored findings at once, not only after the next audit of each course.
-            $enabled = new admin_setting_configcheckbox(
-                "{$component}/enabled_{$id}",
-                new lang_string('settings:checkenabled', $component),
-                '',
-                1
-            );
-            $enabled->set_updatedcallback('local_completiondoctor\\local\\finding_store::setting_changed');
-            $checkspage->add($enabled);
-            $severity = new admin_setting_configselect(
-                "{$component}/severity_{$id}",
-                new lang_string('settings:checkseverity', $component),
-                new lang_string('settings:checkseverity_desc', $component, $severities[$check->get_default_severity()]->out()),
-                0,
-                $severities
-            );
-            $severity->set_updatedcallback('local_completiondoctor\\local\\finding_store::setting_changed');
-            $checkspage->add($severity);
+            foreach ($packchecks as $id => $check) {
+                $checkspage->add(new admin_setting_heading(
+                    "{$component}/checkheading_{$id}",
+                    $check->get_name(),
+                    $check->get_description()
+                ));
+                // Changes apply to the stored findings at once, not only after the next audit of each course.
+                $enabled = new admin_setting_configcheckbox(
+                    "{$component}/enabled_{$id}",
+                    new lang_string('settings:checkenabled', $component),
+                    '',
+                    1
+                );
+                $enabled->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
+                $checkspage->add($enabled);
+                $severity = new admin_setting_configselect(
+                    "{$component}/severity_{$id}",
+                    new lang_string('settings:checkseverity', $component),
+                    new lang_string(
+                        'settings:checkseverity_desc',
+                        $component,
+                        $severities[$check->get_default_severity()]->out()
+                    ),
+                    0,
+                    $severities
+                );
+                $severity->set_updatedcallback('local_chronifycompliance\\local\\finding_store::setting_changed');
+                $checkspage->add($severity);
+            }
         }
     }
-    $ADMIN->add('local_completiondoctor_category', $checkspage);
+    $ADMIN->add('local_chronifycompliance_category', $checkspage);
 }

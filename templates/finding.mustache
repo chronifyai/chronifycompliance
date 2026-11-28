@@ -15,9 +15,10 @@
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_completiondoctor/finding
+    @template local_chronifycompliance/finding
 
-    One finding with its actions.
+    One finding as a card: severity, the problem in one sentence, where it is, one main action, and a menu
+    with Ignore, Details and the other links.
 
     Example context (json):
     {
@@ -26,51 +27,60 @@
         "severitylabel": "Critical", "badgeclass": "lcd-pill lcd-pill-critical", "cmname": "Final test",
         "cmurl": "https://example.com/mod/quiz/view.php?id=4", "editurl": "https://example.com/course/modedit.php?update=4",
         "scormurl": null, "canfix": true, "canignore": true, "canreopen": false, "fixlogid": null,
-        "ignorereason": null, "timeignored": null
+        "ignorereason": null, "timeignored": null, "mainfix": true, "mainundo": false, "mainreopen": false,
+        "mainscorm": false, "mainsetup": false, "menuedit": true, "menuscorm": false, "coreref": null
     }
 }}
-<div class="local-completiondoctor-finding card mb-2" data-region="finding" data-findingid="{{id}}">
+<div class="local-chronifycompliance-finding card mb-2" data-region="finding" data-findingid="{{id}}">
     <div class="card-body p-3">
         <div class="d-flex flex-wrap align-items-start justify-content-between">
-            <div class="me-3 mb-2">
+            <div class="me-3 mb-2 flex-grow-1 lcc-finding-text">
                 <h4 class="h6 mb-1"><span class="{{badgeclass}} me-2">{{severitylabel}}</span>{{checkname}}</h4>
                 <p class="mb-1">{{message}}</p>
                 {{#cmname}}
-                    <p class="mb-1 small">
-                        {{#cmurl}}<a href="{{cmurl}}">{{cmname}}</a>{{/cmurl}}{{^cmurl}}{{cmname}}{{/cmurl}}
-                        {{#editurl}} · <a href="{{editurl}}">{{#str}}report:editsettings, local_completiondoctor{{/str}}</a>{{/editurl}}
-                        {{#scormurl}} · <a href="{{scormurl}}">{{#str}}report:scormpanel, local_completiondoctor{{/str}}</a>{{/scormurl}}
-                    </p>
+                    <p class="mb-1 small text-muted">{{#cmurl}}<a href="{{cmurl}}">{{cmname}}</a>{{/cmurl}}{{^cmurl}}{{cmname}}{{/cmurl}}</p>
                 {{/cmname}}
                 {{#ignorereason}}
-                    <p class="mb-1 small text-muted">{{#str}}report:ignoredbecause, local_completiondoctor, {{ignorereason}}{{/str}}</p>
+                    <p class="mb-1 small text-muted">{{#str}}report:ignoredbecause, local_chronifycompliance, {{ignorereason}}{{/str}}</p>
                 {{/ignorereason}}
-                <details class="small text-muted">
-                    <summary>{{#str}}report:whythismatters, local_completiondoctor{{/str}}</summary>
+                <div class="collapse small text-muted" id="cd-details-{{id}}" data-region="details">
                     <p class="mt-1 mb-0">{{checkdesc}}</p>
-                </details>
+                    {{#coreref}}<p class="mt-1 mb-0">{{#str}}security:coreref, local_chronifycompliance, {{coreref}}{{/str}}</p>{{/coreref}}
+                </div>
             </div>
-            <div class="btn-group-sm text-nowrap">
-                {{#canfix}}
-                    <button type="button" class="btn btn-primary btn-sm mb-1" data-action="cd-preview-fix" data-findingid="{{id}}">
-                        {{#str}}report:previewfix, local_completiondoctor{{/str}}
+            <div class="d-flex align-items-start text-nowrap">
+                {{#mainfix}}
+                    <button type="button" class="btn btn-primary btn-sm me-1" data-action="cd-preview-fix" data-findingid="{{id}}">
+                        {{#str}}report:previewfix, local_chronifycompliance{{/str}}
                     </button>
-                {{/canfix}}
-                {{#fixlogid}}
-                    <button type="button" class="btn btn-outline-secondary btn-sm mb-1" data-action="cd-undo-fix" data-fixlogid="{{fixlogid}}">
-                        {{#str}}report:undo, local_completiondoctor{{/str}}
+                {{/mainfix}}
+                {{#mainundo}}
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-1" data-action="cd-undo-fix" data-fixlogid="{{fixlogid}}">
+                        {{#str}}report:undo, local_chronifycompliance{{/str}}
                     </button>
-                {{/fixlogid}}
-                {{#canignore}}
-                    <button type="button" class="btn btn-outline-secondary btn-sm mb-1" data-action="cd-ignore" data-findingid="{{id}}">
-                        {{#str}}report:ignore, local_completiondoctor{{/str}}
+                {{/mainundo}}
+                {{#mainreopen}}
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-1" data-action="cd-reopen" data-findingid="{{id}}">
+                        {{#str}}report:reopen, local_chronifycompliance{{/str}}
                     </button>
-                {{/canignore}}
-                {{#canreopen}}
-                    <button type="button" class="btn btn-outline-secondary btn-sm mb-1" data-action="cd-reopen" data-findingid="{{id}}">
-                        {{#str}}report:reopen, local_completiondoctor{{/str}}
+                {{/mainreopen}}
+                {{#mainscorm}}<a class="btn btn-outline-primary btn-sm me-1" href="{{scormurl}}">{{#str}}report:scormpanel, local_chronifycompliance{{/str}}</a>{{/mainscorm}}
+                {{#mainsetup}}<a class="btn btn-outline-primary btn-sm me-1" href="{{editurl}}">{{#str}}report:setup, local_chronifycompliance{{/str}}</a>{{/mainsetup}}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" id="cd-menu-{{id}}">
+                        {{#str}}report:moreactions, local_chronifycompliance{{/str}}
                     </button>
-                {{/canreopen}}
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-end" aria-labelledby="cd-menu-{{id}}">
+                        <a class="dropdown-item" href="#cd-details-{{id}}" data-toggle="collapse" data-bs-toggle="collapse"
+                            aria-controls="cd-details-{{id}}" aria-expanded="false" role="button">{{#str}}report:details, local_chronifycompliance{{/str}}</a>
+                        {{#canignore}}
+                            <a class="dropdown-item" href="#" role="button" data-action="cd-ignore" data-findingid="{{id}}">{{#str}}report:ignore, local_chronifycompliance{{/str}}</a>
+                        {{/canignore}}
+                        {{#menuedit}}<a class="dropdown-item" href="{{editurl}}">{{#str}}report:editsettings, local_chronifycompliance{{/str}}</a>{{/menuedit}}
+                        {{#menuscorm}}<a class="dropdown-item" href="{{scormurl}}">{{#str}}report:scormpanel, local_chronifycompliance{{/str}}</a>{{/menuscorm}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

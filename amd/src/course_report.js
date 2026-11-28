@@ -16,7 +16,7 @@
 /**
  * Actions of the course report and the SCORM panel: preview, apply and undo fixes, ignore and reopen findings.
  *
- * @module     local_completiondoctor/course_report
+ * @module     local_chronifycompliance/course_report
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,8 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
-import {previewFix, applyFix, undoFix, ignoreFinding} from 'local_completiondoctor/repository';
+import {previewFix, applyFix, undoFix, ignoreFinding} from 'local_chronifycompliance/repository';
+import * as UndoToast from 'local_chronifycompliance/undo_toast';
 
 /**
  * Parameter values entered in the preview modal.
@@ -46,10 +47,10 @@ const getParams = (root) => Array.from(root.querySelectorAll('[data-region="fix-
  * @param {Array} params
  */
 const refreshPreview = async(modal, findingid, params) => {
-    const pending = new Pending('local_completiondoctor/preview');
+    const pending = new Pending('local_chronifycompliance/preview');
     try {
         const preview = await previewFix(findingid, params);
-        const {html, js} = await Templates.renderForPromise('local_completiondoctor/fix_preview', preview);
+        const {html, js} = await Templates.renderForPromise('local_chronifycompliance/fix_preview', preview);
         await modal.setBody(html);
         Templates.runTemplateJS(js);
         modal.setButtonDisabled('save', !preview.canapply || preview.error !== '');
@@ -67,9 +68,9 @@ const refreshPreview = async(modal, findingid, params) => {
  */
 const showFixModal = async(findingid) => {
     const modal = await ModalSaveCancel.create({
-        title: getString('report:previewfix', 'local_completiondoctor'),
+        title: getString('report:previewfix', 'local_chronifycompliance'),
         body: '',
-        buttons: {save: getString('report:applyfix', 'local_completiondoctor')},
+        buttons: {save: getString('report:applyfix', 'local_chronifycompliance')},
         removeOnClose: true,
     });
     modal.show();
@@ -83,11 +84,12 @@ const showFixModal = async(findingid) => {
     });
     modal.getRoot().on(ModalEvents.save, async(e) => {
         e.preventDefault();
-        const pending = new Pending('local_completiondoctor/apply');
+        const pending = new Pending('local_chronifycompliance/apply');
         try {
             const result = await applyFix(findingid, getParams(modal.getBody()[0]));
             modal.destroy();
             if (result.success) {
+                UndoToast.remember(result.fixlogid, result.message);
                 window.location.reload();
             } else {
                 Notification.addNotification({message: result.message, type: 'error'});
@@ -107,16 +109,16 @@ const showFixModal = async(findingid) => {
  */
 const showIgnoreModal = async(findingid) => {
     const modal = await ModalSaveCancel.create({
-        title: getString('report:ignore', 'local_completiondoctor'),
-        body: Templates.render('local_completiondoctor/ignore_form', {findingid}),
-        buttons: {save: getString('report:ignore', 'local_completiondoctor')},
+        title: getString('report:ignore', 'local_chronifycompliance'),
+        body: Templates.render('local_chronifycompliance/ignore_form', {findingid}),
+        buttons: {save: getString('report:ignore', 'local_chronifycompliance')},
         removeOnClose: true,
     });
     modal.show();
     modal.getRoot().on(ModalEvents.save, async(e) => {
         e.preventDefault();
         const reason = modal.getBody()[0].querySelector('[data-region="ignore-reason"]').value;
-        const pending = new Pending('local_completiondoctor/ignore');
+        const pending = new Pending('local_chronifycompliance/ignore');
         try {
             await ignoreFinding(findingid, reason, true);
             modal.destroy();
@@ -137,14 +139,14 @@ const showIgnoreModal = async(findingid) => {
 const confirmUndo = async(fixlogid) => {
     try {
         await Notification.saveCancelPromise(
-            getString('report:undo', 'local_completiondoctor'),
-            getString('report:undoconfirm', 'local_completiondoctor'),
-            getString('report:undo', 'local_completiondoctor')
+            getString('report:undo', 'local_chronifycompliance'),
+            getString('report:undoconfirm', 'local_chronifycompliance'),
+            getString('report:undo', 'local_chronifycompliance')
         );
     } catch (error) {
         return;
     }
-    const pending = new Pending('local_completiondoctor/undo');
+    const pending = new Pending('local_chronifycompliance/undo');
     try {
         await undoFix(fixlogid);
         window.location.reload();
@@ -161,7 +163,7 @@ const confirmUndo = async(fixlogid) => {
  * @param {Number} findingid
  */
 const reopen = async(findingid) => {
-    const pending = new Pending('local_completiondoctor/reopen');
+    const pending = new Pending('local_chronifycompliance/reopen');
     try {
         await ignoreFinding(findingid, '', false);
         window.location.reload();
@@ -178,6 +180,7 @@ const reopen = async(findingid) => {
  * @param {String} selector Selector of the report region.
  */
 export const init = (selector) => {
+    UndoToast.init();
     const root = document.querySelector(selector);
     if (!root) {
         return;
