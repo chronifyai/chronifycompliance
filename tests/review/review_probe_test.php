@@ -445,7 +445,8 @@ final class review_probe_test extends \advanced_testcase {
             }
         }
         sort($ids);
-        $this->assertSame(['completiondisabled', 'completiontasks', 'cronstale'], $ids);
+        $this->assertSame(['backupstatus', 'caching', 'completiondisabled', 'completiontasks', 'cronstale', 'failingtasks',
+            'logretention', 'phpdbsupport', 'upgradeready'], $ids);
 
         $ids = [];
         foreach (\core\check\manager::get_checks('security') as $check) {

@@ -99,6 +99,13 @@
   New checks: `corevulnerabilities` (missing fixes for this release, unsupported versions, old list) and
   `availableupdates` (newer build of this version and plugin updates from Moodle's stored update check, update
   notifications off or stale). No web requests from the plugin.
+- Step C5: Site and performance checks: `failingtasks`, `caching` (one click fixes for the language string and
+  template caches), `phpdbsupport` (end of security support of PHP and the database, dates in the check),
+  `backupstatus`, `logretention` (log never cleaned while it grows fast, from the plugin's activity data) and
+  `upgradeready` (pending plugin upgrades, add-ons without declared support for the next Moodle). The setting fix
+  moved into the `check\setting_fix` trait and the link helpers into `site_check`, so site checks of any pack
+  use them. Every site check now has a demo site scenario (the existing ones too), and a test enforces it.
+  Measured on 100,000 users: all site checks together take under half a second.
 
 ## 0.2.3 (unreleased): QA fixes
 

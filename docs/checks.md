@@ -74,6 +74,26 @@ Completion tracking is off for the whole site while courses have completion set 
 ### Moodle performance and status checks (`coreperformance`) · per result
 Reads Moodle's own Check API results of the types *performance* and *status* (*Site administration > Reports > Performance overview* and *System status*, including checks of other plugins). Every result that is not OK becomes one finding: critical and error are Critical, warning is Warning, info and unknown are Info. The problem links to the setting core points to. Skipped: this plugin's own checks, and `core_dbschema` (it compares the whole database schema and is slow). **Fix:** follow the link to the setting.
 
+### Failing tasks (`failingtasks`) · Warning
+Scheduled tasks (not turned off) and ad hoc tasks that Moodle keeps retrying because they fail. The completion tasks are covered by `completiontasks`. **Fix:** *Scheduled tasks* and *Ad hoc tasks*: open the task log and fix the cause.
+
+### Caching (`caching`) · Warning or Info · fixable
+The language string cache or the template cache is off (Warning; one click turns it back on, unless config.php sets it). Sites with 1,000 or more users active in the last 30 days whose application cache uses the default file store (Info). **Fix:** one click, or *Caching > Configuration* for a Redis or Memcached store.
+
+### PHP and database support (`phpdbsupport`) · Warning or Info
+PHP, PostgreSQL, MySQL or MariaDB versions whose makers no longer give security updates (Warning), or stop within 90 days (Info). The end dates are kept in the check (`PHP_END`, `DB_END`) and updated with the plugin. Unknown versions are not reported. **Fix:** plan the upgrade with the server team.
+
+### Backup status (`backupstatus`) · Warning or Info
+Automated course backups are off (Info: many sites back up the whole server), or courses failed their last automated backup (Warning). **Fix:** *Automated backup setup* and the *Backups* report.
+
+### Log table keeps growing (`logretention`) · Warning
+The standard log keeps events for ever while the site logs 10,000 or more events a day on average over 30 days. The counts come from the plugin's activity data (`siteday`), not from the log table. **Fix:** set *Keep logs for* in the standard log settings, after checking what your reports need.
+
+### Plugin upgrade readiness (`upgradeready`) · Warning or Info
+Plugins waiting for their upgrade, new and not installed, or missing from the disk (Warning). Add-on plugins whose version.php declares support only up to a Moodle version before the next one (Info). **Fix:** *Notifications* to finish upgrades; plugin updates before the next Moodle upgrade.
+
+Every site check has a demo site scenario with a failing and a passing state, except `coresecurity` and `coreperformance`, which report whatever Moodle's own checks find on the site.
+
 The site checks also appear in *Site administration > Reports > System status*, except the two that read Moodle's own checks.
 
 ## Security

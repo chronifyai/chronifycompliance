@@ -59,4 +59,34 @@ abstract class site_check extends base_check {
     ): finding {
         return $this->make_finding((int) SITEID, $messagekey, $params, [], null, $identity, $severity);
     }
+
+    /**
+     * A site finding linking to an admin page.
+     *
+     * @param string $messagekey
+     * @param array $params
+     * @param \moodle_url $url Page with the setting that fixes it.
+     * @param array $identity Distinguishes several findings of the check.
+     * @param int|null $severity
+     * @return finding
+     */
+    protected function security_finding(
+        string $messagekey,
+        array $params,
+        \moodle_url $url,
+        array $identity = [],
+        ?int $severity = null
+    ): finding {
+        return $this->make_finding((int) SITEID, $messagekey, $params, ['url' => $url->out(false)], null, $identity, $severity);
+    }
+
+    /**
+     * Site settings page of a section.
+     *
+     * @param string $section
+     * @return \moodle_url
+     */
+    protected static function settings(string $section): \moodle_url {
+        return new \moodle_url('/admin/settings.php', ['section' => $section]);
+    }
 }

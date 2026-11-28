@@ -163,6 +163,9 @@ final class site_checks_test extends \advanced_testcase {
      */
     public function test_site_audit_saves(): void {
         set_config('cron_enabled', 0);
+        set_config('backup_auto_active', 1, 'backup');
+        // Depends on the PHP and database of the machine running the tests.
+        set_config('enabled_phpdbsupport', 0, 'local_chronifycompliance');
         // Moodle's own checks have their own test (core_import_check_test).
         set_config('enabled_coreperformance', 0, 'local_chronifycompliance');
         foreach (\local_chronifycompliance\check\check_registry::get_checks(null, false, ['security']) as $id => $check) {
