@@ -49,14 +49,18 @@ class security_view implements \core\output\named_templatable, \renderable {
 
     /** @var string Active filter. */
     private string $filter;
+    /** @var string Group to open, for links to one area. */
+    private string $opengroup;
 
     /**
      * Constructor.
      *
      * @param string $filter One of FILTERS.
+     * @param string $opengroup One of GROUPS to open as well, or ''.
      */
-    public function __construct(string $filter = '') {
+    public function __construct(string $filter = '', string $opengroup = '') {
         $this->filter = in_array($filter, self::FILTERS, true) ? $filter : '';
+        $this->opengroup = $opengroup;
     }
 
     /**
@@ -160,7 +164,7 @@ class security_view implements \core\output\named_templatable, \renderable {
                     'group' => $group,
                     'name' => get_string('security:group:' . $group, $component),
                     'counts' => implode(', ', $parts),
-                    'open' => $groupcounts['critical'] > 0 || $this->filter !== '',
+                    'open' => $groupcounts['critical'] > 0 || $this->filter !== '' || $this->opengroup === $group,
                     'findings' => $rows,
                 ];
             }

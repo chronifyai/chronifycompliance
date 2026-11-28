@@ -26,8 +26,8 @@ Feature: Administrators review and fix the security of the site
     Then I should see "Web services are on, but nothing uses them"
 
   Scenario: Preview, apply and undo a one click security fix
-    When I am on the "local_chronifycompliance > Security" page logged in as "admin"
-    And I click on "Configuration" "text"
+    Given I log in as "admin"
+    When I visit "/local/chronifycompliance/security.php?group=config"
     And I click on "Preview fix" "button" in the "Web services on without need" "local_chronifycompliance > Finding"
     Then I should see "Enable web services" in the "Preview fix" "dialogue"
     And I should see "This changes a site setting for everyone." in the "Preview fix" "dialogue"
@@ -39,8 +39,8 @@ Feature: Administrators review and fix the security of the site
     And I should see "Web services are off or in use" in the "[data-group='passed']" "css_element"
 
   Scenario: Undo a security fix from the toast
-    When I am on the "local_chronifycompliance > Security" page logged in as "admin"
-    And I click on "Configuration" "text"
+    Given I log in as "admin"
+    When I visit "/local/chronifycompliance/security.php?group=config"
     And I click on "Preview fix" "button" in the "Web services on without need" "local_chronifycompliance > Finding"
     And I click on "Apply fix" "button" in the "Preview fix" "dialogue"
     And I click on "Undo fix" "button" in the "[data-region='undo-toast']" "css_element"

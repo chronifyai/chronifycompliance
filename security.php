@@ -39,10 +39,11 @@ if (optional_param('action', '', PARAM_ALPHA) === 'check') {
 }
 
 $filter = optional_param('filter', '', PARAM_ALPHA);
+$group = optional_param('group', '', PARAM_ALPHA);
 $PAGE->set_url(new moodle_url($url, $filter !== '' ? ['filter' => $filter] : []));
 $PAGE->set_title(get_string('nav:security', 'local_chronifycompliance'));
 $PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="security-view"]']);
 
 echo $OUTPUT->header();
-echo $OUTPUT->render(new \local_chronifycompliance\output\security_view($filter));
+echo $OUTPUT->render(new \local_chronifycompliance\output\security_view($filter, $group));
 echo $OUTPUT->footer();

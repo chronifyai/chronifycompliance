@@ -75,6 +75,9 @@ final class security_view_test extends \advanced_testcase {
         $this->assertSame(['access', 'config'], array_keys($groups));
         $this->assertTrue($groups['access']['open'], 'A group with a critical problem is open');
         $this->assertFalse($groups['config']['open'], 'Info only: closed');
+        global $PAGE;
+        $opened = (new security_view('', 'config'))->export_for_template($PAGE->get_renderer('core'));
+        $this->assertTrue(array_column($opened['groups'], 'open', 'group')['config'], 'Opened by the link');
         $this->assertSame('adminmfa', $groups['access']['findings'][0]['checkid']);
         $this->assertTrue($groups['access']['findings'][0]['mainsetup']);
         $webservices = $groups['config']['findings'][0];
