@@ -102,13 +102,13 @@ The site checks also appear in *Site administration > Reports > System status*, 
 Reads Moodle's own security checks (*Site administration > Reports > Security checks*, including checks of other plugins such as "No authentication"), with the same mapping as above. Skipped: `core_publicpaths`, because it requests the site's own web addresses, and a site audit makes no web requests (step C3 checks exposed files without them). **Fix:** follow the link to the setting. Nothing is changed automatically.
 
 ### Administrators without multi-factor authentication (`adminmfa`) · Critical
-Multi-factor authentication (*Site administration > Plugins > Admin tools > Multi-factor authentication*) is off, or some site administrators have no second factor set up (an authenticator app, a security key or text messages; revoked factors do not count). With the email factor on, every administrator has a second factor. **Fix:** turn on MFA and a factor, and ask each administrator to set it up.
+Multi-factor authentication (*Site administration > Plugins > Admin tools > Multi-factor authentication*) is off, or some site administrators have no second factor set up (an authenticator app, a security key or text messages; revoked factors do not count). With the email factor on, every administrator has a second factor. **Fix:** *Start setup* opens a two step wizard: choose the factors (authenticator app, security key or passkey, email code), then who is asked (administrators only by default, through the Non administrator factor) and how many days people have to set up (grace period, 7 days by default). The review shows every setting that changes and warns before applying; the change is logged and can be undone.
 
 ### Inactive administrator accounts (`inactiveadmins`) · Warning
 Site administrators (not suspended) who have not signed in for 90 days or more. **Fix:** remove the administrator role from accounts nobody uses, or suspend them.
 
 ### Weak password policy (`passwordstrength`) · Warning
-The password policy is on, but the minimum length is below 8 characters, or accounts are never locked after failed sign ins. A policy that is off is reported by Moodle's own security checks. **Fix:** *Site administration > Security > Site security settings*.
+The password policy is off, the minimum length is below 8 characters, or accounts are never locked after failed sign ins. Moodle's own password policy check is not imported, because this check covers it. **Fix:** *Start setup* opens a two step wizard: length and character rules (12 characters suggested), then the lockout threshold (10 suggested). The review shows every setting that changes; the change turns the policy on, is logged and can be undone.
 
 ### Open self registration (`selfregistration`) · Warning or Info
 Email based self registration is on. Warning without allowed email domains and reCAPTCHA; Info with reCAPTCHA only, or limited to email domains. **Fix:** *Manage authentication*: turn self registration off, or limit the domains and turn on reCAPTCHA.

@@ -282,7 +282,11 @@ class main_dashboard implements \core\output\named_templatable, \renderable {
                 $action['text'] = get_string('dashboard:action:courses', $component, [
                     'name' => $check->get_name(), 'courses' => (int) $stat->courses]);
             }
-            if ($single && (int) $stat->fixable) {
+            if ($single && (int) $stat->fixable && $check instanceof \local_chronifycompliance\check\guided_fix) {
+                // A fix that needs decisions opens its wizard.
+                $action['url'] = (new moodle_url('/local/chronifycompliance/guided.php', ['id' => $stat->firstid]))->out(false);
+                $action['linktext'] = get_string('guided:start', $component);
+            } else if ($single && (int) $stat->fixable) {
                 $action['fixid'] = (int) $stat->firstid;
             } else if ($check->get_scope() !== base_check::SCOPE_SITE && (int) $stat->courses === 1) {
                 $action['url'] = (new moodle_url('/local/chronifycompliance/course.php', ['id' => $stat->courseid]))->out(false);

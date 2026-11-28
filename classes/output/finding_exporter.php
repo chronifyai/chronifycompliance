@@ -72,6 +72,7 @@ class finding_exporter {
             'editurl' => null,
             'scormurl' => null,
             'fixlogid' => null,
+            'guidedurl' => null,
             'coreref' => $check instanceof \local_chronifycompliance\check\core_import_check
                 ? (string) ($finding->details['ref'] ?? '') : null,
         ];
@@ -91,6 +92,9 @@ class finding_exporter {
         if (!$item['editurl'] && !empty($finding->details['url'])) {
             $item['editurl'] = (string) $finding->details['url'];
         }
+        if ($item['canfix'] && $check instanceof \local_chronifycompliance\check\guided_fix) {
+            $item['guidedurl'] = (new moodle_url('/local/chronifycompliance/guided.php', ['id' => $finding->id]))->out(false);
+        }
         if ($finding->status === finding::STATUS_FIXED && $caps['canfix']) {
             $log = fix_log::get_latest_active((int) $finding->id);
             $item['fixlogid'] = $log ? (int) $log->id : null;
@@ -99,15 +103,17 @@ class finding_exporter {
     }
 
     /**
-     * One main action per card, by fix level: Preview fix, Undo, Reopen, Set up (activity settings) or the
-     * SCORM analysis. The other actions go in the card's menu.
+     * One main action per card, by fix level: Preview fix (or Start setup for a guided fix), Undo, Reopen, Set up
+     * (activity settings) or the SCORM analysis. The other actions go in the card's menu.
      *
      * @param array $item
      * @return array
      */
     public static function add_main_action(array $item): array {
         $main = null;
-        if ($item['canfix']) {
+        if (!empty($item['guidedurl'])) {
+            $main = 'guided';
+        } else if ($item['canfix']) {
             $main = 'fix';
         } else if ($item['fixlogid']) {
             $main = 'undo';
@@ -118,7 +124,7 @@ class finding_exporter {
         } else if ($item['editurl']) {
             $main = 'setup';
         }
-        foreach (['fix', 'undo', 'reopen', 'scorm', 'setup'] as $action) {
+        foreach (['guided', 'fix', 'undo', 'reopen', 'scorm', 'setup'] as $action) {
             $item['main' . $action] = $main === $action;
         }
         $item['menuedit'] = $item['editurl'] && $main !== 'setup';

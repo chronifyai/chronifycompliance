@@ -72,45 +72,82 @@ trait setting_fix {
     }
 
     /**
+     * The settings a fix changes, with the values it sets. By default the one setting of setting_finding(); guided
+     * fixes build them from the answers of the wizard.
+     *
+     * @param finding $finding
+     * @param array $params
+     * @return array[] Each with keys name, plugin (null for core), value (string), label (language string) and
+     *                 type (bool, shown as On or Off, or text, shown as it is; default bool).
+     */
+    protected function fix_settings(finding $finding, array $params): array {
+        $fix = $finding->details['fix'] ?? null;
+        if (!$fix) {
+            throw new \coding_exception('Finding of ' . $this->get_id() . ' has no setting fix');
+        }
+        return [$fix];
+    }
+
+    /**
      * Current value of a setting.
      *
-     * @param array $fix Keys name and plugin.
+     * @param array $setting Keys name and plugin.
      * @return string
      */
-    private static function current_value(array $fix): string {
-        $value = get_config($fix['plugin'] ?? 'core', $fix['name']);
+    private static function current_value(array $setting): string {
+        $value = get_config($setting['plugin'] ?? 'core', $setting['name']);
         return $value === false ? '' : (string) $value;
     }
 
     /**
-     * Preview the setting change. Writes nothing.
+     * Preview the setting changes. Writes nothing.
      *
      * @param finding $finding
      * @param array $params
      * @return fix_preview
      */
     public function preview_fix(finding $finding, array $params = []): fix_preview {
-        $fix = $finding->details['fix'] ?? null;
-        if (!$fix) {
-            throw new \coding_exception('Finding of ' . $this->get_id() . ' has no setting fix');
+        $before = [];
+        $after = [];
+        $rows = [];
+        foreach ($this->fix_settings($finding, $params) as $setting) {
+            $key = ['name' => $setting['name'], 'plugin' => $setting['plugin'] ?? null];
+            $now = self::current_value($setting);
+            $before[] = $key + ['value' => $now];
+            $after[] = $key + ['value' => (string) $setting['value']];
+            if ($now !== (string) $setting['value']) {
+                $type = $setting['type'] ?? 'bool';
+                $rows[] = [get_string($setting['label'], 'local_chronifycompliance'), self::display($now, $type),
+                    self::display((string) $setting['value'], $type)];
+            }
         }
-        $key = ['name' => $fix['name'], 'plugin' => $fix['plugin']];
-        $preview = new fix_preview(
-            'setting',
-            $key + ['value' => self::current_value($fix)],
-            $key + ['value' => (string) $fix['value']]
-        );
-        $preview->add_row(
-            get_string($fix['label'], 'local_chronifycompliance'),
-            self::display(self::current_value($fix)),
-            self::display((string) $fix['value'])
-        );
+        $preview = new fix_preview('settings', ['settings' => $before], ['settings' => $after]);
+        foreach ($rows as [$label, $from, $to]) {
+            $preview->add_row($label, $from, $to);
+        }
+        if (!$rows) {
+            $preview->add_warning(get_string('fix:setting:nochange', 'local_chronifycompliance'));
+        }
         $preview->add_warning(get_string('fix:setting:warning', 'local_chronifycompliance'));
+        foreach ($this->fix_warnings($finding, $params) as $warning) {
+            $preview->add_warning($warning);
+        }
         return $preview;
     }
 
     /**
-     * Change the setting, logged in the config changes report like a change on the settings page.
+     * Extra warnings shown in the preview of the fix.
+     *
+     * @param finding $finding
+     * @param array $params
+     * @return string[]
+     */
+    protected function fix_warnings(finding $finding, array $params): array {
+        return [];
+    }
+
+    /**
+     * Change the settings, each logged in the config changes report like a change on the settings page.
      *
      * @param finding $finding
      * @param fix_preview $preview
@@ -118,12 +155,14 @@ trait setting_fix {
      * @return fix_result
      */
     public function apply_fix(finding $finding, fix_preview $preview, int $userid): fix_result {
-        self::set_setting($preview->before, (string) $preview->after['value']);
+        foreach ($preview->after['settings'] as $setting) {
+            self::set_setting($setting, (string) $setting['value']);
+        }
         return new fix_result(true, $preview->after);
     }
 
     /**
-     * Put the setting back, unless someone changed it since the fix.
+     * Put the settings back, unless someone changed one of them since the fix.
      *
      * @param string $fixtype
      * @param array $before
@@ -132,32 +171,52 @@ trait setting_fix {
      * @return fix_result
      */
     public function undo_fix(string $fixtype, array $before, array $after, \stdClass $fixlog): fix_result {
-        if (self::current_value($after) !== (string) $after['value']) {
-            throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
+        // Fixes logged before guided fixes changed one setting, stored without the settings list.
+        $before = $before['settings'] ?? [$before];
+        $after = $after['settings'] ?? [$after];
+        foreach ($after as $setting) {
+            if (self::current_value($setting) !== (string) $setting['value']) {
+                throw new \moodle_exception('error:undochanged', 'local_chronifycompliance');
+            }
         }
-        self::set_setting($after, (string) $before['value']);
-        return new fix_result(true, $before);
+        foreach ($before as $setting) {
+            self::set_setting($setting, (string) $setting['value']);
+        }
+        return new fix_result(true, ['settings' => $before]);
     }
 
     /**
      * Set a setting and log the change.
      *
-     * @param array $fix Keys name and plugin.
+     * @param array $setting Keys name and plugin.
      * @param string $value
      */
-    private static function set_setting(array $fix, string $value): void {
-        $old = self::current_value($fix);
-        set_config($fix['name'], $value, $fix['plugin'] ?? null);
-        add_to_config_log($fix['name'], $old, $value, $fix['plugin'] ?? null);
+    private static function set_setting(array $setting, string $value): void {
+        $old = self::current_value($setting);
+        if ($old === $value) {
+            return;
+        }
+        set_config($setting['name'], $value, $setting['plugin'] ?? null);
+        add_to_config_log($setting['name'], $old, $value, $setting['plugin'] ?? null);
+        // MFA factors keep their own order list, which the factor settings page updates when a factor is turned
+        // on or off.
+        $plugin = (string) ($setting['plugin'] ?? '');
+        if ($setting['name'] === 'enabled' && str_starts_with($plugin, 'factor_') && class_exists('\\tool_mfa\\manager')) {
+            \tool_mfa\manager::do_factor_action(substr($plugin, 7), $value ? 'enable' : 'disable');
+        }
     }
 
     /**
      * A setting value as shown in the preview.
      *
      * @param string $value
+     * @param string $type bool or text.
      * @return string
      */
-    private static function display(string $value): string {
+    private static function display(string $value, string $type = 'bool'): string {
+        if ($type !== 'bool') {
+            return $value === '' ? get_string('fix:setting:empty', 'local_chronifycompliance') : $value;
+        }
         if ($value === '' || $value === '0') {
             return get_string('fix:setting:off', 'local_chronifycompliance');
         }

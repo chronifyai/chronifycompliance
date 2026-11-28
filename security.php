@@ -44,6 +44,17 @@ $PAGE->set_url(new moodle_url($url, $filter !== '' ? ['filter' => $filter] : [])
 $PAGE->set_title(get_string('nav:security', 'local_chronifycompliance'));
 $PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="security-view"]']);
 
+// A guided fix was just applied: offer Undo.
+if (!empty($SESSION->local_chronifycompliance_lastfix)) {
+    $lastfix = $SESSION->local_chronifycompliance_lastfix;
+    unset($SESSION->local_chronifycompliance_lastfix);
+    $PAGE->requires->js_call_amd(
+        'local_chronifycompliance/undo_toast',
+        'showFixed',
+        [(int) $lastfix['fixlogid'], (string) $lastfix['message']]
+    );
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->render(new \local_chronifycompliance\output\security_view($filter, $group));
 echo $OUTPUT->footer();

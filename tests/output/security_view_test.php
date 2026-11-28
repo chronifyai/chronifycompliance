@@ -79,7 +79,7 @@ final class security_view_test extends \advanced_testcase {
         $opened = (new security_view('', 'config'))->export_for_template($PAGE->get_renderer('core'));
         $this->assertTrue(array_column($opened['groups'], 'open', 'group')['config'], 'Opened by the link');
         $this->assertSame('adminmfa', $groups['access']['findings'][0]['checkid']);
-        $this->assertTrue($groups['access']['findings'][0]['mainsetup']);
+        $this->assertTrue($groups['access']['findings'][0]['mainguided'], 'Fixed with a guided setup');
         $webservices = $groups['config']['findings'][0];
         $this->assertSame('webservices', $webservices['checkid']);
         $this->assertTrue($webservices['mainfix'], 'One click fix');
