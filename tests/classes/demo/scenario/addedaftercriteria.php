@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo\scenario;
+namespace local_chronifycompliance\tests\demo\scenario;
 
-use local_completiondoctor\tests\demo\scenario;
+use local_chronifycompliance\tests\demo\scenario;
 
 /**
  * Demo course for the addedaftercriteria check: a quiz was added an hour after the completion
  * settings were saved (recorded by the plugin's observer, and in the standard log when enabled).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +63,7 @@ class addedaftercriteria extends scenario {
             'courseid' => $course->id,
             'context' => \context_course::instance($course->id),
         ])->trigger();
-        \local_completiondoctor\local\audit_store::set_criteria_saved((int) $course->id, time() - HOURSECS);
+        \local_chronifycompliance\local\audit_store::set_criteria_saved((int) $course->id, time() - HOURSECS);
         $readers = get_log_manager()->get_readers('\core\log\sql_internal_table_reader');
         if (isset($readers['logstore_standard'])) {
             $readers['logstore_standard']->flush();

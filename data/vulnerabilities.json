@@ -1,0 +1,311 @@
+{
+    "format": 1,
+    "generated": "2026-11-28",
+    "source": "https://moodle.org/security/",
+    "advisories": [
+        {
+            "id": "MSA-26-0045",
+            "title": "Upgrade TinyMCE and PrismJS including security fixes (upstream)",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.3",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.3"
+                ]
+            ],
+            "unsupported": false,
+            "fixed": [
+                "5.2.4"
+            ],
+            "cves": [
+                "CVE-2026-47759",
+                "CVE-2026-47761",
+                "CVE-2026-47762"
+            ],
+            "tracker": "MDL-89591"
+        },
+        {
+            "id": "MSA-26-0044",
+            "title": "Missing access checks on H5P content files",
+            "severity": "serious",
+            "affected": "5.2 to 5.2.3, 5.1 to 5.1.7, 5.0 to 5.0.10, 4.5 to 4.5.14 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.3"
+                ],
+                [
+                    "5.1",
+                    "5.1.7"
+                ],
+                [
+                    "5.0",
+                    "5.0.10"
+                ],
+                [
+                    "4.5",
+                    "4.5.14"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.4",
+                "5.1.8",
+                "5.0.11",
+                "4.5.15"
+            ],
+            "cves": [],
+            "tracker": "MDL-89547"
+        },
+        {
+            "id": "MSA-26-0043",
+            "title": "Possible to bypass the login notification mechanism",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.2, 5.1 to 5.1.6, 5.0 to 5.0.9, 4.5 to 4.5.13 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.2"
+                ],
+                [
+                    "5.1",
+                    "5.1.6"
+                ],
+                [
+                    "5.0",
+                    "5.0.9"
+                ],
+                [
+                    "4.5",
+                    "4.5.13"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.3",
+                "5.1.7",
+                "5.0.10",
+                "4.5.14"
+            ],
+            "cves": [],
+            "tracker": "MDL-87817"
+        },
+        {
+            "id": "MSA-26-0042",
+            "title": "Blind SQL injection risk in profile availability condition check",
+            "severity": "serious",
+            "affected": "5.2 to 5.2.2, 5.1 to 5.1.6, 5.0 to 5.0.9, 4.5 to 4.5.13 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.2"
+                ],
+                [
+                    "5.1",
+                    "5.1.6"
+                ],
+                [
+                    "5.0",
+                    "5.0.9"
+                ],
+                [
+                    "4.5",
+                    "4.5.13"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.3",
+                "5.1.7",
+                "5.0.10",
+                "4.5.14"
+            ],
+            "cves": [],
+            "tracker": "MDL-89484"
+        },
+        {
+            "id": "MSA-26-0041",
+            "title": "CSRF risk in XML grade imports",
+            "severity": "serious",
+            "affected": "5.2 to 5.2.1, 5.1 to 5.1.5, 5.0 to 5.0.8, 4.5 to 4.5.12 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ],
+                [
+                    "5.0",
+                    "5.0.8"
+                ],
+                [
+                    "4.5",
+                    "4.5.12"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.2",
+                "5.1.6",
+                "5.0.9",
+                "4.5.13"
+            ],
+            "cves": [],
+            "tracker": "MDL-84545"
+        },
+        {
+            "id": "MSA-26-0040",
+            "title": "User list filters do not respect user profile field visibility",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.1, 5.1 to 5.1.5, 5.0 to 5.0.8, 4.5 to 4.5.12 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ],
+                [
+                    "5.0",
+                    "5.0.8"
+                ],
+                [
+                    "4.5",
+                    "4.5.12"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.2",
+                "5.1.6",
+                "5.0.9",
+                "4.5.13"
+            ],
+            "cves": [],
+            "tracker": "MDL-87518"
+        },
+        {
+            "id": "MSA-26-0039",
+            "title": "Minor XSS risk via password reset link",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.1, 5.1 to 5.1.5, 5.0 to 5.0.8, 4.5 to 4.5.12 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ],
+                [
+                    "5.0",
+                    "5.0.8"
+                ],
+                [
+                    "4.5",
+                    "4.5.12"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.2",
+                "5.1.6",
+                "5.0.9",
+                "4.5.13"
+            ],
+            "cves": [],
+            "tracker": "MDL-88335"
+        },
+        {
+            "id": "MSA-26-0038",
+            "title": "Enrolling user to course while selecting group does not validate group belongs to that course",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.1 and 5.1 to 5.1.5",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ]
+            ],
+            "unsupported": false,
+            "fixed": [
+                "5.2.2",
+                "5.1.6"
+            ],
+            "cves": [],
+            "tracker": "MDL-88538"
+        },
+        {
+            "id": "MSA-26-0037",
+            "title": "Missing capability checks allow unauthorised triggering of grade penalty recalculation",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.1, 5.1 to 5.1.5 and 5.0 to 5.0.8",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ],
+                [
+                    "5.0",
+                    "5.0.8"
+                ]
+            ],
+            "unsupported": false,
+            "fixed": [
+                "5.2.2",
+                "5.1.6",
+                "5.0.9"
+            ],
+            "cves": [],
+            "tracker": "MDL-88585"
+        },
+        {
+            "id": "MSA-26-0036",
+            "title": "Incorrect capability check in AI editor placement \"generate image\" service",
+            "severity": "minor",
+            "affected": "5.2 to 5.2.1, 5.1 to 5.1.5, 5.0 to 5.0.8, 4.5 to 4.5.12 and earlier unsupported versions",
+            "ranges": [
+                [
+                    "5.2",
+                    "5.2.1"
+                ],
+                [
+                    "5.1",
+                    "5.1.5"
+                ],
+                [
+                    "5.0",
+                    "5.0.8"
+                ],
+                [
+                    "4.5",
+                    "4.5.12"
+                ]
+            ],
+            "unsupported": true,
+            "fixed": [
+                "5.2.2",
+                "5.1.6",
+                "5.0.9",
+                "4.5.13"
+            ],
+            "cves": [],
+            "tracker": "MDL-88587"
+        }
+    ]
+}

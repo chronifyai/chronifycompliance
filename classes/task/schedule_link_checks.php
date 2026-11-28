@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\task;
+namespace local_chronifycompliance\task;
 
-use local_completiondoctor\links\link_scan;
+use local_chronifycompliance\links\link_scan;
 
 /**
  * Queues automatic link checks of new courses whose content changed (their cache revision moved
  * since the last check) and then stayed unchanged for a few minutes. Does nothing unless an
  * administrator turned on automatic link checks.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ class schedule_link_checks extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name(): string {
-        return get_string('task:schedulelinkchecks', 'local_completiondoctor');
+        return get_string('task:schedulelinkchecks', 'local_chronifycompliance');
     }
 
     /**
@@ -43,7 +43,7 @@ class schedule_link_checks extends \core\task\scheduled_task {
     public function execute(): void {
         $queued = link_scan::queue_changed_courses();
         if ($queued) {
-            mtrace("Completion Doctor: {$queued} link checks queued.");
+            mtrace("Chronify.Compliance: {$queued} link checks queued.");
         }
     }
 }

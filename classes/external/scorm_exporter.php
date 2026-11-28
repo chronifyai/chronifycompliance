@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
 
 /**
  * Converts SCORM analyses to web service data: typed key fields plus the full analysis as JSON.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

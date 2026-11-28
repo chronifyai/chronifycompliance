@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\learner;
+namespace local_chronifycompliance\learner;
 
 /**
  * Explains the course completion of one learner: each criterion with its state, which ones block
  * completion, the completion rules of required activities, what SCORM activities received, and why
  * locked activities are locked. Read-only: it reads stored completion data and never recalculates it.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -91,12 +91,13 @@ class explainer {
                 'id' => (int) $record->id,
                 'type' => $type,
                 'typetitle' => $object->get_type_title(),
-                'title' => $missingcm ? get_string('learner:missingactivity', 'local_completiondoctor', $cmid)
+                'title' => $missingcm ? get_string('learner:missingactivity', 'local_chronifycompliance', $cmid)
                     : self::safe_title($object),
                 'met' => array_key_exists($record->id, $met) && $met[$record->id],
                 'timemet' => !empty($met[$record->id]) ? (int) $met[$record->id] : null,
                 'blocking' => false,
                 'activity' => null,
+                'cmid' => $type === COMPLETION_CRITERIA_TYPE_ACTIVITY ? $cmid : null,
             ];
             if ($type === COMPLETION_CRITERIA_TYPE_ACTIVITY) {
                 $item['activity'] = self::explain_activity($modinfo, (int) $record->moduleinstance, $userid);
@@ -250,10 +251,10 @@ class explainer {
     public static function require_can_diagnose(\stdClass $course, int $userid): void {
         $context = \context_course::instance($course->id);
         if (!is_enrolled($context, $userid)) {
-            throw new \moodle_exception('learner:notenrolled', 'local_completiondoctor');
+            throw new \moodle_exception('learner:notenrolled', 'local_chronifycompliance');
         }
         if (!groups_user_groups_visible($course, $userid)) {
-            throw new \moodle_exception('learner:othergroup', 'local_completiondoctor');
+            throw new \moodle_exception('learner:othergroup', 'local_chronifycompliance');
         }
     }
 

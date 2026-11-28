@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Cache definitions for Completion Doctor.
+ * Cache definitions for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,19 +31,5 @@ $definitions = [
         'simpledata' => true,
         'staticacceleration' => true,
         'staticaccelerationsize' => 50,
-    ],
-    'sitehealth' => [
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => false,
-        'ttl' => 600,
-    ],
-    'evidence' => [
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => false,
-        'ttl' => DAYSECS,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 20,
     ],
 ];

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 /**
  * Detects the authoring tool of a package and extracts tool-specific settings, driven by the JSON
@@ -25,7 +25,7 @@ namespace local_completiondoctor\scorm;
  * Extraction rule keys: file (path or glob), regex, optional decode=base64 with a "then" regex on the
  * decoded text, optional map for captured values, optional pick=mostfrequent|first.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

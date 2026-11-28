@@ -17,30 +17,31 @@
 /**
  * Course completion health report.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\links\link_scan;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\task\check_course;
+use local_chronifycompliance\links\link_scan;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\task\check_course;
 
 require(__DIR__ . '/../../config.php');
 
 $courseid = required_param('id', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
+$tab = optional_param('tab', 'problems', PARAM_ALPHA);
 
 $course = get_course($courseid);
 require_login($course);
 $context = context_course::instance($course->id);
-require_capability('local/completiondoctor:viewcoursereport', $context);
+require_capability('local/chronifycompliance:viewcoursereport', $context);
 
-$url = new moodle_url('/local/completiondoctor/course.php', ['id' => $course->id]);
+$url = new moodle_url('/local/chronifycompliance/course.php', ['id' => $course->id]);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('report:title', 'local_completiondoctor') . ': ' . format_string($course->shortname));
+$PAGE->set_title(get_string('report:title', 'local_chronifycompliance') . ': ' . format_string($course->shortname));
 $PAGE->set_heading(format_string($course->fullname));
 
 // Every action only queues work: the check runs in a background task and the page waits for it.
@@ -55,20 +56,25 @@ if ($action === 'recheck' || $action === 'analyzescorm') {
         $cmid = (int) $cm->id;
     }
     check_course::request((int) $course->id, $cmid);
-    \local_completiondoctor\event\course_check_requested::create(['context' => $context])->trigger();
-    redirect($url, get_string('report:checkqueued', 'local_completiondoctor'), null, \core\output\notification::NOTIFY_INFO);
+    \local_chronifycompliance\event\course_check_requested::create(['context' => $context])->trigger();
+    redirect(
+        new moodle_url($url, ['tab' => $tab]),
+        get_string('report:checkqueued', 'local_chronifycompliance'),
+        null,
+        \core\output\notification::NOTIFY_INFO
+    );
 }
 
 if ($action === 'checklinks') {
     require_sesskey();
-    require_capability('local/completiondoctor:checklinks', $context);
+    require_capability('local/chronifycompliance:checklinks', $context);
     if (!link_scan::is_enabled()) {
-        throw new moodle_exception('links:disabled', 'local_completiondoctor', $url);
+        throw new moodle_exception('links:disabled', 'local_chronifycompliance', $url);
     }
     $queued = link_scan::queue((int) $course->id, (int) $USER->id);
     redirect(
-        new moodle_url($url, [], 'cd-links'),
-        get_string($queued ? 'links:queued' : 'links:alreadyqueued', 'local_completiondoctor'),
+        new moodle_url($url, ['tab' => 'links']),
+        get_string($queued ? 'links:queued' : 'links:alreadyqueued', 'local_chronifycompliance'),
         null,
         $queued ? \core\output\notification::NOTIFY_SUCCESS : \core\output\notification::NOTIFY_INFO
     );
@@ -78,14 +84,14 @@ if ($action === 'checklinks') {
 if (!audit_store::get((int) $course->id) && !audit_store::get_requested((int) $course->id)) {
     check_course::request((int) $course->id);
 }
-\local_completiondoctor\event\course_report_viewed::create(['context' => $context])->trigger();
+\local_chronifycompliance\event\course_report_viewed::create(['context' => $context])->trigger();
 
-$PAGE->requires->js_call_amd('local_completiondoctor/course_report', 'init', ['[data-region="course-report"]']);
+$PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="course-report"]']);
 if (audit_store::get_requested((int) $course->id)) {
-    $PAGE->requires->js_call_amd('local_completiondoctor/course_status', 'init', [(int) $course->id]);
+    $PAGE->requires->js_call_amd('local_chronifycompliance/course_status', 'init', [(int) $course->id]);
 }
 
-$renderer = $PAGE->get_renderer('local_completiondoctor');
+$renderer = $PAGE->get_renderer('local_chronifycompliance');
 echo $OUTPUT->header();
-echo $renderer->course_report($course);
+echo $renderer->course_report($course, $tab);
 echo $OUTPUT->footer();

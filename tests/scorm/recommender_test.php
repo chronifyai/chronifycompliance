@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(recommender::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 /**
  * Tests of the runtime evidence and the recommender.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\scorm\recommender
+ * @covers \local_chronifycompliance\scorm\runtime_evidence
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(recommender::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(runtime_evidence::class)]
 final class recommender_test extends \advanced_testcase {
     /**
      * A scorm record with completion settings.

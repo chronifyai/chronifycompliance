@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\fix\fix_log;
-use local_completiondoctor\fix\fixer;
+use local_chronifycompliance\fix\fix_log;
+use local_chronifycompliance\fix\fixer;
 
 /**
  * Undo a fix from the fix log.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,7 +55,7 @@ class undo_fix extends external_api {
         $context = (int) $log->courseid === (int) SITEID ? \context_system::instance() : \context_course::instance($log->courseid);
         self::validate_context($context);
         require_capability(
-            $context->contextlevel == CONTEXT_SYSTEM ? 'moodle/site:config' : 'local/completiondoctor:applyfix',
+            $context->contextlevel == CONTEXT_SYSTEM ? 'moodle/site:config' : 'local/chronifycompliance:applyfix',
             $context
         );
 

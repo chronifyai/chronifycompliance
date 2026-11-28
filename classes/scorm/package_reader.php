@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\scorm;
+namespace local_chronifycompliance\scorm;
 
 use ZipArchive;
 
@@ -25,7 +25,7 @@ use ZipArchive;
  * counted in $unsafeentries. The total uncompressed size and the number of entries are limited, and
  * text reads are capped.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -92,7 +92,7 @@ class package_reader {
             return new self($filesystem->get_local_path_from_storedfile($file));
         }
         try {
-            $path = $file->copy_content_to_temp('local_completiondoctor', 'pkg_');
+            $path = $file->copy_content_to_temp('local_chronifycompliance', 'pkg_');
         } catch (\Throwable $e) {
             throw new package_exception('missingfile');
         }
@@ -112,7 +112,7 @@ class package_reader {
         if ($count > self::MAX_ENTRIES) {
             throw new package_exception('toomanyfiles', $count);
         }
-        $maxbytes = ((int) get_config('local_completiondoctor', 'maxpackagesize') ?: self::DEFAULT_MAX_MB) * 1048576;
+        $maxbytes = ((int) get_config('local_chronifycompliance', 'maxpackagesize') ?: self::DEFAULT_MAX_MB) * 1048576;
         for ($i = 0; $i < $count; $i++) {
             $stat = $this->zip->statIndex($i);
             if ($stat === false) {
