@@ -36,7 +36,8 @@ Feature: Administrators review and fix the security of the site
     When I press "Check again"
     Then I should see "The site checks ran."
     And I should not see "Web services are on, but nothing uses them"
-    And I should see "Web services are off or in use" in the "[data-group='passed']" "css_element"
+    When I click on "[data-filter='healthy']" "css_element"
+    Then I should see "Web services are off or in use" in the "[data-group='passed']" "css_element"
 
   Scenario: Undo a security fix from the toast
     Given I log in as "admin"
