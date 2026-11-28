@@ -72,6 +72,8 @@ class finding_exporter {
             'editurl' => null,
             'scormurl' => null,
             'fixlogid' => null,
+            'coreref' => $check instanceof \local_chronifycompliance\check\core_import_check
+                ? (string) ($finding->details['ref'] ?? '') : null,
         ];
         if ($finding->cmid && $modinfo) {
             $cms = $modinfo->get_cms();

@@ -1,0 +1,100 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chronifycompliance/security_view
+
+    Security view: summary tiles, findings grouped by area, passed checks, ignored findings, invitation.
+
+    Example context (json):
+    {
+        "nav": "", "checked": "Checked 2:14 AM today.", "canscan": true,
+        "actionurl": "https://example.com/local/chronifycompliance/security.php", "sesskey": "abc",
+        "tiles": [{"group": "critical", "label": "3 critical", "value": 3, "url": "https://example.com/?filter=critical",
+            "active": false}],
+        "groups": [{"group": "access", "name": "Access and accounts", "counts": "1 critical", "open": true, "findings": []}],
+        "hasgroups": true, "showpassed": true, "haspassed": true, "passedopen": false,
+        "passedcount": 1, "passed": [{"checkid": "riskyroles", "name": "Risky capabilities for everyone",
+            "text": "Roles for everyone have no risky capabilities", "description": "Why it matters."}],
+        "ignored": [], "hasignored": false, "clearurl": null, "invitation": null
+    }
+}}
+<div class="local-chronifycompliance-security" data-region="security-view">
+    <h2 class="h3 mb-2">{{#str}}dashboard:title, local_chronifycompliance{{/str}}</h2>
+    {{{nav}}}
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <ul class="nav nav-pills mb-2" aria-label="{{#str}}security:views, local_chronifycompliance{{/str}}">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{actionurl}}">{{#str}}security:view:security, local_chronifycompliance{{/str}}</a></li>
+            <li class="nav-item"><span class="nav-link disabled" aria-disabled="true" title="{{#str}}security:view:frameworks:soon, local_chronifycompliance{{/str}}">{{#str}}security:view:frameworks, local_chronifycompliance{{/str}}</span></li>
+        </ul>
+        <form method="post" action="{{actionurl}}" class="small text-muted mb-2">
+            {{checked}}
+            {{#canscan}}
+                <input type="hidden" name="sesskey" value="{{sesskey}}">
+                <input type="hidden" name="action" value="check">
+                <button type="submit" class="btn btn-link btn-sm p-0 ms-1 align-baseline">{{#str}}report:recheck, local_chronifycompliance{{/str}}</button>
+            {{/canscan}}
+        </form>
+    </div>
+
+    <div class="lcd-tiles mb-3">
+        {{#tiles}}
+            <a class="lcd-tile lcd-tile-{{group}}{{#active}} lcd-active{{/active}}" href="{{url}}" data-filter="{{group}}"{{#active}} aria-current="true"{{/active}}>
+                <span class="lcd-tile-value">{{label}}</span>
+            </a>
+        {{/tiles}}
+    </div>
+    {{#clearurl}}<p class="small mb-3"><a href="{{clearurl}}">{{#str}}security:showall, local_chronifycompliance{{/str}}</a></p>{{/clearurl}}
+
+    {{#groups}}
+        <details class="lcc-security-group card mb-3" data-group="{{group}}"{{#open}} open{{/open}}>
+            <summary class="card-header d-flex justify-content-between">
+                <span class="fw-bold">{{name}}</span>
+                <span class="small">{{counts}}</span>
+            </summary>
+            <div class="card-body pb-1">
+                {{#findings}}{{> local_chronifycompliance/finding }}{{/findings}}
+            </div>
+        </details>
+    {{/groups}}
+    {{^hasgroups}}{{^passedopen}}<p class="text-muted">{{#str}}security:noproblems, local_chronifycompliance{{/str}}</p>{{/passedopen}}{{/hasgroups}}
+
+    {{#showpassed}}{{#haspassed}}
+        <details class="lcc-security-group card mb-3" data-group="passed"{{#passedopen}} open{{/passedopen}}>
+            <summary class="card-header d-flex justify-content-between">
+                <span class="fw-bold">{{#str}}security:group:passed, local_chronifycompliance{{/str}}</span>
+                <span class="small">{{#str}}security:passedcount, local_chronifycompliance, {{passedcount}}{{/str}}</span>
+            </summary>
+            <ul class="list-unstyled card-body mb-0">
+                {{#passed}}
+                    <li class="lcd-health" data-checkid="{{checkid}}" title="{{description}}">
+                        <span class="lcd-dot lcd-dot-ok" aria-hidden="true"></span>
+                        <span><span class="fw-bold">{{name}}:</span> {{text}}</span>
+                    </li>
+                {{/passed}}
+            </ul>
+        </details>
+    {{/haspassed}}{{/showpassed}}
+
+    {{#hasignored}}
+        <details class="lcc-security-group card mb-3" data-group="ignored">
+            <summary class="card-header fw-bold">{{#str}}report:tab:ignored, local_chronifycompliance{{/str}}</summary>
+            <div class="card-body pb-1">{{#ignored}}{{> local_chronifycompliance/finding }}{{/ignored}}</div>
+        </details>
+    {{/hasignored}}
+
+    {{{invitation}}}
+</div>

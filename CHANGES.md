@@ -106,6 +106,12 @@
   moved into the `check\setting_fix` trait and the link helpers into `site_check`, so site checks of any pack
   use them. Every site check now has a demo site scenario (the existing ones too), and a test enforces it.
   Measured on 100,000 users: all site checks together take under half a second.
+- Step C6: Security view (`security.php`, the Security and Compliance tab). Security and Frameworks pill tabs
+  (Frameworks arrives in Stage D), when the site was checked with Check again (runs the site checks now), tiles
+  for critical, warnings and passed checks that filter the list, problems grouped into Access and accounts,
+  Configuration, Updates and versions, and Server and files (groups with a critical problem open), each a finding
+  card with one action, the passed checks for auditors, ignored problems with Reopen, and the invitation below the
+  results. Details of findings from Moodle's own checks name the core check. Reads only stored findings.
 
 ## 0.2.3 (unreleased): QA fixes
 

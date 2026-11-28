@@ -28,7 +28,7 @@
         "cmurl": "https://example.com/mod/quiz/view.php?id=4", "editurl": "https://example.com/course/modedit.php?update=4",
         "scormurl": null, "canfix": true, "canignore": true, "canreopen": false, "fixlogid": null,
         "ignorereason": null, "timeignored": null, "mainfix": true, "mainundo": false, "mainreopen": false,
-        "mainscorm": false, "mainsetup": false, "menuedit": true, "menuscorm": false
+        "mainscorm": false, "mainsetup": false, "menuedit": true, "menuscorm": false, "coreref": null
     }
 }}
 <div class="local-chronifycompliance-finding card mb-2" data-region="finding" data-findingid="{{id}}">
@@ -45,6 +45,7 @@
                 {{/ignorereason}}
                 <div class="collapse small text-muted" id="cd-details-{{id}}" data-region="details">
                     <p class="mt-1 mb-0">{{checkdesc}}</p>
+                    {{#coreref}}<p class="mt-1 mb-0">{{#str}}security:coreref, local_chronifycompliance, {{coreref}}{{/str}}</p>{{/coreref}}
                 </div>
             </div>
             <div class="d-flex align-items-start text-nowrap">
