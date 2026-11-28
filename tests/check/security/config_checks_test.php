@@ -132,7 +132,7 @@ final class config_checks_test extends \advanced_testcase {
         $this->assertCount(1, $fixable);
 
         $preview = fixer::preview((int) $fixable[0]->id);
-        $this->assertSame($value, $preview->after['value']);
+        $this->assertSame($value, $preview->after['settings'][0]['value']);
         $this->assertSame($before, (string) get_config('core', $setting), 'The preview writes nothing');
         $this->assertNotEmpty($preview->warnings);
 

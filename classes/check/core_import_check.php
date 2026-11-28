@@ -49,6 +49,15 @@ abstract class core_import_check extends site_check {
     abstract protected function get_types(): array;
 
     /**
+     * Core checks that a check of this plugin covers better, so they are not read twice.
+     *
+     * @return string[] Core check refs.
+     */
+    protected function get_covered(): array {
+        return [];
+    }
+
+    /**
      * Severity of a check whose results each carry their own severity.
      *
      * @return int
@@ -66,7 +75,8 @@ abstract class core_import_check extends site_check {
         $checks = [];
         foreach ($this->get_types() as $type) {
             foreach (\core\check\manager::get_checks($type) as $check) {
-                if ($check->get_component() === 'local_chronifycompliance' || in_array($check->get_ref(), self::EXCLUDED, true)) {
+                $skip = array_merge(self::EXCLUDED, $this->get_covered());
+                if ($check->get_component() === 'local_chronifycompliance' || in_array($check->get_ref(), $skip, true)) {
                     continue;
                 }
                 $checks[$check->get_ref()] = $check;

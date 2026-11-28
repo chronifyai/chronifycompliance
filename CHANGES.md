@@ -112,6 +112,14 @@
   Configuration, Updates and versions, and Server and files (groups with a critical problem open), each a finding
   card with one action, the passed checks for auditors, ignored problems with Reopen, and the invitation below the
   results. Details of findings from Moodle's own checks name the core check. Reads only stored findings.
+- Step C7: guided fixes for security problems that need decisions (`check\guided_fix`, `guided.php`). Weak
+  password policy and Administrators without multi-factor authentication show Start setup: a short wizard that
+  explains each choice with safe suggestions (12 character passwords, lockout after 10 failed sign ins; authenticator
+  app, administrators only, 7 days to set up), then a review of every setting that changes with warnings, then Apply.
+  The change goes through the fixer, so it is logged in Config changes and can be undone from the toast or the card.
+  Setting fixes now change several settings at once (`setting_fix`), and MFA factors are turned on the way the MFA
+  settings page does. Weak password policy now also reports a policy that is off, so Moodle's own password policy
+  check is no longer imported (`core_import_check::get_covered()`).
 
 ## 0.2.3 (unreleased): QA fixes
 

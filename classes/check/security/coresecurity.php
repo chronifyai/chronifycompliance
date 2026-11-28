@@ -52,4 +52,13 @@ class coresecurity extends core_import_check {
     protected function get_types(): array {
         return ['security'];
     }
+
+    /**
+     * The password policy is covered by passwordstrength, which also fixes it with a wizard.
+     *
+     * @return string[]
+     */
+    protected function get_covered(): array {
+        return ['core_passwordpolicy'];
+    }
 }

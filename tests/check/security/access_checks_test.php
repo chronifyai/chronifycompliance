@@ -94,7 +94,11 @@ final class access_checks_test extends \advanced_testcase {
             $this->assertSame((int) SITEID, $finding->courseid);
             $this->assertNotEmpty($finding->details['url'], 'Link to the setting');
             $this->assertStringNotContainsString('[[', $finding->get_message());
-            $this->assertFalse($finding->fixable, 'Security checks are not fixed in one click');
+            if (check_registry::get_check($id) instanceof \local_chronifycompliance\check\guided_fix) {
+                $this->assertTrue($finding->fixable, 'Fixed with a guided setup');
+            } else {
+                $this->assertFalse($finding->fixable, 'Security checks are not fixed in one click');
+            }
         }
 
         $scenarios[$id]->pass($this->getDataGenerator());
@@ -132,7 +136,11 @@ final class access_checks_test extends \advanced_testcase {
         set_config('lockoutthreshold', 5);
         $this->assertSame([['case' => 'length']], array_map(fn($f) => $f->identity, $this->run_check('passwordstrength')));
         set_config('passwordpolicy', 0);
-        $this->assertSame([], $this->run_check('passwordstrength'), 'Policy off is the core check');
+        $this->assertSame(
+            [['case' => 'off']],
+            array_map(fn($f) => $f->identity, $this->run_check('passwordstrength')),
+            'Policy off is reported here, not by the core check'
+        );
 
         set_config('autologinguests', 0);
         set_config('guestloginbutton', 1);

@@ -108,6 +108,14 @@ export const show = async(fix) => {
 };
 
 /**
+ * Show the toast for a fix applied on another page (a guided fix), passed by the server.
+ *
+ * @param {Number} fixlogid
+ * @param {String} message
+ */
+export const showFixed = (fixlogid, message) => show({fixlogids: [fixlogid], message, until: Date.now() + SHOW_FOR});
+
+/**
  * Show the toast when a fix was applied just before this page loaded.
  */
 export const init = () => {

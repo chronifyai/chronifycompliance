@@ -26,7 +26,7 @@
         "message": "Quiz \"Final test\" requires a passing grade, but its grade to pass is 0.",
         "severitylabel": "Critical", "badgeclass": "lcd-pill lcd-pill-critical", "cmname": "Final test",
         "cmurl": "https://example.com/mod/quiz/view.php?id=4", "editurl": "https://example.com/course/modedit.php?update=4",
-        "scormurl": null, "canfix": true, "canignore": true, "canreopen": false, "fixlogid": null,
+        "scormurl": null, "canfix": true, "guidedurl": null, "canignore": true, "canreopen": false, "fixlogid": null,
         "ignorereason": null, "timeignored": null, "mainfix": true, "mainundo": false, "mainreopen": false,
         "mainscorm": false, "mainsetup": false, "menuedit": true, "menuscorm": false, "coreref": null
     }
@@ -49,6 +49,9 @@
                 </div>
             </div>
             <div class="d-flex align-items-start text-nowrap">
+                {{#mainguided}}
+                    <a class="btn btn-primary btn-sm me-1" href="{{guidedurl}}">{{#str}}guided:start, local_chronifycompliance{{/str}}</a>
+                {{/mainguided}}
                 {{#mainfix}}
                     <button type="button" class="btn btn-primary btn-sm me-1" data-action="cd-preview-fix" data-findingid="{{id}}">
                         {{#str}}report:previewfix, local_chronifycompliance{{/str}}

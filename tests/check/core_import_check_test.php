@@ -44,7 +44,8 @@ final class core_import_check_test extends \advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
-        // Make two core security checks fail: no password policy, and the "no authentication" plugin on.
+        // Make two core security checks fail: no password policy (read by passwordstrength instead), and the
+        // "no authentication" plugin on.
         set_config('passwordpolicy', 0);
         set_config('auth', 'none');
         $CFG->auth = 'none';
@@ -78,28 +79,29 @@ final class core_import_check_test extends \advanced_testcase {
         foreach ($security as $finding) {
             $byref[$finding->details['ref']] = $finding;
         }
-        $this->assertArrayHasKey('core_passwordpolicy', $byref);
+        $this->assertArrayNotHasKey('core_passwordpolicy', $byref, 'Covered by passwordstrength');
         $this->assertArrayHasKey('auth_none_noauth', $byref);
         $this->assertSame(base_check::SEVERITY_CRITICAL, $byref['auth_none_noauth']->severity);
-        $this->assertNotEmpty($byref['core_passwordpolicy']->details['url'], 'Link to the core setting');
+        $this->assertNotEmpty($byref['auth_none_noauth']->details['url'], 'Link to the core setting');
 
         // Stored by the site audit, with the setting as the card's Set up link.
         site_auditor::audit(true);
         $stored = array_filter(
             finding_store::get_course_findings((int) SITEID),
-            fn($f) => $f->checkid === 'coresecurity' && $f->details['ref'] === 'core_passwordpolicy'
+            fn($f) => $f->checkid === 'coresecurity' && $f->details['ref'] === 'auth_none_noauth'
         );
         $this->assertCount(1, $stored);
         $card = finding_exporter::export(reset($stored), null, ['canfix' => true, 'canignore' => true]);
         $this->assertTrue($card['mainsetup']);
-        $this->assertSame($byref['core_passwordpolicy']->details['url'], $card['editurl']);
+        $this->assertSame($byref['auth_none_noauth']->details['url'], $card['editurl']);
 
         // Fixing the setting resolves the finding at the next audit.
-        set_config('passwordpolicy', 1);
+        set_config('auth', 'email');
+        $CFG->auth = 'email';
         site_auditor::audit(true);
         $open = array_filter(
             finding_store::get_course_findings((int) SITEID),
-            fn($f) => $f->checkid === 'coresecurity' && $f->details['ref'] === 'core_passwordpolicy'
+            fn($f) => $f->checkid === 'coresecurity' && $f->details['ref'] === 'auth_none_noauth'
         );
         $this->assertCount(0, $open);
     }
