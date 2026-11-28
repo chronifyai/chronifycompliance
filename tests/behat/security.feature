@@ -5,7 +5,11 @@ Feature: Administrators review and fix the security of the site
   I need every security problem grouped by area, with one action each, and the checks that passed
 
   Background:
-    Given the Chronify.Compliance demo site problem "webservices" exists
+    # Moodle's own security checks find different things on each test machine, so they are off here.
+    Given the following config values are set as admin:
+      | config               | value | plugin                   |
+      | enabled_coresecurity | 0     | local_chronifycompliance |
+    And the Chronify.Compliance demo site problem "webservices" exists
     And the Chronify.Compliance demo site problem "adminmfa" exists
 
   Scenario: Problems grouped by area, passed checks and filters
