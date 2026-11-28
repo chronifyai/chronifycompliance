@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * Several course builds (usually one per language) share one SCO, and so one resume record.
@@ -28,7 +28,7 @@ use local_completiondoctor\scorm\package_analyzer;
  * written by the other build, which causes endless loading or a blank screen. Info when they match:
  * it works, but only while every build is republished from the same source.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

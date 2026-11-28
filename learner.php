@@ -17,12 +17,12 @@
 /**
  * Learner completion diagnostic.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\learner\explainer;
+use local_chronifycompliance\learner\explainer;
 
 require(__DIR__ . '/../../config.php');
 
@@ -33,13 +33,13 @@ $search = trim(optional_param('search', '', PARAM_NOTAGS));
 $course = get_course($courseid);
 require_login($course);
 $context = context_course::instance($course->id);
-require_capability('local/completiondoctor:viewlearnerdiagnostic', $context);
+require_capability('local/chronifycompliance:viewlearnerdiagnostic', $context);
 
-$url = new moodle_url('/local/completiondoctor/learner.php', ['courseid' => $course->id]);
+$url = new moodle_url('/local/chronifycompliance/learner.php', ['courseid' => $course->id]);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('learner:title', 'local_completiondoctor') . ': ' . format_string($course->shortname));
+$PAGE->set_title(get_string('learner:title', 'local_chronifycompliance') . ': ' . format_string($course->shortname));
 $PAGE->set_heading(format_string($course->fullname));
 
 // Only users enrolled in the course (active or not) can be diagnosed, in separate groups only those
@@ -52,12 +52,13 @@ if ($userid) {
     explainer::require_can_diagnose($course, $userid);
     $user = core_user::get_user($userid, '*', MUST_EXIST);
     $explanation = explainer::explain((int) $course->id, $userid);
-    \local_completiondoctor\event\learner_diagnostic_viewed::create(['context' => $context, 'relateduserid' => $userid])
+    \local_chronifycompliance\event\learner_diagnostic_viewed::create(['context' => $context, 'relateduserid' => $userid])
         ->trigger();
 }
 
-$renderer = $PAGE->get_renderer('local_completiondoctor');
+$PAGE->requires->js_call_amd('local_chronifycompliance/course_report', 'init', ['[data-region="learner-diagnostic"]']);
+$renderer = $PAGE->get_renderer('local_chronifycompliance');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('learner:title', 'local_completiondoctor'));
+echo $OUTPUT->heading(get_string('learner:heading', 'local_chronifycompliance'));
 echo $renderer->learner_report($course, $user, $explanation, array_values($matches), $search);
 echo $OUTPUT->footer();

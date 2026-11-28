@@ -1,7 +1,9 @@
-# Completion Doctor checks
+# Chronify.Compliance checks
 
 Every check is read-only. Fixable checks show a preview first, write a fix log entry, and can be undone.
-Each check can be switched off, or given another severity, in *Site administration > Plugins > Local plugins > Completion Doctor > Checks*.
+Each check can be switched off, or given another severity, in *Site administration > Plugins > Local plugins > Chronify.Compliance > Checks*.
+
+Checks are grouped in packs: **Completion**, **SCORM and content**, **Site and performance** and **Security**. The settings page lists the checks by pack, and each pack gets its own score.
 
 Severity: **Critical** means learners can never complete, or complete when they should not. **Warning** means a likely mistake. **Info** is a suggestion.
 
@@ -69,7 +71,80 @@ Cron is disabled, has never run, or has not started recently (setting, default 1
 ### Completion disabled on the site (`completiondisabled`) · Critical
 Completion tracking is off for the whole site while courses have completion set up. **Fix:** turn on *Enable completion tracking* in the advanced features.
 
-The site checks also appear in *Site administration > Reports > System status*.
+### Moodle performance and status checks (`coreperformance`) · per result
+Reads Moodle's own Check API results of the types *performance* and *status* (*Site administration > Reports > Performance overview* and *System status*, including checks of other plugins). Every result that is not OK becomes one finding: critical and error are Critical, warning is Warning, info and unknown are Info. The problem links to the setting core points to. Skipped: this plugin's own checks, and `core_dbschema` (it compares the whole database schema and is slow). **Fix:** follow the link to the setting.
+
+### Failing tasks (`failingtasks`) · Warning
+Scheduled tasks (not turned off) and ad hoc tasks that Moodle keeps retrying because they fail. The completion tasks are covered by `completiontasks`. **Fix:** *Scheduled tasks* and *Ad hoc tasks*: open the task log and fix the cause.
+
+### Caching (`caching`) · Warning or Info · fixable
+The language string cache or the template cache is off (Warning; one click turns it back on, unless config.php sets it). Sites with 1,000 or more users active in the last 30 days whose application cache uses the default file store (Info). **Fix:** one click, or *Caching > Configuration* for a Redis or Memcached store.
+
+### PHP and database support (`phpdbsupport`) · Warning or Info
+PHP, PostgreSQL, MySQL or MariaDB versions whose makers no longer give security updates (Warning), or stop within 90 days (Info). The end dates are kept in the check (`PHP_END`, `DB_END`) and updated with the plugin. Unknown versions are not reported. **Fix:** plan the upgrade with the server team.
+
+### Backup status (`backupstatus`) · Warning or Info
+Automated course backups are off (Info: many sites back up the whole server), or courses failed their last automated backup (Warning). **Fix:** *Automated backup setup* and the *Backups* report.
+
+### Log table keeps growing (`logretention`) · Warning
+The standard log keeps events for ever while the site logs 10,000 or more events a day on average over 30 days. The counts come from the plugin's activity data (`siteday`), not from the log table. **Fix:** set *Keep logs for* in the standard log settings, after checking what your reports need.
+
+### Plugin upgrade readiness (`upgradeready`) · Warning or Info
+Plugins waiting for their upgrade, new and not installed, or missing from the disk (Warning). Add-on plugins whose version.php declares support only up to a Moodle version before the next one (Info). **Fix:** *Notifications* to finish upgrades; plugin updates before the next Moodle upgrade.
+
+Every site check has a demo site scenario with a failing and a passing state, except `coresecurity` and `coreperformance`, which report whatever Moodle's own checks find on the site.
+
+The site checks also appear in *Site administration > Reports > System status*, except the two that read Moodle's own checks.
+
+## Security
+
+### Moodle security checks (`coresecurity`) · per result
+Reads Moodle's own security checks (*Site administration > Reports > Security checks*, including checks of other plugins such as "No authentication"), with the same mapping as above. Skipped: `core_publicpaths`, because it requests the site's own web addresses, and a site audit makes no web requests (step C3 checks exposed files without them). **Fix:** follow the link to the setting. Nothing is changed automatically.
+
+### Administrators without multi-factor authentication (`adminmfa`) · Critical
+Multi-factor authentication (*Site administration > Plugins > Admin tools > Multi-factor authentication*) is off, or some site administrators have no second factor set up (an authenticator app, a security key or text messages; revoked factors do not count). With the email factor on, every administrator has a second factor. **Fix:** turn on MFA and a factor, and ask each administrator to set it up.
+
+### Inactive administrator accounts (`inactiveadmins`) · Warning
+Site administrators (not suspended) who have not signed in for 90 days or more. **Fix:** remove the administrator role from accounts nobody uses, or suspend them.
+
+### Weak password policy (`passwordstrength`) · Warning
+The password policy is on, but the minimum length is below 8 characters, or accounts are never locked after failed sign ins. A policy that is off is reported by Moodle's own security checks. **Fix:** *Site administration > Security > Site security settings*.
+
+### Open self registration (`selfregistration`) · Warning or Info
+Email based self registration is on. Warning without allowed email domains and reCAPTCHA; Info with reCAPTCHA only, or limited to email domains. **Fix:** *Manage authentication*: turn self registration off, or limit the domains and turn on reCAPTCHA.
+
+### Guest access (`guestaccess`) · Warning or Info
+Visitors are signed in as guest automatically (Warning); the login page offers guest access, or courses let guests in without a password (Info). **Fix:** the guest settings in *Site security settings*, *Manage authentication* and the guest access enrolment method.
+
+### Risky capabilities for everyone (`riskyroles`) · Critical
+The authenticated user, guest or default front page role is allowed capabilities with configuration, data loss or XSS risk across the site, beyond Moodle's defaults for that role. One finding per role. **Fix:** *Define roles*: reset the role or remove the capabilities.
+
+### Debug messages shown to everyone (`debugdisplay`) · Warning or Critical · fixable
+*Display debug messages* is on, so errors appear on the page for everyone. Critical with the Developer debug level. **Fix:** one click turns the display off (undo turns it back on). When config.php sets it, the problem says so and there is no one click fix.
+
+### Session and cookie settings (`sessioncookies`) · Warning or Info · fixable
+Session cookies without HttpOnly, which only happens on old upgraded sites or when config.php turns it off (Warning; one click fix unless config.php sets it). Sessions that stay signed in for more than a day without activity (Info). **Fix:** HttpOnly by one click or in config.php; the session timeout in *Session handling*.
+
+### Web services on without need (`webservices`) · Info · fixable
+Web services are on, but no protocol is enabled and the mobile app is off. **Fix:** one click turns web services off (undo turns them back on).
+
+### Risky web service tokens (`wstokens`) · Warning or Critical
+Permanent tokens without an expiry date (Warning), and tokens of site administrators (Critical). **Fix:** *Manage tokens*: give tokens an expiry date, and use a dedicated user with only the needed capabilities instead of an administrator.
+
+### Files exposed in the web folder (`exposedfiles`) · Critical
+The data folder is inside the Moodle folder, or copies of config.php (for example `config.php.bak`, `config.old`, `config.php~`) are in it. Checked on disk, without web requests. **Fix:** move the data folder out of the web folder and delete the copies.
+
+### Known Moodle security issues (`corevulnerabilities`) · Critical or Warning
+Compares this Moodle release with the Moodle security announcements shipped in `data/vulnerabilities.json`. Critical when at least one missing fix is for a serious issue, Warning for minor ones; the message names the release to upgrade to. A version older than every supported branch is reported when the announcements say "and earlier unsupported versions". Info when the shipped list is more than 180 days old. **Fix:** upgrade Moodle; update the plugin for a newer list.
+
+### Available updates (`availableupdates`) · Warning or Info
+Reads what Moodle's own update check already stored: a newer build of this Moodle version (Warning, it carries the security fixes), plugin updates (Info), update notifications off or not checked for 7 days (Info). The plugin makes no web request. **Fix:** *Notifications* and *Plugins overview*.
+
+The vulnerability list is rebuilt before each release with `php dev/build-vulnerability-list.php`, which reads https://moodle.org/security/ (or saved pages with `--input`) and merges new announcements into the list; nothing is removed.
+
+One click setting fixes show the exact change and a warning first, change only that one setting, are logged in *Reports > Config changes*, and can be undone from the fix history; undo is refused when the setting was changed again since.
+
+The security checks also appear in *Site administration > Reports > Security checks*. Each has a demo site scenario (`tests/classes/demo/site_scenario/`) with a failing and a passing state.
 
 ## SCORM
 

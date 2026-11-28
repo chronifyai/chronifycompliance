@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\external;
+namespace local_chronifycompliance\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\local\access;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\local\access;
+use local_chronifycompliance\local\finding_store;
 
 /**
  * Preview the fix of a finding: what would change, and which parameters are needed.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,11 +61,11 @@ class preview_fix extends external_api {
     /**
      * Convert name/value pairs to an array, cleaning each value with the type the check declares.
      *
-     * @param \local_completiondoctor\check\finding $finding
+     * @param \local_chronifycompliance\check\finding $finding
      * @param array $pairs
      * @return array
      */
-    public static function clean_params(\local_completiondoctor\check\finding $finding, array $pairs): array {
+    public static function clean_params(\local_chronifycompliance\check\finding $finding, array $pairs): array {
         $check = check_registry::get_check($finding->checkid);
         $types = [];
         foreach ($check ? $check->get_fix_parameters($finding) : [] as $definition) {

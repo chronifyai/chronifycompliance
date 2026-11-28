@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Event observers for Completion Doctor.
+ * Event observers for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,14 +37,14 @@ foreach (
 ) {
     $observers[] = [
         'eventname' => $eventname,
-        'callback' => '\local_completiondoctor\observer::course_changed',
+        'callback' => '\local_chronifycompliance\observer::course_changed',
     ];
 }
 $observers[] = [
     'eventname' => '\core\event\course_completion_updated',
-    'callback' => '\local_completiondoctor\observer::criteria_saved',
+    'callback' => '\local_chronifycompliance\observer::criteria_saved',
 ];
 $observers[] = [
     'eventname' => '\core\event\course_deleted',
-    'callback' => '\local_completiondoctor\observer::course_deleted',
+    'callback' => '\local_chronifycompliance\observer::course_deleted',
 ];

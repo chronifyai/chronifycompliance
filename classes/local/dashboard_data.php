@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
- * Figures for the dashboard header: course health groups, top problems and site health.
+ * Figures for the Completion workspace: course health groups, top problems, site checks and SCORM.
  *
- * Every figure is an aggregate over the plugin's own tables (one row per course in the audit table),
- * plus the live site checks, which are cheap.
+ * Every figure comes from the plugin's own tables (one row per course in the audit table, stored findings,
+ * analyzed packages); nothing here runs a check or reads Moodle's file or log tables.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -119,55 +118,89 @@ class dashboard_data {
     }
 
     /**
-     * Site health lines: each enabled site check and SCORM package totals. The site check results and
-     * the package count are cached for a few minutes, so dashboard views do not recompute them.
+     * Site check lines from the stored findings of the last site audit: each enabled site check with its
+     * open finding, or that it passed. Paused scans add a line.
      *
      * @return array[] Keys ok, text.
      */
     public static function get_site_health(): array {
         global $DB;
-        $cache = \cache::make('local_completiondoctor', 'sitehealth');
-        $cached = $cache->get('lines');
-        if ($cached === false) {
-            $checks = [];
-            $context = new audit_context(get_site(), false);
-            foreach (check_registry::get_checks([base_check::SCOPE_SITE], true) as $check) {
-                $findings = $check->run($context);
-                $checks[] = ['ok' => !$findings, 'finding' => $findings ? $findings[0]->to_record() : null,
-                    'checkid' => $check->get_id()];
+        $checks = check_registry::get_checks([base_check::SCOPE_SITE], true);
+        $open = [];
+        if ($checks) {
+            [$insql, $params] = $DB->get_in_or_equal(array_keys($checks), SQL_PARAMS_NAMED);
+            $params += ['siteid' => SITEID, 'open' => finding::STATUS_OPEN];
+            $records = $DB->get_records_select(
+                finding_store::TABLE,
+                "courseid = :siteid AND status = :open AND checkid {$insql}",
+                $params,
+                'severity DESC, id'
+            );
+            foreach ($records as $record) {
+                $open[$record->checkid] = $open[$record->checkid] ?? finding::from_record($record);
             }
-            $packages = (int) $DB->count_records_sql("SELECT COUNT(DISTINCT contenthash) FROM {files}
-                WHERE component = 'mod_scorm' AND filearea = 'package' AND filename <> '.'");
-            $cached = ['checks' => $checks, 'packages' => $packages];
-            $cache->set('lines', $cached);
         }
+        $audited = $DB->record_exists_select(audit_store::TABLE, 'courseid = :siteid AND timeaudited > 0', ['siteid' => SITEID]);
         $lines = [];
-        foreach ($cached['checks'] as $check) {
-            $lines[] = [
-                'ok' => $check['ok'],
-                'text' => $check['finding'] ? finding::from_record((object) $check['finding'])->get_message()
-                    : get_string('dashboard:siteok:' . $check['checkid'], 'local_completiondoctor'),
-            ];
+        foreach ($checks as $id => $check) {
+            if (isset($open[$id])) {
+                $lines[] = ['ok' => false, 'text' => $open[$id]->get_message()];
+            } else if ($audited) {
+                $lines[] = ['ok' => true, 'text' => get_string('dashboard:siteok:' . $id, 'local_chronifycompliance')];
+            }
         }
         if (scan_manager::is_paused()) {
-            $lines[] = ['ok' => false, 'text' => get_string('dashboard:paused', 'local_completiondoctor')];
-        }
-        $queued = package_analyzer::count_queued();
-        if ($queued) {
-            $lines[] = ['ok' => null, 'text' => get_string('dashboard:packagesqueued', 'local_completiondoctor', $queued)];
-        }
-        if ($cached['packages']) {
-            $analyzed = $DB->count_records_select(
-                package_analyzer::TABLE,
-                'parserversion = :v AND status = :ok',
-                ['v' => package_analyzer::PARSER_VERSION, 'ok' => package_analyzer::STATUS_OK]
-            );
-            $lines[] = ['ok' => null, 'text' => get_string(
-                'dashboard:packages',
-                'local_completiondoctor',
-                ['total' => $cached['packages'], 'analyzed' => $analyzed]
-            )];
+            $lines[] = ['ok' => false, 'text' => get_string('dashboard:paused', 'local_chronifycompliance')];
         }
         return $lines;
+    }
+
+    /**
+     * SCORM figures for the strip: packages analyzed, and SCORM activities with open problems.
+     *
+     * @return array Keys analyzed, queued, attention.
+     */
+    public static function get_scorm_summary(): array {
+        global $DB;
+        $analyzed = $DB->count_records_select(
+            package_analyzer::TABLE,
+            'parserversion = :v AND status = :ok',
+            ['v' => package_analyzer::PARSER_VERSION, 'ok' => package_analyzer::STATUS_OK]
+        );
+        $attention = 0;
+        $scormchecks = array_keys(check_registry::get_checks(null, true, [base_check::PACK_SCORM]));
+        if ($scormchecks) {
+            [$insql, $params] = $DB->get_in_or_equal($scormchecks, SQL_PARAMS_NAMED);
+            $params['open'] = finding::STATUS_OPEN;
+            $attention = (int) $DB->count_records_sql(
+                "SELECT COUNT(DISTINCT cmid) FROM {" . finding_store::TABLE . "}
+                  WHERE status = :open AND cmid IS NOT NULL AND checkid {$insql}",
+                $params
+            );
+        }
+        return ['analyzed' => $analyzed, 'queued' => package_analyzer::count_queued(), 'attention' => $attention];
+    }
+
+    /**
+     * SQL condition for courses with open problems of the SCORM and content pack.
+     *
+     * @param string $alias Alias of the audit table.
+     * @param callable $paramname Returns a new parameter name (Report Builder needs its own names).
+     * @return array [sql, params]
+     */
+    public static function scorm_condition(string $alias, callable $paramname): array {
+        $scormchecks = array_keys(check_registry::get_checks(null, true, [base_check::PACK_SCORM])) ?: ['-'];
+        $params = [];
+        $placeholders = [];
+        foreach ($scormchecks as $checkid) {
+            $name = $paramname();
+            $params[$name] = $checkid;
+            $placeholders[] = ':' . $name;
+        }
+        $open = $paramname();
+        $params[$open] = finding::STATUS_OPEN;
+        return ["EXISTS (SELECT 1 FROM {" . finding_store::TABLE . "} cds
+                 WHERE cds.courseid = {$alias}.courseid AND cds.status = :{$open}
+                   AND cds.checkid IN (" . implode(', ', $placeholders) . "))", $params];
     }
 }

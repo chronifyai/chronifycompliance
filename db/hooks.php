@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Hook callbacks of Completion Doctor.
+ * Hook callbacks of Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook' => \core\hook\output\before_http_headers::class,
-        'callback' => [\local_completiondoctor\hook_callbacks::class, 'before_http_headers'],
+        'callback' => [\local_chronifycompliance\hook_callbacks::class, 'before_http_headers'],
     ],
 ];

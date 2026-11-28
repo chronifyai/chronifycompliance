@@ -14,25 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\fix;
+namespace local_chronifycompliance\fix;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\course_auditor;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\tests\check_testcase_trait;
-use local_completiondoctor\tests\fake_check;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\course_auditor;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\tests\check_testcase_trait;
+use local_chronifycompliance\tests\fake_check;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(fixer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(fix_log::class)]
 /**
  * Tests for the fixer and the fix log.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\fix\fixer
+ * @covers \local_chronifycompliance\fix\fix_log
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(fixer::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(fix_log::class)]
 final class fixer_test extends \advanced_testcase {
     use check_testcase_trait;
 
