@@ -79,4 +79,7 @@ must stay sorted: `dev/check-lang-order.py`.
 
 ## Release ZIP
 
+Before each release, rebuild the vulnerability list: `php dev/build-vulnerability-list.php` (needs internet;
+`--input=page.html` for saved pages). It merges new announcements into `data/vulnerabilities.json`, which ships.
+
 Leave out `dev/`, `.github/`, `CLAUDE.md` and test fixture sources when building the ZIP (step F7).

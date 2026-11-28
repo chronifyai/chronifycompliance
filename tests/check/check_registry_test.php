@@ -117,7 +117,8 @@ final class check_registry_test extends \advanced_testcase {
                 'scormquiz', 'scormreplaced', 'scormrequireview', 'scormstage', 'scormstatusmismatch', 'scormsuspenddata',
             ],
             base_check::PACK_SITE => ['completiondisabled', 'completiontasks', 'coreperformance', 'cronstale'],
-            base_check::PACK_SECURITY => ['adminmfa', 'coresecurity', 'debugdisplay', 'exposedfiles', 'guestaccess',
+            base_check::PACK_SECURITY => ['adminmfa', 'availableupdates', 'coresecurity', 'corevulnerabilities', 'debugdisplay',
+                'exposedfiles', 'guestaccess',
                 'inactiveadmins', 'passwordstrength', 'riskyroles', 'selfregistration', 'sessioncookies', 'webservices',
                 'wstokens'],
         ];
@@ -126,7 +127,7 @@ final class check_registry_test extends \advanced_testcase {
         foreach ($expected as $pack => $ids) {
             $this->assertSame($ids, $actual[$pack], "Checks of pack {$pack}");
         }
-        $this->assertCount(45, check_registry::get_checks());
+        $this->assertCount(47, check_registry::get_checks());
     }
 
     /**
@@ -140,7 +141,7 @@ final class check_registry_test extends \advanced_testcase {
         }
         $both = check_registry::get_checks(null, false, [base_check::PACK_SITE, base_check::PACK_COMPLETION]);
         $this->assertCount(21, $both);
-        $this->assertCount(12, check_registry::get_checks(null, false, [base_check::PACK_SECURITY]));
+        $this->assertCount(14, check_registry::get_checks(null, false, [base_check::PACK_SECURITY]));
         foreach (base_check::get_packs() as $pack) {
             $this->assertNotEmpty(base_check::get_pack_name($pack));
         }

@@ -93,6 +93,12 @@
   First security fixes: one click setting fixes for debug display, HttpOnly cookies and unused web services. Each
   shows the change and a warning in the preview, changes one setting, is logged in Config changes and can be
   undone (refused if the setting changed since). Settings forced in config.php are reported without a fix.
+- Step C4: versions and vulnerability list. `data/vulnerabilities.json` (format 1) lists Moodle security
+  announcements with their affected ranges and fixes; `security\vulnerability_list` loads and parses it, and
+  `dev/build-vulnerability-list.php` rebuilds it from https://moodle.org/security/ (or saved pages) by merging.
+  New checks: `corevulnerabilities` (missing fixes for this release, unsupported versions, old list) and
+  `availableupdates` (newer build of this version and plugin updates from Moodle's stored update check, update
+  notifications off or stale). No web requests from the plugin.
 
 ## 0.2.3 (unreleased): QA fixes
 

@@ -114,6 +114,14 @@ Permanent tokens without an expiry date (Warning), and tokens of site administra
 ### Files exposed in the web folder (`exposedfiles`) · Critical
 The data folder is inside the Moodle folder, or copies of config.php (for example `config.php.bak`, `config.old`, `config.php~`) are in it. Checked on disk, without web requests. **Fix:** move the data folder out of the web folder and delete the copies.
 
+### Known Moodle security issues (`corevulnerabilities`) · Critical or Warning
+Compares this Moodle release with the Moodle security announcements shipped in `data/vulnerabilities.json`. Critical when at least one missing fix is for a serious issue, Warning for minor ones; the message names the release to upgrade to. A version older than every supported branch is reported when the announcements say "and earlier unsupported versions". Info when the shipped list is more than 180 days old. **Fix:** upgrade Moodle; update the plugin for a newer list.
+
+### Available updates (`availableupdates`) · Warning or Info
+Reads what Moodle's own update check already stored: a newer build of this Moodle version (Warning, it carries the security fixes), plugin updates (Info), update notifications off or not checked for 7 days (Info). The plugin makes no web request. **Fix:** *Notifications* and *Plugins overview*.
+
+The vulnerability list is rebuilt before each release with `php dev/build-vulnerability-list.php`, which reads https://moodle.org/security/ (or saved pages with `--input`) and merges new announcements into the list; nothing is removed.
+
 One click setting fixes show the exact change and a warning first, change only that one setting, are logged in *Reports > Config changes*, and can be undone from the fix history; undo is refused when the setting was changed again since.
 
 The security checks also appear in *Site administration > Reports > Security checks*. Each has a demo site scenario (`tests/classes/demo/site_scenario/`) with a failing and a passing state.
