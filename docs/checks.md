@@ -99,6 +99,23 @@ Visitors are signed in as guest automatically (Warning); the login page offers g
 ### Risky capabilities for everyone (`riskyroles`) · Critical
 The authenticated user, guest or default front page role is allowed capabilities with configuration, data loss or XSS risk across the site, beyond Moodle's defaults for that role. One finding per role. **Fix:** *Define roles*: reset the role or remove the capabilities.
 
+### Debug messages shown to everyone (`debugdisplay`) · Warning or Critical · fixable
+*Display debug messages* is on, so errors appear on the page for everyone. Critical with the Developer debug level. **Fix:** one click turns the display off (undo turns it back on). When config.php sets it, the problem says so and there is no one click fix.
+
+### Session and cookie settings (`sessioncookies`) · Warning or Info · fixable
+Session cookies without HttpOnly, which only happens on old upgraded sites or when config.php turns it off (Warning; one click fix unless config.php sets it). Sessions that stay signed in for more than a day without activity (Info). **Fix:** HttpOnly by one click or in config.php; the session timeout in *Session handling*.
+
+### Web services on without need (`webservices`) · Info · fixable
+Web services are on, but no protocol is enabled and the mobile app is off. **Fix:** one click turns web services off (undo turns them back on).
+
+### Risky web service tokens (`wstokens`) · Warning or Critical
+Permanent tokens without an expiry date (Warning), and tokens of site administrators (Critical). **Fix:** *Manage tokens*: give tokens an expiry date, and use a dedicated user with only the needed capabilities instead of an administrator.
+
+### Files exposed in the web folder (`exposedfiles`) · Critical
+The data folder is inside the Moodle folder, or copies of config.php (for example `config.php.bak`, `config.old`, `config.php~`) are in it. Checked on disk, without web requests. **Fix:** move the data folder out of the web folder and delete the copies.
+
+One click setting fixes show the exact change and a warning first, change only that one setting, are logged in *Reports > Config changes*, and can be undone from the fix history; undo is refused when the setting was changed again since.
+
 The security checks also appear in *Site administration > Reports > Security checks*. Each has a demo site scenario (`tests/classes/demo/site_scenario/`) with a failing and a passing state.
 
 ## SCORM

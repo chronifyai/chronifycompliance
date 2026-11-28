@@ -88,6 +88,11 @@
   everyone gets). Each links to the setting that fixes it; none is fixed automatically. Security checks are offered
   to core's Security checks report. New demo site scenarios (`tests\demo\site_scenario`) with a failing and a
   passing state per site check, and a Behat step to apply one. Access stays with site administrators only.
+- Step C3: configuration and web service checks in the Security pack: `debugdisplay`, `sessioncookies`,
+  `webservices`, `wstokens`, `exposedfiles` (data folder or config.php copies in the web folder, checked on disk).
+  First security fixes: one click setting fixes for debug display, HttpOnly cookies and unused web services. Each
+  shows the change and a warning in the preview, changes one setting, is logged in Config changes and can be
+  undone (refused if the setting changed since). Settings forced in config.php are reported without a fix.
 
 ## 0.2.3 (unreleased): QA fixes
 

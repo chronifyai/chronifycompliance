@@ -455,7 +455,8 @@ final class review_probe_test extends \advanced_testcase {
         }
         sort($ids);
         $this->assertSame(
-            ['adminmfa', 'guestaccess', 'inactiveadmins', 'passwordstrength', 'riskyroles', 'selfregistration'],
+            ['adminmfa', 'debugdisplay', 'exposedfiles', 'guestaccess', 'inactiveadmins', 'passwordstrength', 'riskyroles',
+                'selfregistration', 'sessioncookies', 'webservices', 'wstokens'],
             $ids
         );
     }
