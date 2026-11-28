@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\fix\fix_preview;
-use local_completiondoctor\fix\fix_result;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\fix\fix_preview;
+use local_chronifycompliance\fix\fix_result;
 
 /**
  * The minimum score required for completion differs from the grade to pass of the grade item, so
@@ -28,7 +28,7 @@ use local_completiondoctor\fix\fix_result;
  *
  * Only for grading methods based on the score (not "learning objects"), where the grade is the raw score.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,7 +106,7 @@ class scormpassgrade extends scorm_check {
     public function preview_fix(finding $finding, array $params = []): fix_preview {
         $item = \grade_item::fetch(['id' => $finding->details['gradeitemid']]);
         if (!$item) {
-            throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+            throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
         }
         $score = (float) $finding->details['score'];
         $preview = new fix_preview(
@@ -158,9 +158,9 @@ class scormpassgrade extends scorm_check {
     private function set_gradepass(array $values): void {
         $item = \grade_item::fetch(['id' => $values['gradeitemid']]);
         if (!$item) {
-            throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+            throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
         }
         $item->gradepass = $values['gradepass'];
-        $item->update('local_completiondoctor');
+        $item->update('local_chronifycompliance');
     }
 }

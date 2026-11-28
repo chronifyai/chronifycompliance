@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\site;
+namespace local_chronifycompliance\check\site;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\site_check;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\site_check;
 
 /**
  * Cron is disabled or has not run recently, so completion is not updated.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +64,7 @@ class cronstale extends site_check {
         if (!$laststart) {
             return [$this->site_finding('check:cronstale:messagenever')];
         }
-        $maxage = ((int) get_config('local_completiondoctor', 'cronmaxage') ?: self::DEFAULT_MAX_AGE) * MINSECS;
+        $maxage = ((int) get_config('local_chronifycompliance', 'cronmaxage') ?: self::DEFAULT_MAX_AGE) * MINSECS;
         $age = time() - $laststart;
         if ($age > $maxage) {
             return [$this->site_finding('check:cronstale:message', ['ago' => format_time($age)])];

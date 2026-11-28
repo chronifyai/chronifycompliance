@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\scorm\package_reader;
+use local_chronifycompliance\scorm\package_reader;
 
 /**
  * Finds links in HTML text, PDF files and Office (docx, pptx, xlsx) files.
@@ -24,7 +24,7 @@ use local_completiondoctor\scorm\package_reader;
  * Only absolute http(s) links, links relative to the site root and embedded files
  * (@@PLUGINFILE@@) are returned. Mail, phone, script and in-page links are ignored.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
- * Completion Doctor scan started.
+ * Chronify.Compliance scan started.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ class scan_started extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'local_completiondoctor_scan';
+        $this->data['objecttable'] = 'local_chronifycompliance_scan';
     }
 
     /**
@@ -39,7 +39,7 @@ class scan_started extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:scanstarted', 'local_completiondoctor');
+        return get_string('event:scanstarted', 'local_chronifycompliance');
     }
 
     /**
@@ -48,7 +48,7 @@ class scan_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' started the Completion Doctor scan with id '{$this->objectid}'.";
+        return "The user with id '{$this->userid}' started the Chronify.Compliance scan with id '{$this->objectid}'.";
     }
 
     /**
@@ -57,7 +57,7 @@ class scan_started extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/local/completiondoctor/index.php');
+        return new \moodle_url('/local/chronifycompliance/index.php');
     }
 
     /**
@@ -66,6 +66,6 @@ class scan_started extends \core\event\base {
      * @return array
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'local_completiondoctor_scan', 'restore' => \core\event\base::NOT_MAPPED];
+        return ['db' => 'local_chronifycompliance_scan', 'restore' => \core\event\base::NOT_MAPPED];
     }
 }

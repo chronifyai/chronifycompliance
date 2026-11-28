@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\scorm\package_reader;
+use local_chronifycompliance\scorm\package_reader;
 
 /**
  * Collects the links of a course: course and section summaries, activity descriptions, page and
  * book content, lesson pages, glossary entries, question texts, URL activities, and PDF and
  * Office files stored in the course. Forum posts and other learner writing are not read.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,7 +66,7 @@ class link_collector {
      * @return self
      */
     public static function from_config(): self {
-        $mb = (int) get_config('local_completiondoctor', 'linkmaxfilemb') ?: 20;
+        $mb = (int) get_config('local_chronifycompliance', 'linkmaxfilemb') ?: 20;
         return new self($mb * 1048576);
     }
 

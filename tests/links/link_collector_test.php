@@ -14,23 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\local\scan_manager;
-use local_completiondoctor\task\check_links;
+use local_chronifycompliance\local\scan_manager;
+use local_chronifycompliance\task\check_links;
 
-/**
- * Tests of collecting the links of a course and of the link check task.
- *
- * @package    local_completiondoctor
- * @category   test
- * @copyright  2026 Sebale {@link https://sebale.net}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 #[\PHPUnit\Framework\Attributes\CoversClass(link_collector::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(link_scan::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(check_links::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_completiondoctor\output\renderer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_chronifycompliance\output\renderer::class)]
+/**
+ * Tests of collecting the links of a course and of the link check task.
+ *
+ * @package    local_chronifycompliance
+ * @category   test
+ * @copyright  2026 Sebale {@link https://sebale.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\links\link_collector
+ * @covers \local_chronifycompliance\links\link_scan
+ * @covers \local_chronifycompliance\task\check_links
+ * @covers \local_chronifycompliance\output\renderer
+ */
 final class link_collector_test extends \advanced_testcase {
     /**
      * A course with links in many places.
@@ -101,7 +105,7 @@ final class link_collector_test extends \advanced_testcase {
         global $DB, $PAGE;
         $this->resetAfterTest();
         // Only the check queued below runs; automatic checks are tested in link_auto_test.
-        set_config('linkautonew', 0, 'local_completiondoctor');
+        set_config('linkautonew', 0, 'local_chronifycompliance');
         [$course, $page] = $this->create_course_with_links();
         $urls = ['https://example.com/summary', 'https://example.com/intro', 'https://example.com/url',
             'https://example.com/chapter', 'https://example.com/entry', 'https://example.com/pdf'];
@@ -140,14 +144,14 @@ final class link_collector_test extends \advanced_testcase {
         $this->assertSame(0, $counts[link_checker::STATUS_SKIPPED]);
 
         // The course report lists the broken links, with no missing strings.
-        $PAGE->set_url('/local/completiondoctor/course.php');
+        $PAGE->set_url('/local/chronifycompliance/course.php');
         $PAGE->set_context(\context_system::instance());
-        $html = $PAGE->get_renderer('local_completiondoctor')->course_report(get_course($course->id));
+        $html = $PAGE->get_renderer('local_chronifycompliance')->course_report(get_course($course->id), 'links');
         $this->assertStringContainsString('id="cd-links"', $html);
-        $this->assertStringContainsString(get_string('links:reason:cmdeleted', 'local_completiondoctor'), $html);
-        $this->assertStringContainsString(get_string('links:embedded', 'local_completiondoctor', 'missing.png'), $html);
+        $this->assertStringContainsString(get_string('links:reason:cmdeleted', 'local_chronifycompliance'), $html);
+        $this->assertStringContainsString(get_string('links:embedded', 'local_chronifycompliance', 'missing.png'), $html);
         $this->assertStringContainsString('value="checklinks"', $html);
-        $this->assertStringContainsString(s(get_string('links:linktext', 'local_completiondoctor', 'old')), $html);
+        $this->assertStringContainsString(s(get_string('links:linktext', 'local_chronifycompliance', 'old')), $html);
         $this->assertStringContainsString('lcd-link-location', $html);
         $this->assertStringContainsString('/course/modedit.php?update=' . $page->cmid, $html);
         $this->assertStringNotContainsString('[[', $html);

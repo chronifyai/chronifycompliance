@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo;
+namespace local_chronifycompliance\tests\demo;
 
 /**
  * Creates demo courses, one per scenario, in a dedicated category.
  *
  * Refuses to run on sites with more than MAX_USERS users, so it can never touch a production site.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ class seeder {
         global $DB;
         $users = $DB->count_records('user', ['deleted' => 0]);
         if ($users > self::MAX_USERS) {
-            throw new \moodle_exception('error:toomanyusers', 'local_completiondoctor', '', $users);
+            throw new \moodle_exception('error:toomanyusers', 'local_chronifycompliance', '', $users);
         }
     }
 
@@ -84,7 +84,7 @@ class seeder {
         $category = $DB->get_record('course_categories', ['idnumber' => self::CATEGORY_IDNUMBER]);
         if (!$category) {
             $category = $generator->create_category([
-                'name' => get_string('demo:category', 'local_completiondoctor'),
+                'name' => get_string('demo:category', 'local_chronifycompliance'),
                 'idnumber' => self::CATEGORY_IDNUMBER,
             ]);
         }

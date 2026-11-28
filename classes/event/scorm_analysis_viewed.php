@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
  * SCORM analysis viewed.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ class scorm_analysis_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:scormanalysisviewed', 'local_completiondoctor');
+        return get_string('event:scormanalysisviewed', 'local_chronifycompliance');
     }
 
     /**
@@ -57,6 +57,6 @@ class scorm_analysis_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/local/completiondoctor/scorm.php', ['cmid' => $this->contextinstanceid]);
+        return new \moodle_url('/local/chronifycompliance/scorm.php', ['cmid' => $this->contextinstanceid]);
     }
 }

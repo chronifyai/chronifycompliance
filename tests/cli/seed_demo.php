@@ -17,12 +17,12 @@
 /**
  * Create demo courses that trigger each check. Development tool for small test sites only.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_completiondoctor\tests\demo\seeder;
+use local_chronifycompliance\tests\demo\seeder;
 
 define('CLI_SCRIPT', true);
 
