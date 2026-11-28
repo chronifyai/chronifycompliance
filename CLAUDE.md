@@ -20,6 +20,7 @@ controls, shows one health score, and fixes what it finds. Built on Completion D
 | Launch frameworks | NIST CSF 2.0, GDPR, FERPA. A named reviewer signs off each framework file |
 | Health score weights | Config in code (Security 35, Completion 30, Site 20, SCORM and content 15), tuned later |
 | Vulnerability list | Ships in the plugin, rebuilt by a repo script before each release |
+| Access (2026-11-27) | Site administrators only: capabilities have no archetypes. Teacher access comes later |
 
 ## Rules for every change
 
@@ -28,7 +29,8 @@ controls, shows one health score, and fixes what it finds. Built on Completion D
   tracking and file storage are read only by refresh tasks, incrementally, in batches.
 - Checks are read only (`run()` never writes). Writes happen only through `fix\fixer`: transaction, fix log, undo.
 - Every new check: language strings `check:<id>:name` and `check:<id>:desc`, an entry in `docs/checks.md`,
-  a PHPUnit test, and a demo scenario in `tests/classes/demo/scenario/`.
+  a PHPUnit test, and a demo scenario: a course in `tests/classes/demo/scenario/`, or for a site check a site
+  scenario (fail and pass states) in `tests/classes/demo/site_scenario/`.
 - Every new table: `db/install.xml`, Privacy API entries in `classes/privacy/provider.php`, cleanup in the cleanup task.
 - Security fixes always preview and confirm. Nothing security related is applied automatically.
 - User facing text: plain words, no em dashes and no en dashes.

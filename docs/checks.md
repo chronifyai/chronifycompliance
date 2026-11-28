@@ -81,6 +81,26 @@ The site checks also appear in *Site administration > Reports > System status*, 
 ### Moodle security checks (`coresecurity`) · per result
 Reads Moodle's own security checks (*Site administration > Reports > Security checks*, including checks of other plugins such as "No authentication"), with the same mapping as above. Skipped: `core_publicpaths`, because it requests the site's own web addresses, and a site audit makes no web requests (step C3 checks exposed files without them). **Fix:** follow the link to the setting. Nothing is changed automatically.
 
+### Administrators without multi-factor authentication (`adminmfa`) · Critical
+Multi-factor authentication (*Site administration > Plugins > Admin tools > Multi-factor authentication*) is off, or some site administrators have no second factor set up (an authenticator app, a security key or text messages; revoked factors do not count). With the email factor on, every administrator has a second factor. **Fix:** turn on MFA and a factor, and ask each administrator to set it up.
+
+### Inactive administrator accounts (`inactiveadmins`) · Warning
+Site administrators (not suspended) who have not signed in for 90 days or more. **Fix:** remove the administrator role from accounts nobody uses, or suspend them.
+
+### Weak password policy (`passwordstrength`) · Warning
+The password policy is on, but the minimum length is below 8 characters, or accounts are never locked after failed sign ins. A policy that is off is reported by Moodle's own security checks. **Fix:** *Site administration > Security > Site security settings*.
+
+### Open self registration (`selfregistration`) · Warning or Info
+Email based self registration is on. Warning without allowed email domains and reCAPTCHA; Info with reCAPTCHA only, or limited to email domains. **Fix:** *Manage authentication*: turn self registration off, or limit the domains and turn on reCAPTCHA.
+
+### Guest access (`guestaccess`) · Warning or Info
+Visitors are signed in as guest automatically (Warning); the login page offers guest access, or courses let guests in without a password (Info). **Fix:** the guest settings in *Site security settings*, *Manage authentication* and the guest access enrolment method.
+
+### Risky capabilities for everyone (`riskyroles`) · Critical
+The authenticated user, guest or default front page role is allowed capabilities with configuration, data loss or XSS risk across the site, beyond Moodle's defaults for that role. One finding per role. **Fix:** *Define roles*: reset the role or remove the capabilities.
+
+The security checks also appear in *Site administration > Reports > Security checks*. Each has a demo site scenario (`tests/classes/demo/site_scenario/`) with a failing and a passing state.
+
 ## SCORM
 
 ### SCORM settings cannot be met (`scormstatusmismatch`) · Critical · fixable

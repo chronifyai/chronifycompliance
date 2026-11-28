@@ -65,3 +65,12 @@ Feature: Managers scan all courses and filter the Completion workspace
     When I click on "Show these courses" "link"
     Then I should see "Demo: " in the "reportbuilder-table" "table"
     And I should see "SCORM problems" in the ".lcd-chips" "css_element"
+
+  Scenario: Security problems of the site are listed with a link to the setting
+    Given the Chronify.Compliance demo site problem "adminmfa" exists
+    And the Chronify.Compliance demo course "healthy" exists
+    When I am on the "local_chronifycompliance > Completion" page logged in as "admin"
+    Then I should see "Multi-factor authentication is off" in the "[data-region='site-checks']" "css_element"
+    And I am on the "local_chronifycompliance > Dashboard" page
+    And I should not see "No checks yet" in the "[data-pack='security']" "css_element"
+    And I should see "critical" in the "[data-pack='security']" "css_element"

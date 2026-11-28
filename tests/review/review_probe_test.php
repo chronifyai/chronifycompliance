@@ -446,5 +446,17 @@ final class review_probe_test extends \advanced_testcase {
         }
         sort($ids);
         $this->assertSame(['completiondisabled', 'completiontasks', 'cronstale'], $ids);
+
+        $ids = [];
+        foreach (\core\check\manager::get_checks('security') as $check) {
+            if ($check->get_component() === 'local_chronifycompliance') {
+                $ids[] = $check->get_id();
+            }
+        }
+        sort($ids);
+        $this->assertSame(
+            ['adminmfa', 'guestaccess', 'inactiveadmins', 'passwordstrength', 'riskyroles', 'selfregistration'],
+            $ids
+        );
     }
 }

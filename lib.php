@@ -23,23 +23,44 @@
  */
 
 /**
- * Site checks shown on Site administration > Reports > System status.
+ * Site checks of the given pack as core checks, without the ones that read core's own checks (that would
+ * run them in a loop).
  *
+ * @param string $pack
  * @return \core\check\check[]
  */
-function local_chronifycompliance_status_checks(): array {
+function local_chronifycompliance_core_checks(string $pack): array {
     $checks = [];
     $sitechecks = \local_chronifycompliance\check\check_registry::get_checks(
-        [\local_chronifycompliance\check\base_check::SCOPE_SITE]
+        [\local_chronifycompliance\check\base_check::SCOPE_SITE],
+        false,
+        [$pack]
     );
     foreach ($sitechecks as $check) {
-        // Checks that read core's own checks are not offered back to core (that would run them in a loop).
         if ($check instanceof \local_chronifycompliance\check\core_import_check) {
             continue;
         }
         $checks[] = new \local_chronifycompliance\check\core_check_adapter($check);
     }
     return $checks;
+}
+
+/**
+ * Site and performance checks shown on Site administration > Reports > System status.
+ *
+ * @return \core\check\check[]
+ */
+function local_chronifycompliance_status_checks(): array {
+    return local_chronifycompliance_core_checks(\local_chronifycompliance\check\base_check::PACK_SITE);
+}
+
+/**
+ * Security checks shown on Site administration > Reports > Security checks.
+ *
+ * @return \core\check\check[]
+ */
+function local_chronifycompliance_security_checks(): array {
+    return local_chronifycompliance_core_checks(\local_chronifycompliance\check\base_check::PACK_SECURITY);
 }
 
 /**

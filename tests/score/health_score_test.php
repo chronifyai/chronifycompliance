@@ -37,13 +37,17 @@ use local_chronifycompliance\tests\demo\seeder;
  */
 final class health_score_test extends \advanced_testcase {
     /**
-     * The formula tests use the Completion, Site and SCORM packs only: Moodle's own checks are off.
+     * The formula tests use the Completion, Site and SCORM packs only: security checks and Moodle's own checks are off.
      */
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
-        set_config('enabled_coresecurity', 0, 'local_chronifycompliance');
         set_config('enabled_coreperformance', 0, 'local_chronifycompliance');
+        $security = \local_chronifycompliance\check\check_registry::get_checks(null, false, [base_check::PACK_SECURITY]);
+        foreach (array_keys($security) as $id) {
+            set_config('enabled_' . $id, 0, 'local_chronifycompliance');
+        }
+        \local_chronifycompliance\check\check_registry::reset();
     }
 
     /**

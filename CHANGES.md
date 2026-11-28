@@ -83,6 +83,11 @@
   action. Skipped: this plugin's checks, `core_publicpaths` (web requests) and `core_dbschema` (slow). The Security
   pack now has a score. Neither check is offered back to core's System status page. Measured on 100,000 users:
   0.04 and 0.11 seconds.
+- Step C2: access and account checks in the Security pack: `adminmfa`, `inactiveadmins`, `passwordstrength`,
+  `selfregistration`, `guestaccess`, `riskyroles` (risky capabilities beyond Moodle's defaults for the roles
+  everyone gets). Each links to the setting that fixes it; none is fixed automatically. Security checks are offered
+  to core's Security checks report. New demo site scenarios (`tests\demo\site_scenario`) with a failing and a
+  passing state per site check, and a Behat step to apply one. Access stays with site administrators only.
 
 ## 0.2.3 (unreleased): QA fixes
 

@@ -78,6 +78,30 @@ class behat_local_chronifycompliance extends behat_base {
     }
 
     /**
+     * Put the site in the failing state of a site check's demo scenario, then run the site checks.
+     *
+     * @Given /^the Chronify.Compliance demo site problem "(?P<check_string>[a-z0-9]+)" exists$/
+     * @param string $check Site check id, for example "adminmfa".
+     */
+    public function the_chronify_compliance_demo_site_problem_exists(string $check): void {
+        global $USER;
+        require_once(__DIR__ . '/../demo_autoload.php');
+        $scenarios = \local_chronifycompliance\tests\demo\site_scenario::get_all();
+        if (!isset($scenarios[$check])) {
+            throw new Exception("Unknown Chronify.Compliance site scenario '{$check}'");
+        }
+        $previous = $USER;
+        \core\session\manager::set_user(get_admin());
+        try {
+            $scenarios[$check]->fail(behat_util::get_data_generator());
+            \local_chronifycompliance\check\check_registry::reset();
+            \local_chronifycompliance\check\site_auditor::audit(true);
+        } finally {
+            \core\session\manager::set_user($previous);
+        }
+    }
+
+    /**
      * Run the scheduled selection of new courses for link checks, as if their last change was long enough ago.
      *
      * @Given /^the Chronify.Compliance link checks of changed new courses are queued$/
