@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
- * Completion Doctor link check requested.
+ * Chronify.Compliance link check requested.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ class link_check_requested extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'local_completiondoctor_linkcheck';
+        $this->data['objecttable'] = 'local_chronifycompliance_linkcheck';
     }
 
     /**
@@ -39,7 +39,7 @@ class link_check_requested extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:linkcheckrequested', 'local_completiondoctor');
+        return get_string('event:linkcheckrequested', 'local_chronifycompliance');
     }
 
     /**
@@ -57,7 +57,7 @@ class link_check_requested extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/local/completiondoctor/course.php', ['id' => $this->courseid]);
+        return new \moodle_url('/local/chronifycompliance/course.php', ['id' => $this->courseid]);
     }
 
     /**
@@ -66,6 +66,6 @@ class link_check_requested extends \core\event\base {
      * @return array
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'local_completiondoctor_linkcheck', 'restore' => \core\event\base::NOT_MAPPED];
+        return ['db' => 'local_chronifycompliance_linkcheck', 'restore' => \core\event\base::NOT_MAPPED];
     }
 }

@@ -18,7 +18,7 @@
  * Autoloader for the demo course generator in tests/classes/demo, for tests/cli/seed_demo.php and Behat.
  * PHPUnit loads these classes by itself; normal requests never load them.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 spl_autoload_register(function (string $classname): void {
-    $prefix = 'local_completiondoctor\\tests\\demo\\';
+    $prefix = 'local_chronifycompliance\\tests\\demo\\';
     if (!str_starts_with($classname, $prefix)) {
         return;
     }

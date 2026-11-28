@@ -1,0 +1,36 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chronifycompliance/undo_toast
+
+    Shown for 30 seconds after a fix was applied.
+
+    Example context (json):
+    {
+        "inline": false, "message": "Grade to pass set to 7 out of 10."
+    }
+}}
+<div class="local-chronifycompliance-toast{{^inline}} position-fixed{{/inline}} p-3 bg-dark text-white rounded shadow" role="status" data-region="undo-toast">
+    <div class="d-flex align-items-center">
+        <div class="me-3">{{message}}</div>
+        <button type="button" class="btn btn-light btn-sm me-2" data-action="cc-toast-undo">
+            {{#str}}report:undo, local_chronifycompliance{{/str}}
+        </button>
+        <button type="button" class="btn btn-link btn-sm text-white p-0" data-action="cc-toast-close"
+            aria-label="{{#str}}closebuttontitle, core{{/str}}"><span aria-hidden="true">&times;</span></button>
+    </div>
+</div>

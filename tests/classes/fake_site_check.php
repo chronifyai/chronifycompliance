@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
-use local_completiondoctor\check\audit_context;
+use local_chronifycompliance\check\audit_context;
 
 /**
  * Site-scope check reporting one finding, used by the site auditor tests.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

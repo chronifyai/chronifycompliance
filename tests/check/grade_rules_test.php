@@ -14,23 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check;
+namespace local_chronifycompliance\check;
 
-use local_completiondoctor\check\course\passgradeunreachable;
-use local_completiondoctor\check\scorm\scormgradenoscore;
-use local_completiondoctor\fix\fixer;
-use local_completiondoctor\local\finding_store;
+use local_chronifycompliance\check\completion\passgradeunreachable;
+use local_chronifycompliance\check\scorm\scormgradenoscore;
+use local_chronifycompliance\fix\fixer;
+use local_chronifycompliance\local\finding_store;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(scormgradenoscore::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(passgradeunreachable::class)]
 /**
  * Tests of the grade rule checks: SCORM requiring a grade without a score, and unreachable pass grades.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\check\scorm\scormgradenoscore
+ * @covers \local_chronifycompliance\check\completion\passgradeunreachable
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(scormgradenoscore::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(passgradeunreachable::class)]
 final class grade_rules_test extends \advanced_testcase {
     /**
      * Prepare.
@@ -70,7 +72,7 @@ final class grade_rules_test extends \advanced_testcase {
         global $DB;
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
-        $path = \core_component::get_component_directory('local_completiondoctor') . "/tests/fixtures/packages/{$fixture}.zip";
+        $path = \core_component::get_component_directory('local_chronifycompliance') . "/tests/fixtures/packages/{$fixture}.zip";
         $scorm = $generator->create_module('scorm', $settings + ['course' => $course->id, 'packagefilepath' => $path,
             'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionusegrade' => 1, 'completionstatusrequired' => null,
             'grademethod' => GRADEHIGHEST]);
@@ -157,7 +159,7 @@ final class grade_rules_test extends \advanced_testcase {
         for ($i = 0; $i < 5; $i++) {
             $this->finish($course, $scorm);
         }
-        \cache::make('local_completiondoctor', 'evidence')->purge();
+        \local_chronifycompliance\scorm\runtime_evidence::purge();
         $findings = $this->audit((int) $course->id, 'scormgradenoscore');
         $this->assertCount(1, $findings);
         $this->assertSame('check:scormgradenoscore:basis:evidence', $findings[0]->messageparams['basis']['str']);
@@ -168,7 +170,7 @@ final class grade_rules_test extends \advanced_testcase {
      */
     public function test_passgrade_unreachable_and_fix(): void {
         global $DB;
-        $course = (new \local_completiondoctor\tests\demo\scenario\passgradeunreachable())
+        $course = (new \local_chronifycompliance\tests\demo\scenario\passgradeunreachable())
             ->create($this->getDataGenerator(), (int) $this->getDataGenerator()->create_category()->id);
         $findings = $this->audit((int) $course->id, 'passgradeunreachable');
         $this->assertCount(1, $findings);

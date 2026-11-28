@@ -14,25 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\links;
+namespace local_chronifycompliance\links;
 
-use local_completiondoctor\tests\fake_http_client;
+use local_chronifycompliance\tests\fake_http_client;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../classes/fake_http_client.php');
 
+#[\PHPUnit\Framework\Attributes\CoversClass(link_checker::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
 /**
  * Tests of checking single links, with a fake HTTP client.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_chronifycompliance\links\link_checker
+ * @covers \local_chronifycompliance\links\link_store
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(link_checker::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(link_store::class)]
 final class link_checker_test extends \advanced_testcase {
     /** @var fake_http_client */
     private fake_http_client $http;
@@ -100,15 +102,16 @@ final class link_checker_test extends \advanced_testcase {
      */
     public function test_limit_and_cache(): void {
         $this->resetAfterTest();
+        $checked = time() - 60;
         link_store::replace_course(1, [[
             'cmid' => 0, 'source' => 'summary', 'itemid' => 0, 'sourcename' => null, 'url' => 'https://example.com/known',
             'urlhash' => sha1('https://example.com/known'), 'kind' => link_checker::KIND_EXTERNAL,
-            'status' => link_checker::STATUS_BROKEN, 'httpcode' => 404, 'reason' => 'notfound', 'timechecked' => time() - 60,
+            'status' => link_checker::STATUS_BROKEN, 'httpcode' => 404, 'reason' => 'notfound', 'timechecked' => $checked,
         ]]);
         $checker = $this->checker(1);
         $result = $checker->check('https://example.com/known');
         $this->assertSame(
-            [link_checker::STATUS_BROKEN, 'notfound', time() - 60],
+            [link_checker::STATUS_BROKEN, 'notfound', $checked],
             [$result['status'], $result['reason'], $result['timechecked']]
         );
         $this->assertSame([], $this->http->requests, 'A recent result is reused.');

@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\output;
+namespace local_chronifycompliance\output;
 
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\local\audit_store;
-use local_completiondoctor\local\finding_store;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\local\audit_store;
+use local_chronifycompliance\local\finding_store;
+use local_chronifycompliance\scorm\package_analyzer;
 use moodle_url;
 use renderer_base;
 
 /**
  * SCORM analysis panel of one activity.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,7 +55,7 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
      * @return string
      */
     public function get_template_name(renderer_base $renderer): string {
-        return 'local_completiondoctor/scorm_panel';
+        return 'local_chronifycompliance/scorm_panel';
     }
 
     /**
@@ -65,7 +65,7 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $component = 'local_completiondoctor';
+        $component = 'local_chronifycompliance';
         $package = $this->inspection['package'];
         $ok = ($package['status'] ?? '') === package_analyzer::STATUS_OK;
         $evidence = $this->inspection['evidence'];
@@ -94,8 +94,8 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             $buildsdata[] = $build + ['label' => $build['language'] ?? $build['path']];
         }
         $context = \context_course::instance($this->cm->course);
-        $caps = ['canfix' => has_capability('local/completiondoctor:applyfix', $context),
-            'canignore' => has_capability('local/completiondoctor:ignorefinding', $context)];
+        $caps = ['canfix' => has_capability('local/chronifycompliance:applyfix', $context),
+            'canignore' => has_capability('local/chronifycompliance:ignorefinding', $context)];
         $findings = [];
         foreach (finding_store::get_course_findings((int) $this->cm->course) as $f) {
             if ((int) $f->cmid === (int) $this->cm->id) {
@@ -106,9 +106,9 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
         $data = [
             'cmid' => (int) $this->cm->id,
             'name' => $this->cm->get_formatted_name(),
-            'courseurl' => (new moodle_url('/local/completiondoctor/course.php', ['id' => $this->cm->course]))->out(false),
+            'courseurl' => (new moodle_url('/local/chronifycompliance/course.php', ['id' => $this->cm->course]))->out(false),
             'editurl' => (new moodle_url('/course/modedit.php', ['update' => $this->cm->id]))->out(false),
-            'refreshurl' => (new moodle_url('/local/completiondoctor/scorm.php', ['cmid' => $this->cm->id]))->out(false),
+            'refreshurl' => (new moodle_url('/local/chronifycompliance/scorm.php', ['cmid' => $this->cm->id]))->out(false),
             'sesskey' => sesskey(),
             'ok' => $ok,
             'pending' => ($package['status'] ?? '') === package_analyzer::STATUS_PENDING,
@@ -125,6 +125,10 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'reportingmode' => $package['tool']['reportingmode'] ?? null,
             'masteryscore' => $package['manifest']['masteryscore'] ?? null,
             'attempts' => $evidence['attempts'],
+            'evidencepending' => !empty($evidence['pending']),
+            'evidencecollected' => !empty($evidence['timecollected'])
+                ? userdate((int) $evidence['timecollected'], get_string('strftimedatetimeshort', 'langconfig'))
+                : null,
             'statuses' => $statuses,
             'hasstatuses' => (bool) $statuses,
             'nostatus' => $evidence['nostatus'],
@@ -132,6 +136,8 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'hasrecommendation' => (bool) $recommendation,
             'settings' => $settings,
             'confidence' => $recommendation ? get_string('panel:confidence:' . $recommendation['confidence'], $component) : null,
+            'confidenceshort' => $recommendation
+                ? get_string('panel:confidenceshort:' . $recommendation['confidence'], $component) : null,
             'reasons' => $recommendation ? $resolve($recommendation['reasons']) : [],
             'warnings' => $recommendation ? $resolve($recommendation['warnings']) : [],
             'size' => isset($bandwidth['totalbytes']) ? display_size((int) $bandwidth['totalbytes']) : null,
@@ -150,7 +156,15 @@ class scorm_panel implements \core\output\named_templatable, \renderable {
             'builddifferences' => $resolve($package['builds']['differences'] ?? []),
             'findings' => $findings,
             'hasfindings' => (bool) $findings,
+            'applyid' => null,
+            'republish' => $ok && $evidence['attempts'] && !$evidence['withscore'],
         ];
+        foreach ($findings as $finding) {
+            if ($finding['mainfix']) {
+                $data['applyid'] = $finding['id'];
+                break;
+            }
+        }
         return $data;
     }
 }

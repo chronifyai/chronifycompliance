@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\base_check;
-use local_completiondoctor\check\check_registry;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\persistent\finding_record;
+use local_chronifycompliance\check\base_check;
+use local_chronifycompliance\check\check_registry;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\persistent\finding_record;
 
 /**
  * Persistence of findings. Writes only to the plugin's own tables.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,7 +52,7 @@ class finding_store {
         $stats = ['new' => 0, 'updated' => 0, 'reopened' => 0, 'resolved' => 0];
         // New or reopened Critical findings, for the optional teacher notification. Not on the first audit.
         $critical = [];
-        $notify = $courseid !== SITEID && get_config('local_completiondoctor', 'notifyteachers')
+        $notify = $courseid !== SITEID && get_config('local_chronifycompliance', 'notifyteachers')
             && audit_store::get($courseid) !== null;
 
         $existing = [];
@@ -134,7 +134,7 @@ class finding_store {
                 fn(finding $f) => (int) $f->id,
                 array_filter($critical, fn(finding $f) => $f->severity === base_check::SEVERITY_CRITICAL)
             );
-            \local_completiondoctor\task\notify_teachers::queue($courseid, $ids);
+            \local_chronifycompliance\task\notify_teachers::queue($courseid, $ids);
         }
         return $stats;
     }
@@ -240,7 +240,7 @@ class finding_store {
     /**
      * Callback of the per-check settings ("enabled_<check>" and "severity_<check>").
      *
-     * @param string $fullname Full setting name, for example s_local_completiondoctor_severity_nocriteria.
+     * @param string $fullname Full setting name, for example s_local_chronifycompliance_severity_nocriteria.
      */
     public static function setting_changed(string $fullname): void {
         if (!preg_match('/(enabled|severity)_([a-z][a-z0-9]*)$/', $fullname, $matches)) {
@@ -307,7 +307,7 @@ class finding_store {
      * Refresh the cached and stored counts of all courses.
      */
     private static function after_bulk_change(): void {
-        \cache::make('local_completiondoctor', 'coursesummary')->purge();
+        \cache::make('local_chronifycompliance', 'coursesummary')->purge();
         audit_store::refresh_all_counts();
     }
 
@@ -319,7 +319,7 @@ class finding_store {
      */
     public static function get_summary(int $courseid): array {
         global $DB;
-        $cache = \cache::make('local_completiondoctor', 'coursesummary');
+        $cache = \cache::make('local_chronifycompliance', 'coursesummary');
         $summary = $cache->get($courseid);
         if ($summary !== false) {
             return $summary;
@@ -354,6 +354,6 @@ class finding_store {
      * @param int $courseid
      */
     public static function invalidate_summary(int $courseid): void {
-        \cache::make('local_completiondoctor', 'coursesummary')->delete($courseid);
+        \cache::make('local_chronifycompliance', 'coursesummary')->delete($courseid);
     }
 }

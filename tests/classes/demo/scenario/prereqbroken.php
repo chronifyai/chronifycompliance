@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests\demo\scenario;
+namespace local_chronifycompliance\tests\demo\scenario;
 
-use local_completiondoctor\tests\demo\scenario;
+use local_chronifycompliance\tests\demo\scenario;
 
 /**
  * Demo course for the prereqbroken check: Completion requires another course that does not track completion.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,7 +55,7 @@ class prereqbroken extends scenario {
         $course = $generator->create_course($this->course_defaults($categoryid, $this->get_fullname()));
         $prerequisite = $generator->create_course([
             'category' => $categoryid,
-            'fullname' => get_string('demo:course:prerequisite', 'local_completiondoctor'),
+            'fullname' => get_string('demo:course:prerequisite', 'local_chronifycompliance'),
             'shortname' => 'cd-demo-prereqbroken-target',
             'enablecompletion' => 0,
         ]);

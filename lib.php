@@ -15,25 +15,52 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Library callbacks for Completion Doctor.
+ * Library callbacks for Chronify.Compliance.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Site checks shown on Site administration > Reports > System status.
+ * Site checks of the given pack as core checks, without the ones that read core's own checks (that would
+ * run them in a loop).
+ *
+ * @param string $pack
+ * @return \core\check\check[]
+ */
+function local_chronifycompliance_core_checks(string $pack): array {
+    $checks = [];
+    $sitechecks = \local_chronifycompliance\check\check_registry::get_checks(
+        [\local_chronifycompliance\check\base_check::SCOPE_SITE],
+        false,
+        [$pack]
+    );
+    foreach ($sitechecks as $check) {
+        if ($check instanceof \local_chronifycompliance\check\core_import_check) {
+            continue;
+        }
+        $checks[] = new \local_chronifycompliance\check\core_check_adapter($check);
+    }
+    return $checks;
+}
+
+/**
+ * Site and performance checks shown on Site administration > Reports > System status.
  *
  * @return \core\check\check[]
  */
-function local_completiondoctor_status_checks(): array {
-    $checks = [];
-    $sitechecks = \local_completiondoctor\check\check_registry::get_checks([\local_completiondoctor\check\base_check::SCOPE_SITE]);
-    foreach ($sitechecks as $check) {
-        $checks[] = new \local_completiondoctor\check\core_check_adapter($check);
-    }
-    return $checks;
+function local_chronifycompliance_status_checks(): array {
+    return local_chronifycompliance_core_checks(\local_chronifycompliance\check\base_check::PACK_SITE);
+}
+
+/**
+ * Security checks shown on Site administration > Reports > Security checks.
+ *
+ * @return \core\check\check[]
+ */
+function local_chronifycompliance_security_checks(): array {
+    return local_chronifycompliance_core_checks(\local_chronifycompliance\check\base_check::PACK_SECURITY);
 }
 
 /**
@@ -43,16 +70,34 @@ function local_completiondoctor_status_checks(): array {
  * @param stdClass $course
  * @param context $context
  */
-function local_completiondoctor_extend_navigation_course(navigation_node $navigation, stdClass $course, context $context): void {
-    if ((int) $course->id === (int) SITEID || !has_capability('local/completiondoctor:viewcoursereport', $context)) {
+function local_chronifycompliance_extend_navigation_course(navigation_node $navigation, stdClass $course, context $context): void {
+    if ((int) $course->id === (int) SITEID || !has_capability('local/chronifycompliance:viewcoursereport', $context)) {
         return;
     }
     $navigation->add(
-        get_string('report:navigation', 'local_completiondoctor'),
-        new moodle_url('/local/completiondoctor/course.php', ['id' => $course->id]),
+        get_string('report:navigation', 'local_chronifycompliance'),
+        new moodle_url('/local/chronifycompliance/course.php', ['id' => $course->id]),
         navigation_node::TYPE_SETTING,
         null,
-        'local_completiondoctor_report',
+        'local_chronifycompliance_report',
         new pix_icon('i/report', '')
     );
+}
+
+/**
+ * User preferences of the plugin: when each invitation was dismissed.
+ *
+ * @return array
+ */
+function local_chronifycompliance_user_preferences(): array {
+    $preferences = [];
+    foreach (\local_chronifycompliance\output\invitation::KEYS as $key) {
+        $preferences[\local_chronifycompliance\output\invitation::preference($key)] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 0,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ];
+    }
+    return $preferences;
 }

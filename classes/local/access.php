@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\local;
+namespace local_chronifycompliance\local;
 
-use local_completiondoctor\check\finding;
+use local_chronifycompliance\check\finding;
 
 /**
  * Permission helpers shared by pages and web services.
@@ -24,7 +24,7 @@ use local_completiondoctor\check\finding;
  * Course findings are checked in the course context; site findings (course id = SITEID) in the
  * system context with the site report capability.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,13 +52,13 @@ class access {
     public static function require_finding_capability(finding $finding, string $capability): \context {
         $context = self::get_finding_context($finding);
         if ($context->contextlevel == CONTEXT_SYSTEM) {
-            require_capability('local/completiondoctor:viewsitereport', $context);
+            require_capability('local/chronifycompliance:viewsitereport', $context);
             if ($capability === 'applyfix' || $capability === 'ignorefinding') {
                 require_capability('moodle/site:config', $context);
             }
             return $context;
         }
-        require_capability('local/completiondoctor:' . $capability, $context);
+        require_capability('local/chronifycompliance:' . $capability, $context);
         return $context;
     }
 }
