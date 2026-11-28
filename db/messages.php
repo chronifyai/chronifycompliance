@@ -17,7 +17,7 @@
 /**
  * Message providers. Popup notifications only: e-mail and mobile push are not allowed.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $messageproviders = [
     // A course got a new Critical finding. Sent only when the setting "notifyteachers" is on.
     'criticalfinding' => [
-        'capability' => 'local/completiondoctor:viewcoursereport',
+        'capability' => 'local/chronifycompliance:viewcoursereport',
         'defaults' => [
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_DISALLOWED,

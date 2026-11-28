@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\scorm\package_analyzer;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\scorm\package_analyzer;
 
 /**
  * The package needs a fast connection, or has so many files that loading it takes many requests.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -74,7 +74,7 @@ class scormheavy extends scorm_check {
      * @return finding[]
      */
     public function run(audit_context $context): array {
-        $threshold = (float) get_config('local_completiondoctor', 'heavythreshold') ?: 10.0;
+        $threshold = (float) get_config('local_chronifycompliance', 'heavythreshold') ?: 10.0;
         $findings = [];
         foreach ($this->get_scorm_cms($context, false) as $cmid => $cm) {
             $package = $this->inspect($context, $cm)['package'];

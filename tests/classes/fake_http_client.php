@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
-use local_completiondoctor\links\http_client;
+use local_chronifycompliance\links\http_client;
 
 /**
  * HTTP client that answers from a table, so link check tests never use the network.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

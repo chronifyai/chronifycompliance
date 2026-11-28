@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\tests;
+namespace local_chronifycompliance\tests;
 
-use local_completiondoctor\check\audit_context;
+use local_chronifycompliance\check\audit_context;
 
 /**
  * Check that always throws, used to test error isolation.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @category   test
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,6 +43,6 @@ class failing_check extends fake_check {
      * @return array
      */
     public function run(audit_context $context): array {
-        throw new \moodle_exception('error:notfixable', 'local_completiondoctor');
+        throw new \moodle_exception('error:notfixable', 'local_chronifycompliance');
     }
 }

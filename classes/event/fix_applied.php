@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\event;
+namespace local_chronifycompliance\event;
 
 /**
- * Completion Doctor fix applied.
+ * Chronify.Compliance fix applied.
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ class fix_applied extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'local_completiondoctor_fixlog';
+        $this->data['objecttable'] = 'local_chronifycompliance_fixlog';
     }
 
     /**
@@ -39,7 +39,7 @@ class fix_applied extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event:fixapplied', 'local_completiondoctor');
+        return get_string('event:fixapplied', 'local_chronifycompliance');
     }
 
     /**
@@ -48,7 +48,7 @@ class fix_applied extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' applied the Completion Doctor fix with id '{$this->objectid}'"
+        return "The user with id '{$this->userid}' applied the Chronify.Compliance fix with id '{$this->objectid}'"
             . " (check '{$this->other['checkid']}') in the course with id '{$this->courseid}'.";
     }
 
@@ -58,7 +58,7 @@ class fix_applied extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/local/completiondoctor/course.php', ['id' => $this->courseid]);
+        return new \moodle_url('/local/chronifycompliance/course.php', ['id' => $this->courseid]);
     }
 
     /**
@@ -79,7 +79,7 @@ class fix_applied extends \core\event\base {
      * @return array
      */
     public static function get_objectid_mapping() {
-        return ['db' => 'local_completiondoctor_fixlog', 'restore' => \core\event\base::NOT_MAPPED];
+        return ['db' => 'local_chronifycompliance_fixlog', 'restore' => \core\event\base::NOT_MAPPED];
     }
 
     /**

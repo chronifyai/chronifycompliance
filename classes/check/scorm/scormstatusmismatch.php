@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace local_completiondoctor\check\scorm;
+namespace local_chronifycompliance\check\scorm;
 
-use local_completiondoctor\check\audit_context;
-use local_completiondoctor\check\finding;
-use local_completiondoctor\check\scorm_check;
-use local_completiondoctor\scorm\package_analyzer;
-use local_completiondoctor\scorm\recommender;
+use local_chronifycompliance\check\audit_context;
+use local_chronifycompliance\check\finding;
+use local_chronifycompliance\check\scorm_check;
+use local_chronifycompliance\scorm\package_analyzer;
+use local_chronifycompliance\scorm\recommender;
 
 /**
  * The SCORM completion settings can never be met by what the package reports (for example
  * "passed" required from a package that only reports "completed"), or the package is broken
  * (no launchable SCO, manifest not at the root of the zip).
  *
- * @package    local_completiondoctor
+ * @package    local_chronifycompliance
  * @copyright  2026 Sebale {@link https://sebale.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
