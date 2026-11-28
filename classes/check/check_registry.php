@@ -21,7 +21,7 @@ use local_chronifycompliance\hook\register_checks;
 /**
  * Registry of all available checks: built-in checks plus checks added through the register_checks hook.
  *
- * Built-in checks are discovered from the check\completion, check\site and check\scorm namespaces.
+ * Built-in checks are discovered from the check\completion, check\site, check\scorm and check\security namespaces.
  * Each check belongs to one pack (see base_check::get_packs()).
  *
  * @package    local_chronifycompliance
@@ -30,7 +30,7 @@ use local_chronifycompliance\hook\register_checks;
  */
 class check_registry {
     /** @var string[] Namespaces (relative to the plugin) holding built-in checks. */
-    private const BUILTIN_NAMESPACES = ['check\\site', 'check\\completion', 'check\\scorm'];
+    private const BUILTIN_NAMESPACES = ['check\\site', 'check\\completion', 'check\\scorm', 'check\\security'];
 
     /** @var base_check[]|null Checks keyed by id. */
     private static ?array $checks = null;

@@ -39,7 +39,7 @@ Feature: Administrators set up Chronify.Compliance on first use
     And I run all adhoc tasks
     And I am on the "local_chronifycompliance > Dashboard" page
     Then I should see "Overall health"
-    And I should see "No checks yet" in the "[data-pack='security']" "css_element"
+    And I should not see "No checks yet" in the "[data-pack='security']" "css_element"
     And I should see "The trend appears after the second weekly score"
 
   Scenario: Skip the setup and finish it later

@@ -94,7 +94,7 @@ final class main_dashboard_test extends \advanced_testcase {
 
         $this->assertSame(base_check::get_packs(), array_column($data['packs'], 'pack'));
         $tiles = array_column($data['packs'], null, 'pack');
-        $this->assertFalse($tiles[base_check::PACK_SECURITY]['hasscore'], 'Security has no checks yet');
+        $this->assertTrue($tiles[base_check::PACK_SECURITY]['hasscore'], 'Moodle security checks score the Security pack');
         $this->assertSame('critical', $tiles[base_check::PACK_COMPLETION]['severity']);
         $this->assertNotNull($tiles[base_check::PACK_COMPLETION]['url']);
 

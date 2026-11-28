@@ -163,6 +163,9 @@ final class site_checks_test extends \advanced_testcase {
      */
     public function test_site_audit_saves(): void {
         set_config('cron_enabled', 0);
+        // Moodle's own checks have their own test (core_import_check_test).
+        set_config('enabled_coresecurity', 0, 'local_chronifycompliance');
+        set_config('enabled_coreperformance', 0, 'local_chronifycompliance');
         site_auditor::audit(true);
         $findings = finding_store::get_course_findings((int) SITEID);
         $this->assertSame(['cronstale'], array_values(array_unique(array_map(fn($f) => $f->checkid, $findings))));

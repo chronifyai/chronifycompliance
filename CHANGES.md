@@ -77,6 +77,12 @@
   package and what learners reported side by side, a Confidence column in the recommended settings, Preview
   recommended settings (the activity's fixable problem), Fix it for me (not active yet) and a republish guide when
   attempts never send a score.
+- Step C1: Moodle's own checks as findings. `coresecurity` (Security pack) reads core's security checks and
+  `coreperformance` (Site pack) its performance and status checks, each result that is not OK as one site finding
+  (critical and error: Critical, warning: Warning, info and unknown: Info) with the core link as the card's Set up
+  action. Skipped: this plugin's checks, `core_publicpaths` (web requests) and `core_dbschema` (slow). The Security
+  pack now has a score. Neither check is offered back to core's System status page. Measured on 100,000 users:
+  0.04 and 0.11 seconds.
 
 ## 0.2.3 (unreleased): QA fixes
 

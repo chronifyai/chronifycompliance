@@ -33,6 +33,10 @@ function local_chronifycompliance_status_checks(): array {
         [\local_chronifycompliance\check\base_check::SCOPE_SITE]
     );
     foreach ($sitechecks as $check) {
+        // Checks that read core's own checks are not offered back to core (that would run them in a loop).
+        if ($check instanceof \local_chronifycompliance\check\core_import_check) {
+            continue;
+        }
         $checks[] = new \local_chronifycompliance\check\core_check_adapter($check);
     }
     return $checks;

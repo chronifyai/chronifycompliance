@@ -3,7 +3,7 @@
 Every check is read-only. Fixable checks show a preview first, write a fix log entry, and can be undone.
 Each check can be switched off, or given another severity, in *Site administration > Plugins > Local plugins > Chronify.Compliance > Checks*.
 
-Checks are grouped in packs: **Completion**, **SCORM and content**, **Site and performance** and **Security** (security checks arrive in a later step). The settings page lists the checks by pack, and each pack gets its own score.
+Checks are grouped in packs: **Completion**, **SCORM and content**, **Site and performance** and **Security**. The settings page lists the checks by pack, and each pack gets its own score.
 
 Severity: **Critical** means learners can never complete, or complete when they should not. **Warning** means a likely mistake. **Info** is a suggestion.
 
@@ -71,7 +71,15 @@ Cron is disabled, has never run, or has not started recently (setting, default 1
 ### Completion disabled on the site (`completiondisabled`) · Critical
 Completion tracking is off for the whole site while courses have completion set up. **Fix:** turn on *Enable completion tracking* in the advanced features.
 
-The site checks also appear in *Site administration > Reports > System status*.
+### Moodle performance and status checks (`coreperformance`) · per result
+Reads Moodle's own Check API results of the types *performance* and *status* (*Site administration > Reports > Performance overview* and *System status*, including checks of other plugins). Every result that is not OK becomes one finding: critical and error are Critical, warning is Warning, info and unknown are Info. The problem links to the setting core points to. Skipped: this plugin's own checks, and `core_dbschema` (it compares the whole database schema and is slow). **Fix:** follow the link to the setting.
+
+The site checks also appear in *Site administration > Reports > System status*, except the two that read Moodle's own checks.
+
+## Security
+
+### Moodle security checks (`coresecurity`) · per result
+Reads Moodle's own security checks (*Site administration > Reports > Security checks*, including checks of other plugins such as "No authentication"), with the same mapping as above. Skipped: `core_publicpaths`, because it requests the site's own web addresses, and a site audit makes no web requests (step C3 checks exposed files without them). **Fix:** follow the link to the setting. Nothing is changed automatically.
 
 ## SCORM
 

@@ -85,6 +85,10 @@ class finding_exporter {
                 }
             }
         }
+        // Site findings can point at the Moodle setting that fixes them.
+        if (!$item['editurl'] && !empty($finding->details['url'])) {
+            $item['editurl'] = (string) $finding->details['url'];
+        }
         if ($finding->status === finding::STATUS_FIXED && $caps['canfix']) {
             $log = fix_log::get_latest_active((int) $finding->id);
             $item['fixlogid'] = $log ? (int) $log->id : null;

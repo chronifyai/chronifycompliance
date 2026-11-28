@@ -37,6 +37,16 @@ use local_chronifycompliance\tests\demo\seeder;
  */
 final class health_score_test extends \advanced_testcase {
     /**
+     * The formula tests use the Completion, Site and SCORM packs only: Moodle's own checks are off.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest();
+        set_config('enabled_coresecurity', 0, 'local_chronifycompliance');
+        set_config('enabled_coreperformance', 0, 'local_chronifycompliance');
+    }
+
+    /**
      * Pinned course scores of the demo scenarios: overall, Completion pack, SCORM and content pack.
      *
      * A change here means the checks or the formula changed: update it on purpose.
@@ -103,7 +113,7 @@ final class health_score_test extends \advanced_testcase {
         $this->assertSame(
             [base_check::PACK_COMPLETION, base_check::PACK_SITE, base_check::PACK_SCORM],
             array_keys($score->packs),
-            'Security has no checks yet, so it is left out.'
+            'Security has no enabled checks, so it is left out.'
         );
 
         // Completion: 1 critical + 2 warnings + 1 info + 1 ignored critical = 10 + 6 + 0.5 + 5 = 21.5.
